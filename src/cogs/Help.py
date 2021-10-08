@@ -19,9 +19,13 @@ class Help(commands.Cog):
         spc_url = 'https://verified.gitbook.io/pixel-docs/special/welcome'
         log_url = 'https://verified.gitbook.io/pixel-docs/activity-logging/enable'
 
-        raw = await db_fetch_object(guildId=ctx.guild.id, key='prefix')
+        raw = await db_fetch_object(
+            guildId=ctx.guild.id, 
+            key='prefix'
+            )
 
-        if raw is not None and len(raw) > 0:
+
+        if raw and len(raw) > 0:
             prefix = raw['item'][0]
         else:
             prefix = '.'
