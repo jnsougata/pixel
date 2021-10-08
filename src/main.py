@@ -24,14 +24,10 @@ bot = BOT()
 
 
 cogs = [
-    "Raw",
     "Set",
-    "Mod",
     "Help",
     "Error",
     "Remove",
-    "Utility",
-    "Naughty",
 ]
 
 for cog in cogs:
