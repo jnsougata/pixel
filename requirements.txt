@@ -2,4 +2,5 @@ deta
 pillow
 urllib3
 requests
+asynctube
 discord.py
