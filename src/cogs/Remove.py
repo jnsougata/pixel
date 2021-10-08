@@ -24,8 +24,6 @@ class Remove(commands.Cog):
                         f'\n- removes custom prefix'
                         f'\n\n**`reception`**'
                         f'\n- removes text channel of welcome cards'
-                        f'\n\n**`autorole`**'
-                        f'\n- removes automatic role'
                         f'\n\n**`welcomecard`**'
                         f'\n- removes welcome card image'
                         f'\n\n**`receiver`**'

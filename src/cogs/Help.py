@@ -47,8 +47,8 @@ class Help(commands.Cog):
         await msg.add_reaction('▶')
 
 
-        def check(reaction, user):
-            return reaction.message.id == msg.id and user == ctx.author
+        def check(reactz, user):
+            return reactz.message.id == msg.id and user == ctx.author
 
 
         
@@ -117,6 +117,7 @@ class Help(commands.Cog):
 
 
     # ---> Groups
+
 
     @help.command(name='prefix')
     async def help_prefix(self, ctx):

@@ -24,8 +24,6 @@ class Set(commands.Cog):
                         f'\n- sets a custom prefix for your server'
                         f'\n\n**`reception`**'
                         f'\n- sets text channel for welcome cards'
-                        f'\n\n**`autorole`**'
-                        f'\n- sets role as automatic role'
                         f'\n\n**`welcomecard`**'
                         f'\n- sets an image as welcome card'
                         f'\n\n**`receiver`**'
@@ -38,7 +36,7 @@ class Set(commands.Cog):
 
     @set.command(name='reception')
     @commands.has_guild_permissions(administrator=True)
-    async def group_set_reception(self, ctx, channel: discord.TextChannel = None):
+    async def set_reception(self, ctx, channel: discord.TextChannel = None):
 
         if channel is None:
 
@@ -83,7 +81,7 @@ class Set(commands.Cog):
 
     @set.command(name='welcomecard')
     @commands.has_guild_permissions(administrator=True)
-    async def group_set_welcomecard(self, ctx, url: str = None):
+    async def set_welcomecard(self, ctx, url: str = None):
 
         def check(m):
             return m.author == ctx.author
@@ -125,7 +123,7 @@ class Set(commands.Cog):
 
     @set.command(name='receiver')
     @commands.has_guild_permissions(administrator=True)
-    async def group_set_receiver(self, ctx, channel: discord.TextChannel = None):
+    async def set_receiver(self, ctx, channel: discord.TextChannel = None):
 
         if channel is None:
 
@@ -165,22 +163,23 @@ class Set(commands.Cog):
 
     @set.command(aliases=['yt', 'youtube'])
     @commands.has_guild_permissions(administrator=True)
-    async def group_set_youtube(self, ctx, Id: str = None):
+    async def set_youtube(self, ctx, Id: str = None):
 
         async def set_handler(YouTubeId: str):
-            channel = Channel(YouTubeId)
+            channel = await Channel.fetch(YouTubeId)
+
             if channel.valid:
 
-                channelId = await channel.id
-                url = await channel.url
+                channelId = channel.id
+                url = channel.url
                 latest = await channel.latest
                 liveId = 'empty'
 
                 emd = discord.Embed(
                     title=f'{Emo.CHECK} Channel Added',
-                    description=f'**`Name`** [{await channel.name}]({url})'
-                                f'\n\n **`Subs`** {await channel.subscribers}'
-                                f'\n\n **`Latest Video`** [Tap Here]({await latest.url})',
+                    description=f'**`Name`** [{channel.name}]({url})'
+                                f'\n\n **`Subs`** {channel.subscribers}'
+                                f'\n\n **`Latest Video`** [Tap Here]({latest.url})',
                     color=0xFF0000
                 )
                 emd.set_thumbnail(url= await channel.avatar_url)
@@ -261,7 +260,7 @@ class Set(commands.Cog):
 
     @set.command(aliases=['prefix'])
     @commands.has_guild_permissions(administrator=True)
-    async def group_set_prefix(self, ctx, prefix: str = None):
+    async def set_prefix(self, ctx, prefix: str = None):
 
         if prefix is None:
             def check(m):
