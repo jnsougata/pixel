@@ -28,7 +28,7 @@ class Help(commands.Cog):
         if raw and len(raw) > 0:
             prefix = raw['item'][0]
         else:
-            prefix = '.'
+            prefix = '-'
 
 
         emd = discord.Embed(color=0x005aef)
@@ -78,7 +78,6 @@ class Help(commands.Cog):
             inline=False
         )
         special_embed.set_footer(text=f'Page: 2 | For more information use {prefix}help [command]')
-
 
         
         embeds = [emd, special_embed]
