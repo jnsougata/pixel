@@ -1,0 +1,5 @@
+deta
+pillow
+urllib3
+requests
+discord.py
