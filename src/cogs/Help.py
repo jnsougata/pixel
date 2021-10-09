@@ -1,7 +1,157 @@
-import asyncio
+import discord
 from src.extras.func import *
 from discord.ext import commands
 from src.extras.emojis import Emo
+
+
+
+class CustomView(discord.ui.View):
+
+    def __init__(
+            self,
+            ctx: commands.Context,
+            message: discord.Message = None
+    ):
+
+        self.ctx = ctx
+        self.message = message
+
+        INVITE = discord.ui.Button(
+            label='Invite',
+            style=discord.ButtonStyle.link,
+            url='https://top.gg/bot/848304171814879273/invite'
+        )
+        VOTE = discord.ui.Button(
+            label='Vote here',
+            style=discord.ButtonStyle.link,
+            url='https://top.gg/bot/848304171814879273/vote'
+        )
+
+        super().__init__()
+        self.value = None
+        self.timeout = 20
+        self.add_item(Dropdown(ctx))
+        self.add_item(INVITE)
+        self.add_item(VOTE)
+
+
+    async def on_timeout(self) -> None:
+
+        p = await prefix_fetcher(self.ctx.guild.id)
+
+        emd = discord.Embed(
+            description=f'**{self.ctx.guild.me.display_name}** is created for:'
+                        f'\n\n{Emo.YT}  **`YouTube Alerts`**'
+                        f'\n\n{Emo.IMG}  **`Welcome Cards`**'
+                        f'\n\n**One command for all:**'
+                        f'\n\n{Emo.MOD} **`{p}settings`**'
+                        f'\n\nAll the features are customizable'
+                        f'\nand free. Use the **dropdown** menu  '
+                        f'\nbelow to get more info about the '
+                        f'\ncommands. If you like these features '
+                        f'\nmake sure to leave a feedback please.'
+                        f'\n For issues you can always join **[here]'
+                        f'(https://discord.gg/UzyEYeYZF9)**',
+            color=0x005aef
+        )
+        emd.set_footer(
+            text=f'✅ Thanks | Current Prefix [{p}]  ⃰  Timed out ',
+        )
+        self.remove_item(self.children[0])
+        await self.message.edit(embed = emd, view = self)
+
+
+
+
+class Dropdown(discord.ui.Select):
+
+    def __init__(self, context: commands.Context):
+
+        self.ctx = context
+
+        options = [
+            discord.SelectOption(label='prefix',value='0'),
+            discord.SelectOption(label='receiver', value='1'),
+            discord.SelectOption(label='youtube', value='2'),
+            discord.SelectOption(label='reception', value='3'),
+            discord.SelectOption(label='welcomecard', value='4'),
+        ]
+
+        super().__init__(
+            placeholder = 'Select a command',
+            min_values = 1,
+            max_values = 1,
+            options = options
+        )
+
+
+    async def callback(self, interaction: discord.Interaction):
+
+        p = await prefix_fetcher(id = interaction.guild.id)
+
+        page_1 = discord.Embed(
+            title=f'{Emo.SETTINGS} Prefix',
+            description=f'shows custom prefix added to'
+                        f'\nyour server. you can change it anytime'
+                        f'\n\n**` Syntax `**'
+                        f'\n```\n{p}prefix```',
+
+            colour=0x005aef
+        )
+        page_2 = discord.Embed(
+            title=f'{Emo.SETTINGS} Receiver',
+            description=f'shows the added text channel'
+                        f'\nof your server to receive youtube alerts'
+                        f'\n\n**` Syntax `**'
+                        f'\n```\n{p}receiver```',
+
+            colour=0x005aef
+        )
+        page_3 = discord.Embed(
+
+            title=f'{Emo.SETTINGS} YouTube',
+            description=f'shows the list of youtube channel '
+                        f'\nadded to your server to receive alerts'
+                        f'\n\n**` Syntax `**'
+                        f'\n```\n{p}youtube```',
+
+            colour=0x005aef
+        )
+        page_4 = discord.Embed(
+
+            title=f'{Emo.SETTINGS} Reception',
+            description=f'shows the text channel added'
+                        f'\nto receive youtube notifications'
+                        f'\n\n**` Syntax `**'
+                        f'\n```\n{p}reception```',
+
+            colour=0x005aef
+        )
+        page_5 = discord.Embed(
+
+            title=f'{Emo.SETTINGS} Welcome Card',
+            description=f'shows the welcome card / image'
+                        f'\nadded for your server to be used'
+                        f'\nto welcome them when a member joins'
+                        f'\n\n**` Syntax `**'
+                        f'\n```\n{p}welcomecard```',
+
+            colour=0x005aef
+        )
+
+        book = [page_1, page_2, page_3, page_4, page_5]
+
+
+        if interaction.user == self.ctx.author:
+
+            await interaction.message.edit(embed=book[int(self.values[0])])
+
+        else:
+
+            await interaction.response.send_message(
+                'You are not allowed to control this message!', ephemeral=True
+            )
+
 
 
 class Help(commands.Cog):
@@ -9,190 +159,45 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.group(name='help', invoke_without_command=True)
+
+    @commands.command(name='help', invoke_without_command=True)
     @commands.cooldown(rate=3, per=60, type=commands.BucketType.member)
     async def help(self, ctx):
 
-        sup_url = 'https://top.gg/servers/834662394068336670/join/'
-        basic_url = 'https://verified.gitbook.io/pixel-docs/basic-commands/afk'
-        mod_url = 'https://verified.gitbook.io/pixel-docs/moderation/clear'
-        spc_url = 'https://verified.gitbook.io/pixel-docs/special/welcome'
-        log_url = 'https://verified.gitbook.io/pixel-docs/activity-logging/enable'
 
         raw = await db_fetch_object(
-            guildId=ctx.guild.id, 
-            key='prefix'
+            guildId = ctx.guild.id,
+            key = 'prefix'
             )
 
 
         if raw and len(raw) > 0:
-            prefix = raw['item'][0]
+            p = raw['item'][0]
         else:
-            prefix = '-'
+            p = '.'
 
 
-        emd = discord.Embed(color=0x005aef)
-        emd.set_author(name=f'Hi {ctx.author.display_name}', url=sup_url, icon_url=ctx.author.avatar_url)
-        emd.add_field(name='\u200b', value=f'{Emo.ESB} **[Basic]({basic_url})**', inline=False)
-        emd.add_field(name='\u200b', value=f'{Emo.SETTINGS} **[Special]({spc_url})**', inline=False)
-        emd.add_field(name='\u200b', value=f'{Emo.DATABASE} **[Logging]({log_url})**', inline=False)
-        emd.add_field(name='\u200b', value=f'{Emo.MOD} **[Moderation]({mod_url})**\n\u200b', inline=False)
+        emd = discord.Embed(
+            description = f'**{ctx.guild.me.display_name}** is created for:'
+                          f'\n\n{Emo.YT}  **`YouTube Alerts`**'
+                          f'\n\n{Emo.IMG}  **`Welcome Cards`**'
+                          f'\n\n**One command for all:**'
+                          f'\n\n{Emo.MOD} **`{p}settings`**'
+                          f'\n\nAll the features are customizable'
+                          f'\nand free. Use the **dropdown** menu  '
+                          f'\nbelow to get more info about the '
+                          f'\ncommands. If you like these features '
+                          f'\nmake sure to leave a feedback please.'
+                          f'\n For issues you can always join **[here]'
+                          f'(https://discord.gg/UzyEYeYZF9)**',
+            color=0x005aef
+        )
         emd.set_footer(
-            text=f' Thanks | Current Prefix ( {prefix} )',
-            icon_url=ctx.guild.me.avatar_url
+            text=f'✅ Thanks | Current Prefix [{p}]',
         )
 
-        msg = await ctx.send(embed=emd)
-        await msg.add_reaction('◀')
-        await msg.add_reaction('▶')
-
-
-        def check(reactz, user):
-            return reactz.message.id == msg.id and user == ctx.author
-
-
-        
-        special_embed = discord.Embed(
-            title=f'{Emo.SPECIAL} Special Commands',
-            description='**Syntax:** set [command] | remove [command]\n\n**Commands:**',
-            color=0x005aef
-        )
-        special_embed.add_field(
-            name='prefix', value='```\nSets a custom prefix for your server```',
-            inline=False
-        )
-        special_embed.add_field(
-            name='reception', value='```\nSets a text channel for welcome cards```',
-            inline=False
-        )
-        special_embed.add_field(
-            name='youtube', value='```\nSets YouTube channel for Live / Upload alerts```',
-            inline=False
-        )
-        special_embed.add_field(
-            name='welcomecard', value='```\nSets custom welcome card / image```',
-            inline=False
-        )
-        special_embed.add_field(
-            name='receiver', value='```\nSets a text channel to receive YouTube Alerts```',
-            inline=False
-        )
-        special_embed.set_footer(text=f'Page: 2 | For more information use {prefix}help [command]')
-
-        
-        embeds = [emd, special_embed]
-
-
-        page = 0
-        while True:
-            try:
-                reaction, _ = await self.bot.wait_for('reaction_add', timeout=180, check=check)
-                if reaction.emoji == '▶' and page < len(embeds) - 1:
-                    page += 1
-                    await msg.remove_reaction('▶', ctx.author)
-                    await msg.edit(embed=embeds[page])
-
-
-                elif reaction.emoji == '◀' and page == 0:
-                    await msg.remove_reaction('◀', ctx.author)
-                    await msg.edit(embed=embeds[0])
-
-
-
-                elif reaction.emoji == '▶' and page == len(embeds) - 1:
-                    page = 0
-                    await msg.remove_reaction('▶', ctx.author)
-                    await msg.edit(embed=embeds[0])
-
-
-                elif reaction.emoji == '◀' and page >= 1:
-                    page -= 1
-                    await msg.remove_reaction('◀', ctx.author)
-                    await msg.edit(embed=embeds[page])
-
-
-            except asyncio.TimeoutError:
-                await msg.clear_reactions()
-                return
-
-
-    # ---> Groups
-
-
-    @help.command(name='prefix')
-    async def help_prefix(self, ctx):
-        prefix = await prefix_fetcher(ctx.guild.id)
-        emd = discord.Embed(
-            title='prefix',
-            color=0x005aef
-        )
-        emd.add_field(
-            name='Syntax:',
-            value=f'```\n{prefix}set prefix```'
-                  f'```\n{prefix}remove prefix```',
-            inline=False
-        )
-        await ctx.send(embed=emd)
-
-    @help.command(name='reception')
-    async def help_set_reception(self, ctx):
-        prefix = await prefix_fetcher(ctx.guild.id)
-        emd = discord.Embed(
-            title='welcome',
-            color=0x005aef
-        )
-        emd.add_field(
-            name='Syntax:',
-            value=f'```\n{prefix}set reception```'
-                  f'```\n{prefix}remove reception```',
-            inline=False
-        )
-        await ctx.send(embed=emd)
-
-    @help.command(name='youtube')
-    async def help_set_youtube(self, ctx):
-        prefix = await prefix_fetcher(ctx.guild.id)
-        emd = discord.Embed(
-            title='youtube',
-            color=0x005aef
-        )
-        emd.add_field(
-            name='Syntax:',
-            value=f'```\n{prefix}set youtube```'
-                  f'```\n{prefix}remove youtube```',
-            inline=False
-        )
-        await ctx.send(embed=emd)
-
-    @help.command(name='welcomecard')
-    async def help_set_welcomecard(self, ctx):
-        prefix = await prefix_fetcher(ctx.guild.id)
-        emd = discord.Embed(
-            title='coverpic',
-            color=0x005aef
-        )
-        emd.add_field(
-            name='Syntax:',
-            value=f'```\n{prefix}set welcomecard```'
-                  f'```\n{prefix}remove welcomecard```',
-            inline=False
-        )
-        await ctx.send(embed=emd)
-
-    @help.command(name='receiver')
-    async def help_set_receiver(self, ctx):
-        prefix = await prefix_fetcher(ctx.guild.id)
-        emd = discord.Embed(
-            title='recipient',
-            color=0x005aef
-        )
-        emd.add_field(
-            name='Syntax:',
-            value=f'```\n{prefix}set receiver```'
-                  f'```\n{prefix}remove receiver```',
-            inline=False
-        )
-        await ctx.send(embed=emd)
+        view = CustomView(ctx)
+        view.message = await ctx.send(embed=emd, view = view)
 
 
 def setup(bot):
