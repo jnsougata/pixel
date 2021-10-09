@@ -7,6 +7,7 @@ intent = discord.Intents().default()
 intent.members = True
 
 
+
 class BOT(commands.Bot):
     def __init__(self):
         super().__init__(
@@ -28,6 +29,7 @@ cogs = [
     "Help",
     "Error",
     "Remove",
+    "Settings"
 ]
 
 for cog in cogs:
