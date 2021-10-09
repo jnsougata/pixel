@@ -57,6 +57,8 @@ class Handlers(commands.Cog):
                 f'{user.mention} **Only owner can use this command for now!**',
                 delete_after=10
             )
+        elif isinstance(error, commands.CheckAnyFailure):
+            await ctx.send(f'{error}')
 
 
 
