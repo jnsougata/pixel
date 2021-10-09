@@ -1,5 +1,4 @@
 import os
-import discord
 from deta import Deta
 from typing import Union
 from discord.ext import commands
@@ -23,8 +22,8 @@ async def db_push_object(
 
 
 async def db_fetch_object(
-    guildId: int,
-     key: str
+        guildId: int,
+        key: str
 ):
     db = deta.Base(f'GUILD{guildId}')
     return db.get(key)
@@ -33,7 +32,6 @@ async def db_fetch_object(
 
 
 async def prefix_fetcher(id):
-
     prefix = await db_fetch_object(guildId=id, key='prefix')
     return prefix['item'][0] if prefix and len(prefix['item']) > 0 else DEFAULT_PREFIX
 
