@@ -32,6 +32,7 @@ async def db_fetch_object(
 
 
 async def prefix_fetcher(id):
+
     prefix = await db_fetch_object(guildId=id, key='prefix')
     return prefix['item'][0] if prefix and len(prefix['item']) > 0 else DEFAULT_PREFIX
 

@@ -1,4 +1,5 @@
 import asyncio
+import discord
 from PIL import Image
 import urllib.request
 from asynctube import Channel

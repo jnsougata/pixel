@@ -1,4 +1,5 @@
 import asyncio
+import discord
 from asynctube import Channel
 from src.extras.func import *
 from discord.ext import commands
@@ -104,8 +105,8 @@ class Remove(commands.Cog):
 
         async def pop_handler(YouTubeId: str):
             try:
-                channel = Channel(YouTubeId)
-                channelId = await channel.id
+                channel = await Channel.fetch(YouTubeId)
+                channelId = channel.id
                 existing = await db_fetch_object(
                     guildId = ctx.guild.id,
                     key = 'youtube'
