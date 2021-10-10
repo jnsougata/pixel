@@ -28,30 +28,6 @@ class BaseView(discord.ui.View):
 
 
 
-class Option(discord.ui.View):
-    def __init__(self, ctx: commands.Context):
-        self.ctx = ctx
-        self.message = None
-
-        super().__init__()
-        self.value = None
-
-
-    @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
-    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = True
-            self.stop()
-
-    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
-    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = False
-            self.stop()
-
-
-
-
 
 class BaseMenu(discord.ui.Select):
 
@@ -94,6 +70,10 @@ class BaseMenu(discord.ui.Select):
                     interaction=interaction,
                     bot=self.bot
                 )
+
+            elif int(self.values[0]) == 2:
+                pass
+
 
             else:
                 await self.ctx.send('Work in progress!')

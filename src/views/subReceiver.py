@@ -63,10 +63,14 @@ async def sub_view_receiver(
 
     if view.value is True:
 
+        view.clear_items()
+
         new = await interaction.message.edit(
-            embed=discord.Embed(
+            content = f'{ctx.author.mention}',
+            embed = discord.Embed(
                 description='Please **mention** a text channel to use as **receiver:**'
-            )
+            ),
+            view = view
         )
 
         def check(m):
@@ -82,11 +86,14 @@ async def sub_view_receiver(
                     key='alertchannel'
                 )
                 view.clear_items()
-                await new.edit(
+                await new.delete()
+                await ctx.send(
+                    content=f'{ctx.author.mention}',
                     embed=discord.Embed(
                         description=f'{Emo.CHECK} **{ctx.guild.name}\'s** '
-                                    f'new receiver channel is {ls[0].mention} ',
-                    )
+                                    f'new receiver channel is {ls[0].mention} '
+                    ),
+                    view=view
                 )
             else:
                 await new.edit(
