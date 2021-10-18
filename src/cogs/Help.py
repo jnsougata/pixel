@@ -40,22 +40,22 @@ class CustomView(discord.ui.View):
         p = await prefix_fetcher(self.ctx.guild.id)
 
         emd = discord.Embed(
-            description=f'**{self.ctx.guild.me.display_name}** is created for:'
+            description=f'**{self.ctx.guild.me.display_name} is created for:**'
                         f'\n\n{Emo.YT}  **`YouTube Alerts`**'
                         f'\n\n{Emo.IMG}  **`Welcome Cards`**'
-                        f'\n\n**One command for all:**'
-                        f'\n\n{Emo.MOD} **`{p}settings`**'
+                        f'\n\n**One command for everything:**'
+                        f'\n\n{Emo.MOD} **`{p}settings`** or **`{p}setup`** or **`{p}s`** '
                         f'\n\nAll the features are customizable'
                         f'\nand free. Use the **dropdown** menu  '
                         f'\nbelow to get more info about the '
-                        f'\ncommands. If you like these features '
+                        f'\n**features**. If you like these features '
                         f'\nmake sure to leave a feedback please.'
                         f'\n For issues you can always join **[here]'
                         f'(https://discord.gg/UzyEYeYZF9)**',
             color=0x005aef
         )
         emd.set_footer(
-            text=f'✅ Thanks | Current Prefix [{p}]  (*Timed out)',
+            text=f'✅ Thanks | Current Prefix [{p}]  (Timed out)',
         )
         self.remove_item(self.children[0])
         await self.message.edit(embed = emd, view = self)
@@ -70,15 +70,15 @@ class Dropdown(discord.ui.Select):
         self.ctx = context
 
         options = [
-            discord.SelectOption(label='prefix',value='0'),
-            discord.SelectOption(label='receiver', value='1'),
-            discord.SelectOption(label='youtube', value='2'),
-            discord.SelectOption(label='reception', value='3'),
-            discord.SelectOption(label='welcomecard', value='4'),
+            discord.SelectOption(label='prefix', value='0', emoji=Emo.TAG),
+            discord.SelectOption(label='receiver', value='1', emoji=Emo.PING),
+            discord.SelectOption(label='youtube', value='2', emoji=Emo.YT),
+            discord.SelectOption(label='reception', value='3', emoji=Emo.DEAL),
+            discord.SelectOption(label='welcomecard', value='4', emoji=Emo.IMG),
         ]
 
         super().__init__(
-            placeholder = 'Select a command',
+            placeholder = 'Available features',
             min_values = 1,
             max_values = 1,
             options = options
@@ -87,55 +87,40 @@ class Dropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
 
-        p = await prefix_fetcher(id = interaction.guild.id)
-
         page_1 = discord.Embed(
             title=f'{Emo.SETTINGS} Prefix',
-            description=f'shows custom prefix added to'
-                        f'\nyour server. you can change it anytime'
-                        f'\n\n**` Syntax `**'
-                        f'\n```\n{p}prefix```',
-
+            description=f'Used to add or remove custom prefix '
+                        f'\nto your server. you can change it anytime',
             colour=0x005aef
         )
         page_2 = discord.Embed(
             title=f'{Emo.SETTINGS} Receiver',
-            description=f'shows the added text channel'
-                        f'\nof your server to receive youtube alerts'
-                        f'\n\n**` Syntax `**'
-                        f'\n```\n{p}receiver```',
+            description=f'Used to add or remove the text channel added'
+                        f'\nto receive youtube alerts for your server',
 
             colour=0x005aef
         )
         page_3 = discord.Embed(
 
             title=f'{Emo.SETTINGS} YouTube',
-            description=f'shows the list of youtube channel '
-                        f'\nadded to your server to receive alerts'
-                        f'\n\n**` Syntax `**'
-                        f'\n```\n{p}youtube```',
+            description=f'Used to add or remove youtube channel '
+                        f'\nto your server to receive live alerts',
 
             colour=0x005aef
         )
         page_4 = discord.Embed(
 
             title=f'{Emo.SETTINGS} Reception',
-            description=f'shows the text channel added'
-                        f'\nto receive youtube notifications'
-                        f'\n\n**` Syntax `**'
-                        f'\n```\n{p}reception```',
+            description=f'Used to add or remove the text channel'
+                        f'\nto receive youtube live notifications',
 
             colour=0x005aef
         )
         page_5 = discord.Embed(
 
             title=f'{Emo.SETTINGS} Welcome Card',
-            description=f'shows the welcome card / image'
-                        f'\nadded for your server to be used'
-                        f'\nto welcome them when a member joins'
-                        f'\n\n**` Syntax `**'
-                        f'\n```\n{p}welcomecard```',
-
+            description=f'Used to add or remove the welcome card / image'
+                        f'\nto your server for welcoming new members',
             colour=0x005aef
         )
 
@@ -178,15 +163,15 @@ class Help(commands.Cog):
 
 
         emd = discord.Embed(
-            description = f'**{ctx.guild.me.display_name}** is created for:'
+            description = f'**{ctx.guild.me.display_name} is created for:**'
                           f'\n\n{Emo.YT}  **`YouTube Alerts`**'
                           f'\n\n{Emo.IMG}  **`Welcome Cards`**'
-                          f'\n\n**One command for all:**'
-                          f'\n\n{Emo.MOD} **`{p}settings`**'
+                          f'\n\n**One command for everything:**'
+                          f'\n\n{Emo.MOD} **`{p}settings`** or **`{p}setup`** or **`{p}s`** '
                           f'\n\nAll the features are customizable'
                           f'\nand free. Use the **dropdown** menu  '
                           f'\nbelow to get more info about the '
-                          f'\ncommands. If you like these features '
+                          f'\n**features**. If you like these features '
                           f'\nmake sure to leave a feedback please.'
                           f'\n For issues you can always join **[here]'
                           f'(https://discord.gg/UzyEYeYZF9)**',

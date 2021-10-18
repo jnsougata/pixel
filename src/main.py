@@ -25,10 +25,8 @@ bot = BOT()
 
 
 cogs = [
-    "Set",
     "Help",
     "Error",
-    "Remove",
     "Settings"
 ]
 
