@@ -1,3 +1,4 @@
+import io
 import discord
 import asyncio
 import aiohttp
@@ -112,7 +113,7 @@ async def sub_view_welcomecard(
             async with aiohttp.ClientSession() as session:
                 async with session.get(reply.content) as response:
                     resp = await response.read()
-                    Image.open(resp)
+                    Image.open(io.BytesIO(resp))
                     await db_push_object(
                         guildId=ctx.guild.id,
                         item=[reply.content],

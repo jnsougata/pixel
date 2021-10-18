@@ -1,4 +1,5 @@
 import discord
+from asynctube import Search
 from src.extras.emojis import *
 from discord.ext import commands
 from src.views.subPrefix import sub_view_prefix
@@ -127,6 +128,14 @@ class Settings(commands.Cog):
         view = BaseView()
         view.add_item(BaseMenu(context=ctx, bot=self.bot))
         view.message = await ctx.send(embed=emd, view=view)
+
+    @commands.command(aliases=['yt'])
+    async def yt_(self, ctx: commands.Context, *, kw:str):
+        q = await Search.channel(kw)
+        await ctx.send(f'{q.info}')
+
+
+
 
 
 def setup(bot):
