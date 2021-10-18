@@ -57,7 +57,7 @@ class CustomView(discord.ui.View):
         emd.set_footer(
             text=f'✅ Thanks | Current Prefix [{p}]  (Timed out)',
         )
-        self.remove_item(self.children[0])
+        self.stop()
         await self.message.edit(embed = emd, view = self)
 
 
