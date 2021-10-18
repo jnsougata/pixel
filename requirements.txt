@@ -3,4 +3,4 @@ pillow
 urllib3
 requests
 asynctube
-discord.py
+git+https://github.com/Rapptz/discord.py

@@ -49,7 +49,7 @@ class CustomView(discord.ui.View):
                         f'\nand free. Use the **dropdown** menu  '
                         f'\nbelow to get more info about the '
                         f'\n**features**. If you like these features '
-                        f'\nmake sure to leave a feedback please.'
+                        f'\nplease make sure to leave a feedback.'
                         f'\n For issues you can always join **[here]'
                         f'(https://discord.gg/UzyEYeYZF9)**',
             color=0x005aef
@@ -172,7 +172,7 @@ class Help(commands.Cog):
                           f'\nand free. Use the **dropdown** menu  '
                           f'\nbelow to get more info about the '
                           f'\n**features**. If you like these features '
-                          f'\nmake sure to leave a feedback please.'
+                          f'\nplease make sure to leave a feedback.'
                           f'\n For issues you can always join **[here]'
                           f'(https://discord.gg/UzyEYeYZF9)**',
             color=0x005aef
