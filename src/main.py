@@ -25,9 +25,8 @@ bot = BOT()
 
 
 cogs = [
-    "Help",
-    "Error",
-    "Settings"
+    "Activity",
+    "Welcomer"
 ]
 
 for cog in cogs:
