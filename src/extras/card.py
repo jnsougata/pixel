@@ -27,7 +27,7 @@ class Io:
         return buff
 
     @classmethod
-    def fetch(cls, url: str):
+    async def fetch(cls, url: str):
 
         """
         :param url: url of the image to be fetched
