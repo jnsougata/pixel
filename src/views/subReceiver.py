@@ -1,7 +1,6 @@
-import asyncio
 import discord
-from discord.ext import commands
 from src.extras.emojis import *
+from discord.ext import commands
 from src.extras.func import db_push_object, db_fetch_object
 
 
@@ -39,6 +38,12 @@ class Option(discord.ui.View):
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             self.value = True
+            self.stop()
+
+    @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
+    async def remove(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = None
             self.stop()
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
@@ -127,8 +132,8 @@ async def sub_view_receiver(
     try:
         receiver = ctx.guild.get_channel(int(raw['item'][0]))
         rm = receiver.mention
-    except TypeError:
-        rm = None
+    except (TypeError, ValueError) as e:
+        rm = '**`None`**'
     emd = discord.Embed(
         description=f'To set new receiver tap **` Edit `**'
                     f'\n\n**{ctx.guild.name}\'s** current receiver is {rm}'
@@ -157,5 +162,19 @@ async def sub_view_receiver(
             view = new_view
         )
 
-    else:
+    elif view.value is False:
         await interaction.delete_original_message()
+
+    else:
+        await interaction.message.edit(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
+                description=f'{Emo.DEL} Receiver removed'
+            ),
+            view=None
+        )
+        await db_push_object(
+            guildId=ctx.guild.id,
+            item=['removed'],
+            key='alertchannel'
+        )

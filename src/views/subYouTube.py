@@ -184,8 +184,8 @@ async def sub_view_youtube(
 
     emd = discord.Embed(
         description=f'**{ctx.guild.name}\'s** YouTube channel Settings'
-                    f'\n\nTo set new channel tap **` Add `**'
-                    f'\n\nTo remove old channel tap **` Edit `**'
+                    f'\n\nTo add new channel tap **` Add `**'
+                    f'\n\nTo remove old channel tap **` Remove `**'
     )
     emd.set_author(
         icon_url=ctx.guild.icon.url,

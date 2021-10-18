@@ -2,8 +2,9 @@ import discord
 from src.extras.emojis import *
 from discord.ext import commands
 from src.views.subPrefix import sub_view_prefix
-from src.views.subReceiver import sub_view_receiver
 from src.views.subYouTube import sub_view_youtube
+from src.views.subReceiver import sub_view_receiver
+from src.views.subReception import sub_view_reception
 
 
 
@@ -76,6 +77,13 @@ class BaseMenu(discord.ui.Select):
 
             elif int(self.values[0]) == 2:
                 await sub_view_youtube(
+                    ctx=self.ctx,
+                    interaction=interaction,
+                    bot=self.bot
+                )
+
+            elif int(self.values[0]) == 3:
+                await sub_view_reception(
                     ctx=self.ctx,
                     interaction=interaction,
                     bot=self.bot
