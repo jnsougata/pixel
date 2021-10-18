@@ -6,6 +6,25 @@ from src.extras.func import db_push_object, db_fetch_object
 
 
 
+class BaseView(discord.ui.View):
+
+    def __init__(
+            self,
+            message: discord.Message = None,
+    ):
+        self.message = message
+        super().__init__()
+        self.value = None
+        self.timeout = 30
+
+
+    async def on_timeout(self) -> None:
+        try:
+            self.clear_items()
+            await self.message.edit(view=self)
+        except discord.errors.NotFound:
+            return
+
 
 class Option(discord.ui.View):
     def __init__(self, ctx: commands.Context):
@@ -30,6 +49,69 @@ class Option(discord.ui.View):
 
 
 
+class TextMenu(discord.ui.Select):
+
+
+    def __init__(
+            self,
+            context: commands.Context,
+            bot: discord.Client,
+
+    ):
+        self.ctx = context
+        self.bot = bot
+
+
+        channels = context.guild.text_channels
+
+        elig = [
+            channel for channel in channels if channel.overwrites_for(
+                context.guild.default_role
+            ).send_messages is False
+        ]
+
+
+        options = [
+            discord.SelectOption(
+                label=channel.name,
+                value=str(channel.id),
+                emoji=Emo.TEXT
+            ) for channel in elig
+        ]
+
+        super().__init__(
+            placeholder='Select a text channel',
+            min_values=1,
+            max_values=1,
+            options=options
+        )
+
+    async def callback(self, interaction: discord.Interaction):
+
+        if interaction.user == self.ctx.author:
+            channel = self.bot.get_channel(int(self.values[0]))
+
+            emd = discord.Embed(
+                title=f'{Emo.YT} Receiver channel edited!',
+                description=f'{Emo.CHECK} The new receiver channel is {channel.mention}'
+                            f'\nThis channel will be used to receive live stream notification'
+            )
+
+            await interaction.message.edit(
+                embed=emd,
+                view=None
+
+            )
+            raw = await db_push_object(
+                guildId=self.ctx.guild.id,
+                item=[self.values[0]],
+                key='alertchannel'
+            )
+
+
+
+
+
 
 async def sub_view_receiver(
         ctx: commands.Context,
@@ -48,8 +130,8 @@ async def sub_view_receiver(
     except TypeError:
         rm = None
     emd = discord.Embed(
-        description=f'**{ctx.guild.name}\'s** current receiver is {rm}'
-                    f'\n\nTo set new receiver tap **` Edit `**'
+        description=f'To set new receiver tap **` Edit `**'
+                    f'\n\n**{ctx.guild.name}\'s** current receiver is {rm}'
     )
     emd.set_author(
         icon_url=ctx.guild.icon.url,
@@ -64,45 +146,16 @@ async def sub_view_receiver(
     if view.value is True:
 
         view.clear_items()
+        new_view = BaseView()
+        new_view.add_item(TextMenu(ctx, bot))
 
-        new = await interaction.message.edit(
+        new_view.message = await interaction.message.edit(
             content = f'{ctx.author.mention}',
             embed = discord.Embed(
-                description='Please **mention** a text channel to use as **receiver:**'
+                description='Please **select** a text channel to use as **receiver:**'
             ),
-            view = view
+            view = new_view
         )
-
-        def check(m):
-            return m.author == ctx.author
-
-        try:
-            response = await bot.wait_for('message', check=check, timeout=20)
-            ls = response.channel_mentions
-            if len(ls) > 0:
-                await db_push_object(
-                    guildId=ctx.guild.id,
-                    item=[str(ls[0].id)],
-                    key='alertchannel'
-                )
-                view.clear_items()
-                await new.delete()
-                await ctx.send(
-                    content=f'{ctx.author.mention}',
-                    embed=discord.Embed(
-                        description=f'{Emo.CHECK} **{ctx.guild.name}\'s** '
-                                    f'new receiver channel is {ls[0].mention} '
-                    ),
-                    view=view
-                )
-            else:
-                await new.edit(
-                    embed=discord.Embed(
-                        description=f'{Emo.WARN} Please mention a **text channel** properly!'
-                    )
-                )
-        except asyncio.TimeoutError:
-            await ctx.send('**Bye! you took so long**')
 
     else:
         await interaction.delete_original_message()

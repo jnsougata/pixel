@@ -1,10 +1,9 @@
+import discord
 import asyncio
 import asynctube
-import discord
 from discord.ext import commands
 from src.extras.emojis import *
 from src.extras.func import db_push_object, db_fetch_object
-
 
 
 class ChannelMenu(discord.ui.Select):
@@ -21,18 +20,30 @@ class ChannelMenu(discord.ui.Select):
             key='youtube'
 
         )
+
+
+
         if raw and len(raw['item']):
+
+            async def name(Id: str):
+                ch = await asynctube.Channel.fetch(Id)
+                return ch.name
+
+            ids = list(raw['item'])
+            names = [await name(id) for id in list(raw['item'])]
+
             options = [
                 discord.SelectOption(
-                    label=id,
+                    label=names[i],
+                    value=ids[i],
                     emoji=Emo.YT
-                ) for id in list(raw['item'])
+                ) for i in range(len(ids))
             ]
         else:
             options = [
                 discord.SelectOption(
-                    label= 'No channel found',
-                    emoji=Emo.YT
+                    label= 'Add a channel first',
+                    emoji=Emo.WARN
                 )
             ]
 
@@ -60,7 +71,43 @@ class ChannelMenu(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
-        pass
+
+        if interaction.user == self.ctx.author:
+
+            try:
+                raw = await asynctube.Channel.fetch(self.values[0])
+                data = raw.info
+
+                emd = discord.Embed(
+                    title=f'{Emo.DEL} {data["name"]}',
+                    description=f'**` Subs `  {data["subscribers"]}**'
+                                f'\n\n**` Views `  {data["views"]}**'
+                                f'\n\n**` Id `  {data["id"]}**',
+                    url=data["url"]
+                )
+                emd.set_thumbnail(url=data["avatar_url"])
+                emd.set_image(url=data["banner_url"])
+                emd.set_footer(text='❌ This channel has been removed.')
+                await interaction.message.edit(
+                    embed = emd,
+                    view=None
+                )
+
+                db_raw = await db_fetch_object(
+                    guildId=self.ctx.guild.id,
+                    key='youtube'
+                )
+                new_data = db_raw['item']
+                new_data.pop(self.values[0])
+
+                await db_push_object(
+                    guildId=self.ctx.guild.id,
+                    item=new_data,
+                    key='youtube'
+                )
+            except AttributeError:
+                return
+
 
 
 class Option(discord.ui.View):
@@ -73,17 +120,17 @@ class Option(discord.ui.View):
         self.value = None
 
 
-    @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
-    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = 'edit'
-            self.stop()
-
-
-    @discord.ui.button(label='Add', style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label='Add', style=discord.ButtonStyle.green)
     async def add(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             self.value = 'add'
+            self.stop()
+
+
+    @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
+    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = 'edit'
             self.stop()
 
 
@@ -105,7 +152,7 @@ class Confirmation(discord.ui.View):
 
 
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
-    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             self.value = True
             self.stop()
@@ -118,7 +165,10 @@ class Confirmation(discord.ui.View):
             self.stop()
 
 
-
+class Temp(discord.ui.View):
+    def __init__(self):
+        self.message = None
+        super().__init__()
 
 
 
@@ -133,8 +183,7 @@ async def sub_view_youtube(
 ):
 
     emd = discord.Embed(
-        description=f'**{ctx.guild.name}\'s** current set YouTube channels'
-                    f'\nare in the drop down menu below'
+        description=f'**{ctx.guild.name}\'s** YouTube channel Settings'
                     f'\n\nTo set new channel tap **` Add `**'
                     f'\n\nTo remove old channel tap **` Edit `**'
     )
@@ -144,13 +193,21 @@ async def sub_view_youtube(
     )
 
     view = Option(ctx, bot)
-    view.add_item(await ChannelMenu.create(ctx, bot))
     await interaction.response.edit_message(embed=emd, view=view)
 
     await view.wait()
 
     if view.value == 'edit':
-        pass
+        view = Temp()
+        view.add_item(await ChannelMenu.create(ctx, bot))
+
+        await interaction.message.edit(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
+                description='Please select YouTube Channel to **remove:**'
+            ),
+            view=view
+        )
 
 
     elif view.value == 'add':
@@ -172,48 +229,57 @@ async def sub_view_youtube(
             response = await bot.wait_for('message', check=check, timeout=20)
             Id = response.content
             channel = await asynctube.Channel.fetch(Id)
+            try:
+                data = channel.info
 
-            data = channel.info
+                emd = discord.Embed(
+                        title=f'{Emo.YT} {data["name"]}',
+                        description=f'**` Subs `  {data["subscribers"]}**'
+                                    f'\n\n**` Views `  {data["views"]}**',
+                        url=data["url"]
+                )
+                emd.set_thumbnail(url=data["avatar_url"])
+                emd.set_image(url=data["banner_url"])
 
-            emd = discord.Embed(
-                    title=f'{Emo.YT} {data["name"]}',
-                    description=f'**` Subs `  {data["subscribers"]}**'
-                                f'\n\n**` Views `  {data["views"]}**',
-                    url=data["url"]
-            )
-            emd.set_thumbnail(url=data["avatar_url"])
-            emd.set_image(url=data["banner_url"])
+                new_view = Confirmation(ctx,bot)
 
-            new_view = Confirmation(ctx,bot)
-
-            await new.edit(
-                content=f'{ctx.author.mention}',
-                embed=emd,
-                view=new_view
-            )
-
-            await new_view.wait()
-
-            if new_view.value is True:
-
-
-                old_data = await db_fetch_object(
-                    guildId=ctx.guild.id,
-                    key='youtube'
+                await new.edit(
+                    content=f'{ctx.author.mention}',
+                    embed=emd,
+                    view=new_view
                 )
 
-                latest = await channel.latest
+                await new_view.wait()
 
-                if old_data:
-                    if len(old_data['item']) > 0:
-                        raw = old_data['item']
-                        raw[data['id']] = {'live': 'empty', 'upload': latest.id}
+                if new_view.value is True:
 
-                        await db_push_object(
-                            guildId=ctx.guild.id,
-                            item=raw,
-                            key='youtube'
-                        )
+
+                    old_data = await db_fetch_object(
+                        guildId=ctx.guild.id,
+                        key='youtube'
+                    )
+
+                    latest = await channel.latest
+
+                    if old_data:
+                        if len(old_data['item']) > 0:
+                            raw = old_data['item']
+                            raw[data['id']] = {'live': 'empty', 'upload': latest.id}
+
+                            await db_push_object(
+                                guildId=ctx.guild.id,
+                                item=raw,
+                                key='youtube'
+                            )
+                        else:
+                            empty = dict()
+                            empty[data['id']] = {'live': 'empty', 'upload': latest.id}
+                            await db_push_object(
+                                guildId=ctx.guild.id,
+                                item=empty,
+                                key='youtube'
+                            )
+
                     else:
                         empty = dict()
                         empty[data['id']] = {'live': 'empty', 'upload': latest.id}
@@ -222,19 +288,17 @@ async def sub_view_youtube(
                             item=empty,
                             key='youtube'
                         )
+                    await new.edit(
+                        content=f'{Emo.CHECK} {ctx.author.mention} **YouTube Channel added successfully!**',
+                        view = None
+                    )
 
                 else:
-                    empty = dict()
-                    empty[data['id']] = {'live': 'empty', 'upload': latest.id}
-                    await db_push_object(
-                        guildId=ctx.guild.id,
-                        item=empty,
-                        key='youtube'
-                    )
-                await new.edit(content=f'{Emo.CHECK} {ctx.author.mention} **YouTube Channel added successfully!**')
+                    await interaction.delete_original_message()
 
-            else:
+            except AttributeError:
                 await interaction.delete_original_message()
+                await ctx.send(embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'))
 
 
         except asyncio.TimeoutError:

@@ -21,12 +21,11 @@ class BaseView(discord.ui.View):
 
 
     async def on_timeout(self) -> None:
+        self.clear_items()
         try:
-            self.clear_items()
             await self.message.edit(view=self)
         except discord.errors.NotFound:
             return
-
 
 
 
@@ -51,6 +50,9 @@ class BaseMenu(discord.ui.Select):
             max_values=1,
             options=options
         )
+
+
+
 
     async def callback(self, interaction: discord.Interaction):
 
@@ -84,21 +86,6 @@ class BaseMenu(discord.ui.Select):
                 await self.ctx.send('Work in progress!')
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         else:
             await interaction.response.send_message(
                 'You are not allowed to control this message!', ephemeral=True
@@ -112,7 +99,6 @@ class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.has_permissions(administrator = True)
     @commands.command(aliases = ['settings', 'setup', 's'])
     async def settings_(self, ctx: commands.Context):
 
