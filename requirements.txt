@@ -1,6 +1,4 @@
 deta
 pillow
-urllib3
-requests
 asynctube
 git+https://github.com/Rapptz/discord.py
