@@ -25,6 +25,12 @@ class Option(discord.ui.View):
             self.value = True
             self.stop()
 
+    @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
+    async def remove(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = None
+            self.stop()
+
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
@@ -95,5 +101,20 @@ async def sub_view_prefix(
         except asyncio.TimeoutError:
             await ctx.send('**Bye! you took so long**')
 
-    else:
+    elif view.value is False:
         await interaction.delete_original_message()
+
+    else:
+        await interaction.message.edit(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
+                description=f'{Emo.DEL} Custom prefix removed'
+            ),
+            view=None
+        )
+
+        await db_push_object(
+            guildId=ctx.guild.id,
+            item=['.'],
+            key='prefix'
+        )

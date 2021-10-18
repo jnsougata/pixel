@@ -243,7 +243,9 @@ async def sub_view_youtube(
 
                 new_view = Confirmation(ctx,bot)
 
-                await new.edit(
+                await new.delete()
+
+                nxt = await ctx.send(
                     content=f'{ctx.author.mention}',
                     embed=emd,
                     view=new_view
@@ -252,7 +254,6 @@ async def sub_view_youtube(
                 await new_view.wait()
 
                 if new_view.value is True:
-
 
                     old_data = await db_fetch_object(
                         guildId=ctx.guild.id,
@@ -288,7 +289,7 @@ async def sub_view_youtube(
                             item=empty,
                             key='youtube'
                         )
-                    await new.edit(
+                    await nxt.edit(
                         content=f'{Emo.CHECK} {ctx.author.mention} **YouTube Channel added successfully!**',
                         view = None
                     )
