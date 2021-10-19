@@ -44,8 +44,6 @@ class CustomView(discord.ui.View):
             return
 
 
-
-
 class Dropdown(discord.ui.Select):
 
     def __init__(self, context: commands.Context):

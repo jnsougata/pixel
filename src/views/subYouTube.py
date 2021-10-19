@@ -109,7 +109,6 @@ class ChannelMenu(discord.ui.Select):
                 return
 
 
-
 class Option(discord.ui.View):
     def __init__(self, ctx: commands.Context, bot: discord.Client):
         self.ctx = ctx

@@ -107,7 +107,7 @@ class TextMenu(discord.ui.Select):
                 view=None
 
             )
-            raw = await db_push_object(
+            await db_push_object(
                 guildId=self.ctx.guild.id,
                 item=[self.values[0]],
                 key='alertchannel'
