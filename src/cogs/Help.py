@@ -77,8 +77,8 @@ class Dropdown(discord.ui.Select):
         )
         page_2 = discord.Embed(
             title=f'{Emo.PING} Receiver',
-            description=f'Used to add or remove the text channel added'
-                        f'\nto receive youtube alerts for your server',
+            description=f'Used to add or remove the text channel'
+                        f'\nadded to receive youtube alerts for your server',
 
             colour=0x005aef
         )
