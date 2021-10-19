@@ -23,11 +23,10 @@ class BaseView(discord.ui.View):
 
 
     async def on_timeout(self) -> None:
-        self.clear_items()
         try:
-            await self.message.edit(view=self)
-        except (discord.errors.NotFound, AttributeError) as e:
-            print(e)
+            await self.message.delete()
+        except Exception as e:
+            print(e.__cause__)
             return
 
 
