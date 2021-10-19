@@ -340,10 +340,11 @@ async def sub_view_youtube(
         p = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
-            description=f'Please Set a Text Channel '
+            description=f'Please set a Text Channel '
                         f'\nfor receiving Livestream Notifications'
-                        f'\n**{p}setup** -> select **receiver** from menu '
-                        f'\nTap **Edit** -> select **text channel** from menu'
+                        f'\n\n**`Steps`**'
+                        f'\n**{p}setup**  select **receiver** from menu '
+                        f'\nThen tap **Edit**  select **text channel** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)
 

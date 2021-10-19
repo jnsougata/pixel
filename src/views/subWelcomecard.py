@@ -161,9 +161,10 @@ async def sub_view_welcomecard(
         p = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
-            description=f'Please Set a Text Channel '
-                        f'\nfor receiving Welcome Messages & Cards'
-                        f'\n**{p}setup** -> select **reception** from menu'
-                        f'\nTap **Edit** -> select **text channel** from menu'
+            description=f'Please set a Text Channel '
+                        f'\nfor receiving Welcome Message Cards'
+                        f'\n\n**`Steps`**'
+                        f'\n**{p}setup**  select **reception** from menu '
+                        f'\nThen tap **Edit**  select **text channel** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)
