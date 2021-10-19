@@ -41,9 +41,15 @@ async def prefix_fetcher(id):
 
 async def custom_prefix(bot, msg):
 
-    prefixes = await db_fetch_object(guildId = msg.guild.id, key='prefix')
+    if msg.guild:
 
-    if prefixes and len(prefixes['item']) > 0:
-        return commands.when_mentioned_or(prefixes['item'][0])(bot, msg)
+        prefixes = await db_fetch_object(guildId = msg.guild.id, key='prefix')
 
-    return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
+        if prefixes and len(prefixes['item']) > 0:
+            return commands.when_mentioned_or(prefixes['item'][0])(bot, msg)
+
+        return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
+
+    else:
+        return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
+
