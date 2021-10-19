@@ -39,6 +39,10 @@ class ChannelMenu(discord.ui.Select):
                     emoji=Emo.YT
                 ) for i in range(len(ids))
             ]
+            options.insert(
+                0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
+            )
+
         else:
             options = [
                 discord.SelectOption(
@@ -46,6 +50,10 @@ class ChannelMenu(discord.ui.Select):
                     emoji=Emo.WARN
                 )
             ]
+
+            options.insert(
+                0, discord.SelectOption(label='Cancel', value='0', emoji=Emo.WARN)
+            )
 
         return cls(
             options = options,
@@ -74,39 +82,44 @@ class ChannelMenu(discord.ui.Select):
 
         if interaction.user == self.ctx.author:
 
-            try:
-                raw = await asynctube.Channel.fetch(self.values[0])
-                data = raw.info
+            if int(self.values[0]) != 0:
 
-                emd = discord.Embed(
-                    title=f'{Emo.DEL} {data["name"]}',
-                    description=f'**` Subs `  {data["subscribers"]}**'
-                                f'\n\n**` Views `  {data["views"]}**'
-                                f'\n\n**` Id `  {data["id"]}**',
-                    url=data["url"]
-                )
-                emd.set_thumbnail(url=data["avatar_url"])
-                emd.set_image(url=data["banner_url"])
-                emd.set_footer(text='❌ This channel has been removed.')
-                await interaction.message.edit(
-                    embed = emd,
-                    view=None
-                )
+                try:
+                    raw = await asynctube.Channel.fetch(self.values[0])
+                    data = raw.info
 
-                db_raw = await db_fetch_object(
-                    guildId=self.ctx.guild.id,
-                    key='youtube'
-                )
-                new_data = db_raw['item']
-                new_data.pop(self.values[0])
+                    emd = discord.Embed(
+                        title=f'{Emo.DEL} {data["name"]}',
+                        description=f'**` Subs `  {data["subscribers"]}**'
+                                    f'\n\n**` Views `  {data["views"]}**'
+                                    f'\n\n**` Id `  {data["id"]}**',
+                        url=data["url"]
+                    )
+                    emd.set_thumbnail(url=data["avatar_url"])
+                    emd.set_image(url=data["banner_url"])
+                    emd.set_footer(text='❌ This channel has been removed.')
+                    await interaction.message.edit(
+                        embed = emd,
+                        view=None
+                    )
 
-                await db_push_object(
-                    guildId=self.ctx.guild.id,
-                    item=new_data,
-                    key='youtube'
-                )
-            except AttributeError:
-                return
+                    db_raw = await db_fetch_object(
+                        guildId=self.ctx.guild.id,
+                        key='youtube'
+                    )
+                    new_data = db_raw['item']
+                    new_data.pop(self.values[0])
+
+                    await db_push_object(
+                        guildId=self.ctx.guild.id,
+                        item=new_data,
+                        key='youtube'
+                    )
+                except AttributeError:
+                    return
+
+            else:
+                await interaction.message.delete()
 
 
 class Option(discord.ui.View):

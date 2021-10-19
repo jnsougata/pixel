@@ -81,8 +81,11 @@ class TextMenu(discord.ui.Select):
                 label=channel.name,
                 value=str(channel.id),
                 emoji=Emo.TEXT
-            ) for channel in elig[:25]
+            ) for channel in elig[:24]
         ]
+        options.insert(
+            0, discord.SelectOption(label='Exit',value='0',emoji=Emo.WARN)
+        )
 
         super().__init__(
             placeholder='Select a text channel',
@@ -94,24 +97,29 @@ class TextMenu(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
 
         if interaction.user == self.ctx.author:
-            channel = self.bot.get_channel(int(self.values[0]))
 
-            emd = discord.Embed(
-                title=f'{Emo.YT} Receiver channel edited!',
-                description=f'{Emo.CHECK} The new receiver channel is {channel.mention}'
-                            f'\nThis channel will be used to receive live stream notification'
-            )
+            if int(self.values[0]) != 0:
 
-            await interaction.message.edit(
-                embed=emd,
-                view=None
+                channel = self.bot.get_channel(int(self.values[0]))
 
-            )
-            await db_push_object(
-                guildId=self.ctx.guild.id,
-                item=[self.values[0]],
-                key='alertchannel'
-            )
+                emd = discord.Embed(
+                    title=f'{Emo.YT} Receiver channel edited!',
+                    description=f'{Emo.CHECK} The new receiver channel is {channel.mention}'
+                                f'\nThis channel will be used to receive live stream notification'
+                )
+
+                await interaction.message.edit(
+                    embed=emd,
+                    view=None
+
+                )
+                await db_push_object(
+                    guildId=self.ctx.guild.id,
+                    item=[self.values[0]],
+                    key='alertchannel'
+                )
+            else:
+               await interaction.message.delete()
 
 
 

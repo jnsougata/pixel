@@ -39,8 +39,7 @@ class CustomView(discord.ui.View):
 
         try:
             await self.message.delete()
-        except Exception as e:
-            print(e.__cause__)
+        except:
             return
 
 
@@ -51,7 +50,7 @@ class Dropdown(discord.ui.Select):
         self.ctx = context
 
         options = [
-            discord.SelectOption(label='Back', value='0'),
+            discord.SelectOption(label='Return', value='0', emoji=Emo.BACK),
             discord.SelectOption(label='prefix', value='1', emoji=Emo.TAG),
             discord.SelectOption(label='receiver', value='2', emoji=Emo.PING),
             discord.SelectOption(label='youtube', value='3', emoji=Emo.YT),

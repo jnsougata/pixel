@@ -83,6 +83,9 @@ class TextMenu(discord.ui.Select):
                 emoji=Emo.TEXT
             ) for channel in elig[:25]
         ]
+        options.insert(
+            0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
+        )
 
         super().__init__(
             placeholder='Select a text channel',
@@ -94,25 +97,32 @@ class TextMenu(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
 
         if interaction.user == self.ctx.author:
-            channel = self.bot.get_channel(int(self.values[0]))
 
-            emd = discord.Embed(
-                title=f'{Emo.YT} Reception channel edited!',
-                description=f'{Emo.CHECK} The new reception channel is {channel.mention}'
-                            f'\nThis channel will be used to send welcome cards'
-            )
+            if int(self.values[0]) != 0:
 
-            await interaction.message.edit(
-                embed=emd,
-                view=None
+                channel = self.bot.get_channel(int(self.values[0]))
 
-            )
+                emd = discord.Embed(
+                    title=f'{Emo.YT} Reception channel edited!',
+                    description=f'{Emo.CHECK} The new reception channel is {channel.mention}'
+                                f'\nThis channel will be used to send welcome cards'
+                )
 
-            await db_push_object(
-                guildId=self.ctx.guild.id,
-                item=[self.values[0]],
-                key='welcome'
-            )
+                await interaction.message.edit(
+                    embed=emd,
+                    view=None
+
+                )
+
+                await db_push_object(
+                    guildId=self.ctx.guild.id,
+                    item=[self.values[0]],
+                    key='welcome'
+                )
+
+            else:
+                await interaction.message.delete()
+
 
 
 

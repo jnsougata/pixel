@@ -5,7 +5,19 @@ from src.extras.emojis import *
 from src.extras.func import prefix_fetcher, db_push_object
 
 
+class Exit(discord.ui.View):
+    def __init__(self, ctx: commands.Context):
+        self.ctx = ctx
 
+        super().__init__()
+        self.value = None
+
+
+    @discord.ui.button(label='Exit', style=discord.ButtonStyle.red)
+    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = True
+            self.stop()
 
 
 
@@ -63,14 +75,12 @@ async def sub_view_prefix(
 
     if view.value is True:
 
-        view.clear_items()
-
         new = await interaction.message.edit(
             content = f'{ctx.author.mention}',
             embed = discord.Embed(
                 description='Please **type** a prefix to set as **custom prefix:**'
             ),
-            view = view
+            view = None
         )
 
         def check(m):

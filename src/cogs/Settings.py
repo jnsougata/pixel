@@ -25,8 +25,7 @@ class BaseView(discord.ui.View):
     async def on_timeout(self) -> None:
         try:
             await self.message.delete()
-        except Exception as e:
-            print(e.__cause__)
+        except:
             return
 
 
