@@ -85,24 +85,24 @@ class Dropdown(discord.ui.Select):
         page_3 = discord.Embed(
 
             title=f'{Emo.YT} YouTube',
-            description=f'Used to add or remove youtube channel '
-                        f'\nto your server to receive live alerts',
+            description=f'Used to add or remove youtube'
+                        f'\nchannel to your server to receive live alerts',
 
             colour=0x005aef
         )
         page_4 = discord.Embed(
 
             title=f'{Emo.DEAL} Reception',
-            description=f'Used to add or remove the text channel'
-                        f'\nfor receiving welcome message cards',
+            description=f'Used to add or remove the text'
+                        f'\nchannel for receiving welcome message cards',
 
             colour=0x005aef
         )
         page_5 = discord.Embed(
 
             title=f'{Emo.IMG} Welcome Card',
-            description=f'Used to add or remove the welcome card / image'
-                        f'\nto your server for welcoming new members',
+            description=f'Used to add or remove the welcome card or'
+                        f'\nimage to your server for welcoming new members',
             colour=0x005aef
         )
 
@@ -128,8 +128,8 @@ class Dropdown(discord.ui.Select):
                     description=f''
                                 f'\n\n{Emo.SETTINGS} To set me up'
                                 f'\n use command **{p}setup**'
-                                f'\n\n{Emo.FAQ} To know about **setup** options'
-                                f'\nuse the **dropdown** menu below'
+                                f'\n\n{Emo.FAQ} To know about **setup**'
+                                f'\noptions use the **dropdown** menu'
                                 f'\n\n{Emo.SUP} For issues join **[PixeL Support]'
                                 f'(https://discord.gg/UzyEYeYZF9)**'
                                 f'\n​‍‍‍',
@@ -180,8 +180,8 @@ class Help(commands.Cog):
             description=f''
                         f'\n\n{Emo.SETTINGS} To set me up'
                         f'\n use command **{p}setup**'
-                        f'\n\n{Emo.FAQ} To know about **setup** options'
-                        f'\nuse the **dropdown** menu below'
+                        f'\n\n{Emo.FAQ} To know about **setup**'
+                        f'\noptions use the **dropdown** menu'
                         f'\n\n{Emo.SUP} For issues join **[PixeL Support]'
                         f'(https://discord.gg/UzyEYeYZF9)**'
                         f'\n​‍‍‍',
