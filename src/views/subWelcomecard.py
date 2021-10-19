@@ -65,83 +65,96 @@ async def sub_view_welcomecard(
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-
-    raw = await db_fetch_object(
+    rcp_raw = await db_fetch_object(
         guildId=ctx.guild.id,
-        key='cover'
+        key='welcome'
     )
+    if rcp_raw and len(rcp_raw['item']) > 0:
 
-
-    emd = discord.Embed(
-        description=f'To set new welcome card tap **` Edit `**'
-                    f'\n\n**Current Welcome card:**'
-    )
-
-    emd.set_author(
-        icon_url=ctx.guild.icon.url,
-        name=ctx.guild.name
-    )
-    if raw and raw['item'][0] != 'removed':
-        card = raw['item'][0]
-        emd.set_image(url=card)
-    else:
-        card = 'https://i.imgur.com/CLy9KUO.jpg'
-        emd.set_image(url=card)
-        emd.set_footer(text='(Default Image)')
-
-
-    view = Option(ctx)
-    await interaction.response.edit_message(embed=emd, view=view)
-
-    await view.wait()
-
-    if view.value is True:
-
-        def check(m):
-            return m.author == ctx.author
-
-        await interaction.message.edit(
-            embed=discord.Embed(description='Please paste URL of an Image **700x300(min)**:'),
-            view=None
-        )
-        try:
-            reply = await bot.wait_for('message', timeout=20, check=check)
-        except asyncio.TimeoutError:
-            await ctx.send('**Bye! you took so long!**')
-            return
-        try:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(reply.content) as response:
-                    resp = await response.read()
-                    Image.open(io.BytesIO(resp))
-                    await db_push_object(
-                        guildId=ctx.guild.id,
-                        item=[reply.content],
-                        key='cover'
-                    )
-                    await ctx.send(
-                        embed=discord.Embed(description=f"{Emo.CHECK} **Cover picture accepted**")
-                    )
-        except:
-            await ctx.send(
-                embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
-            )
-
-        pass
-
-    elif view.value is False:
-        await interaction.delete_original_message()
-
-    else:
-        await interaction.message.edit(
-            content=f'{ctx.author.mention}',
-            embed=discord.Embed(
-                description=f'{Emo.DEL} Welcomecard removed'
-            ),
-            view=None
-        )
-        await db_push_object(
+        raw = await db_fetch_object(
             guildId=ctx.guild.id,
-            item=['removed'],
             key='cover'
         )
+
+
+        emd = discord.Embed(
+            description=f'To set new welcome card tap **` Edit `**'
+                        f'\n\n**Current Welcome card:**'
+        )
+
+        emd.set_author(
+            icon_url=ctx.guild.icon.url,
+            name=ctx.guild.name
+        )
+        if raw and raw['item'][0] != 'removed':
+            card = raw['item'][0]
+            emd.set_image(url=card)
+        else:
+            card = 'https://i.imgur.com/CLy9KUO.jpg'
+            emd.set_image(url=card)
+            emd.set_footer(text='(Default Image)')
+
+
+        view = Option(ctx)
+        await interaction.response.edit_message(embed=emd, view=view)
+
+        await view.wait()
+
+        if view.value is True:
+
+            def check(m):
+                return m.author == ctx.author
+
+            await interaction.message.edit(
+                embed=discord.Embed(description='Please paste URL of an Image **700x300(min)**:'),
+                view=None
+            )
+            try:
+                reply = await bot.wait_for('message', timeout=20, check=check)
+            except asyncio.TimeoutError:
+                await ctx.send('**Bye! you took so long!**')
+                return
+            try:
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(reply.content) as response:
+                        resp = await response.read()
+                        Image.open(io.BytesIO(resp))
+                        await db_push_object(
+                            guildId=ctx.guild.id,
+                            item=[reply.content],
+                            key='cover'
+                        )
+                        await ctx.send(
+                            embed=discord.Embed(description=f"{Emo.CHECK} **Cover picture accepted**")
+                        )
+            except:
+                await ctx.send(
+                    embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
+                )
+
+            pass
+
+        elif view.value is False:
+            await interaction.delete_original_message()
+
+        else:
+            await interaction.message.edit(
+                content=f'{ctx.author.mention}',
+                embed=discord.Embed(
+                    description=f'{Emo.DEL} Welcomecard removed'
+                ),
+                view=None
+            )
+            await db_push_object(
+                guildId=ctx.guild.id,
+                item=['removed'],
+                key='cover'
+            )
+
+    else:
+        emd = discord.Embed(
+            title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
+            description='Please Set a Text Channel '
+                        '\nfor receiving Welcome Messages & Cards'
+        )
+        await interaction.response.edit_message(embed=emd, view=None)
