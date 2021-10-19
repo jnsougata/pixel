@@ -81,7 +81,7 @@ class TextMenu(discord.ui.Select):
                 label=channel.name,
                 value=str(channel.id),
                 emoji=Emo.TEXT
-            ) for channel in elig
+            ) for channel in elig[:25]
         ]
 
         super().__init__(
