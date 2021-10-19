@@ -70,9 +70,9 @@ class TextMenu(discord.ui.Select):
         channels = context.guild.text_channels
 
         elig = [
-            channel for channel in channels if channel.overwrites_for(
-                context.guild.default_role
-            ).send_messages is False
+            channel for channel in channels if channel.permissions_for(
+                context.guild.me
+            ).embed_links is True
         ]
 
 
@@ -144,6 +144,8 @@ async def sub_view_receiver(
         rm = '**`None`**'
     emd = discord.Embed(
         description=f'To set new receiver tap **` Edit `**'
+                    f'\n\n{Emo.WARN} Only accepts text channels where'
+                    f'\nit has permission to **embed links** and **urls**'
                     f'\n\n**{ctx.guild.name}\'s** current receiver is {rm}'
     )
     if ctx.guild.icon:

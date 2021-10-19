@@ -342,8 +342,8 @@ async def sub_view_youtube(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
             description=f'Please Set a Text Channel '
                         f'\nfor receiving Livestream Notifications'
-                        f'\n{p}setup -> select `receiver` from menu '
-                        f'\n-> select `text channel option` from menu'
+                        f'\n**{p}setup** -> select **receiver** from menu '
+                        f'\nTap **Edit** -> select **text channel** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)
 

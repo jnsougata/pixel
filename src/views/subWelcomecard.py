@@ -163,7 +163,7 @@ async def sub_view_welcomecard(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
             description=f'Please Set a Text Channel '
                         f'\nfor receiving Welcome Messages & Cards'
-                        f'\n{p}setup -> select `reception` from menu '
-                        f'\n-> select `text channel option` from menu'
+                        f'\n**{p}setup** -> select **reception** from menu'
+                        f'\nTap **Edit** -> select **text channel** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)

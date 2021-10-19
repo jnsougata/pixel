@@ -70,9 +70,9 @@ class TextMenu(discord.ui.Select):
         channels = context.guild.text_channels
 
         elig = [
-            channel for channel in channels if channel.overwrites_for(
-                context.guild.default_role
-            ).send_messages is False
+            channel for channel in channels if channel.permissions_for(
+                context.guild.me
+            ).attach_files is True
         ]
 
 
@@ -81,7 +81,7 @@ class TextMenu(discord.ui.Select):
                 label=channel.name,
                 value=str(channel.id),
                 emoji=Emo.TEXT
-            ) for channel in elig[:25]
+            ) for channel in elig[:24]
         ]
         options.insert(
             0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
@@ -145,6 +145,8 @@ async def sub_view_reception(
         rm = f'**`None`**'
     emd = discord.Embed(
         description=f'To set new reception tap **` Edit `**'
+                    f'\n\n{Emo.WARN} Only accepts text channels where'
+                    f'\nit has permission to **send attachments**'
                     f'\n\n**{ctx.guild.name}\'s** current reception is {rm}'
     )
     if ctx.guild.icon:
