@@ -149,14 +149,14 @@ class Help(commands.Cog):
             description = f'**{ctx.guild.me.name} is created for:**'
                           f'\n\n{Emo.YT}  **`YouTube Alerts`**'
                           f'\n\n{Emo.IMG}  **`Welcome Cards`**'
-                          f'\n\n**Use any one command for everything:**'
+                          f'\n\n**Any one command for everything:**'
                           f'\n\n{Emo.MOD} **`{p}settings`** | **`{p}setup`** | **`{p}s`** '
                           f'\n\nAll the features are customizable'
                           f'\nand free. Use the **dropdown** menu  '
                           f'\nbelow to get more info about the '
                           f'\n**features**. If you like these features '
                           f'\nplease make sure to leave a feedback.'
-                          f'\n For issues you can always join **[here]'
+                          f'\n For issues you can join **[PixeL Support]'
                           f'(https://discord.gg/UzyEYeYZF9)**',
             color=0x005aef
         )
