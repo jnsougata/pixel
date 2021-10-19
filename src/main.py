@@ -30,7 +30,8 @@ cogs = [
     "Error",
     "Activity",
     "Welcomer",
-    "Settings"
+    "Settings",
+    "Listener"
 
 ]
 
