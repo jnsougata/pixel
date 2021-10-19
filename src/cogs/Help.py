@@ -29,7 +29,7 @@ class CustomView(discord.ui.View):
 
         super().__init__()
         self.value = None
-        self.timeout = 20
+        self.timeout = 60
         self.add_item(Dropdown(ctx))
         self.add_item(INVITE)
         self.add_item(VOTE)
@@ -50,16 +50,16 @@ class Dropdown(discord.ui.Select):
         self.ctx = context
 
         options = [
-            discord.SelectOption(label='Return', value='0', emoji=Emo.BACK),
-            discord.SelectOption(label='prefix', value='1', emoji=Emo.TAG),
-            discord.SelectOption(label='receiver', value='2', emoji=Emo.PING),
-            discord.SelectOption(label='youtube', value='3', emoji=Emo.YT),
-            discord.SelectOption(label='reception', value='4', emoji=Emo.DEAL),
-            discord.SelectOption(label='welcomecard', value='5', emoji=Emo.IMG),
+            discord.SelectOption(label='​', value='x', emoji=Emo.BACK),
+            discord.SelectOption(label='prefix', value='0', emoji=Emo.TAG),
+            discord.SelectOption(label='receiver', value='1', emoji=Emo.PING),
+            discord.SelectOption(label='youtube', value='2', emoji=Emo.YT),
+            discord.SelectOption(label='reception', value='3', emoji=Emo.DEAL),
+            discord.SelectOption(label='welcomecard', value='4', emoji=Emo.IMG),
         ]
 
         super().__init__(
-            placeholder = 'Available features',
+            placeholder = 'About setup options',
             min_values = 1,
             max_values = 1,
             options = options
@@ -68,43 +68,15 @@ class Dropdown(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
 
-        raw = await db_fetch_object(
-            guildId=self.ctx.guild.id,
-            key='prefix'
-        )
-
-        if raw and len(raw) > 0:
-            p = raw['item'][0]
-        else:
-            p = '.'
-        page_0 = discord.Embed(
-            description=f'**{self.ctx.guild.me.name} is created for:**'
-                        f'\n\n{Emo.YT}  **`YouTube Alerts`**'
-                        f'\n\n{Emo.IMG}  **`Welcome Cards`**'
-                        f'\n\n**Any one command for everything:**'
-                        f'\n\n{Emo.MOD} **`{p}settings`** | **`{p}setup`** | **`{p}s`** '
-                        f'\n\nAll the features are customizable'
-                        f'\nand free. Use the **dropdown** menu  '
-                        f'\nbelow to get more info about the '
-                        f'\n**features**. If you like these features '
-                        f'\nplease make sure to leave a feedback.'
-                        f'\n For issues you can join **[PixeL Support]'
-                        f'(https://discord.gg/UzyEYeYZF9)**',
-            color=0x005aef
-        )
-        page_0.set_footer(
-            text=f'✅ Thanks | Current Prefix [{p}]'
-        )
-
 
         page_1 = discord.Embed(
-            title=f'{Emo.SETTINGS} Prefix',
+            title=f'{Emo.TAG} Prefix',
             description=f'Used to add or remove custom prefix '
                         f'\nto your server. you can change it anytime',
             colour=0x005aef
         )
         page_2 = discord.Embed(
-            title=f'{Emo.SETTINGS} Receiver',
+            title=f'{Emo.PING} Receiver',
             description=f'Used to add or remove the text channel added'
                         f'\nto receive youtube alerts for your server',
 
@@ -112,7 +84,7 @@ class Dropdown(discord.ui.Select):
         )
         page_3 = discord.Embed(
 
-            title=f'{Emo.SETTINGS} YouTube',
+            title=f'{Emo.YT} YouTube',
             description=f'Used to add or remove youtube channel '
                         f'\nto your server to receive live alerts',
 
@@ -120,26 +92,58 @@ class Dropdown(discord.ui.Select):
         )
         page_4 = discord.Embed(
 
-            title=f'{Emo.SETTINGS} Reception',
+            title=f'{Emo.DEAL} Reception',
             description=f'Used to add or remove the text channel'
-                        f'\nto receive youtube live notifications',
+                        f'\nfor receiving welcome message cards',
 
             colour=0x005aef
         )
         page_5 = discord.Embed(
 
-            title=f'{Emo.SETTINGS} Welcome Card',
+            title=f'{Emo.IMG} Welcome Card',
             description=f'Used to add or remove the welcome card / image'
                         f'\nto your server for welcoming new members',
             colour=0x005aef
         )
 
-        book = [page_0, page_1, page_2, page_3, page_4, page_5]
+        book = [page_1, page_2, page_3, page_4, page_5]
 
 
         if interaction.user == self.ctx.author:
 
-            await interaction.message.edit(embed=book[int(self.values[0])])
+            if self.values[0].isdigit():
+                await interaction.message.edit(embed=book[int(self.values[0])])
+            else:
+                raw = await db_fetch_object(
+                    guildId=self.ctx.guild.id,
+                    key='prefix'
+                )
+
+                if raw and len(raw) > 0:
+                    p = raw['item'][0]
+                else:
+                    p = '.'
+
+                emd = discord.Embed(
+                    description=f''
+                                f'\n\n{Emo.SETTINGS} To set me up'
+                                f'\n use command **{p}setup**'
+                                f'\n\n{Emo.FAQ} To know about **setup** options'
+                                f'\nuse the **dropdown** menu below'
+                                f'\n\n{Emo.SUP} For issues join **[PixeL Support]'
+                                f'(https://discord.gg/UzyEYeYZF9)**'
+                                f'\n​‍‍‍',
+                    color=0x005aef
+                )
+                emd.set_author(
+                    name=self.ctx.author,
+                    icon_url=self.ctx.author.avatar.url
+                )
+                emd.set_footer(
+                    text=f'✅ Thanks | Current Prefix [{p}]',
+                )
+
+                await interaction.message.edit(embed=emd)
 
         else:
 
@@ -173,19 +177,19 @@ class Help(commands.Cog):
 
 
         emd = discord.Embed(
-            description = f'**{ctx.guild.me.name} is created for:**'
-                          f'\n\n{Emo.YT}  **`YouTube Alerts`**'
-                          f'\n\n{Emo.IMG}  **`Welcome Cards`**'
-                          f'\n\n**Any one command for everything:**'
-                          f'\n\n{Emo.MOD} **`{p}settings`** | **`{p}setup`** | **`{p}s`** '
-                          f'\n\nAll the features are customizable'
-                          f'\nand free. Use the **dropdown** menu  '
-                          f'\nbelow to get more info about the '
-                          f'\n**features**. If you like these features '
-                          f'\nplease make sure to leave a feedback.'
-                          f'\n For issues you can join **[PixeL Support]'
-                          f'(https://discord.gg/UzyEYeYZF9)**',
+            description=f''
+                        f'\n\n{Emo.SETTINGS} To set me up'
+                        f'\n use command **{p}setup**'
+                        f'\n\n{Emo.FAQ} To know about **setup** options'
+                        f'\nuse the **dropdown** menu below'
+                        f'\n\n{Emo.SUP} For issues join **[PixeL Support]'
+                        f'(https://discord.gg/UzyEYeYZF9)**'
+                        f'\n​‍‍‍',
             color=0x005aef
+        )
+        emd.set_author(
+            name=ctx.author,
+            icon_url=ctx.author.avatar.url
         )
         emd.set_footer(
             text=f'✅ Thanks | Current Prefix [{p}]',
