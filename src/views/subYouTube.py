@@ -320,11 +320,15 @@ async def sub_view_youtube(
                         )
 
                     else:
-                        await interaction.delete_original_message()
+                        await nxt.delete()
 
                 except AttributeError:
                     await interaction.delete_original_message()
-                    await ctx.send(embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'))
+                    await ctx.send(
+                        embed=discord.Embed(
+                            description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'
+                        )
+                    )
 
 
             except asyncio.TimeoutError:
