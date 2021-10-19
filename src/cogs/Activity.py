@@ -11,8 +11,14 @@ class ActivityHandler(commands.Cog):
     @tasks.loop(hours=12)
     async def Activity(self):
         await self.bot.wait_until_ready()
-        activity = discord.Activity(type=discord.ActivityType.watching, name=f'YouTube\'s Database')
-        await self.bot.change_presence(status=discord.Status.online, activity=activity)
+        activity = discord.Activity(
+            type=discord.ActivityType.listening,
+            name=f'YouTube Music'
+        )
+        await self.bot.change_presence(
+            status=discord.Status.online,
+            activity=activity
+        )
 
 
 
