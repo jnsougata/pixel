@@ -26,7 +26,8 @@ class BaseView(discord.ui.View):
         self.clear_items()
         try:
             await self.message.edit(view=self)
-        except discord.errors.NotFound:
+        except (discord.errors.NotFound, AttributeError) as e:
+            print(e)
             return
 
 
