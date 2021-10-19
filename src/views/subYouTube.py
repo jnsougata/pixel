@@ -262,8 +262,9 @@ async def sub_view_youtube(
                                         f'\n\n**` Views `  {data["views"]}**',
                             url=data["url"]
                     )
-                    emd.set_thumbnail(url=data["avatar_url"])
-                    emd.set_image(url=data["banner_url"])
+                    if data["avatar_url"] and data["banner_url"]:
+                        emd.set_thumbnail(url=data["avatar_url"])
+                        emd.set_image(url=data["banner_url"])
 
                     new_view = Confirmation(ctx,bot)
 
