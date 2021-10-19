@@ -146,10 +146,16 @@ async def sub_view_receiver(
         description=f'To set new receiver tap **` Edit `**'
                     f'\n\n**{ctx.guild.name}\'s** current receiver is {rm}'
     )
-    emd.set_author(
-        icon_url=ctx.guild.icon.url,
-        name=ctx.guild.name
-    )
+    if ctx.guild.icon:
+        emd.set_author(
+            icon_url=ctx.guild.icon.url,
+            name=ctx.guild.name
+        )
+    else:
+        emd.set_author(
+            icon_url=ctx.guild.me.avatar.url,
+            name=ctx.guild.me.name
+        )
 
     view = Option(ctx)
     await interaction.response.edit_message(embed=emd, view=view)

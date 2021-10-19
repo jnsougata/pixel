@@ -3,7 +3,7 @@ import asyncio
 import asynctube
 from discord.ext import commands
 from src.extras.emojis import *
-from src.extras.func import db_push_object, db_fetch_object
+from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
 
 
 class ChannelMenu(discord.ui.Select):
@@ -205,10 +205,16 @@ async def sub_view_youtube(
                         f'\n\nTo add new channel tap **` Add `**'
                         f'\n\nTo remove old channel tap **` Remove `**'
         )
-        emd.set_author(
-            icon_url=ctx.guild.icon.url,
-            name=ctx.guild.name
-        )
+        if ctx.guild.icon:
+            emd.set_author(
+                icon_url=ctx.guild.icon.url,
+                name=ctx.guild.name
+            )
+        else:
+            emd.set_author(
+                icon_url=ctx.guild.me.avatar.url,
+                name=ctx.guild.me.name
+            )
 
         view = Option(ctx, bot)
         await interaction.response.edit_message(embed=emd, view=view)
@@ -327,16 +333,17 @@ async def sub_view_youtube(
         else:
             try:
                 await interaction.delete_original_message()
-            except Exception as e:
-                print(e.__cause__)
-
-
+            except:
+                return
 
     else:
+        p = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
-            description='Please Set a Text Channel '
-                        '\nfor receiving Livestream Notifications'
+            description=f'Please Set a Text Channel '
+                        f'\nfor receiving Livestream Notifications'
+                        f'\n{p}setup -> select `receiver` from menu '
+                        f'\n-> select `text channel option` from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)
 

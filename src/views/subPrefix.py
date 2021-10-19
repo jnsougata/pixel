@@ -63,10 +63,16 @@ async def sub_view_prefix(
         description=f'**{ctx.guild.me.display_name}\'s** current prefix is **` {p} `**'
                     f'\n\nTo set new custom prefix tap **` Edit `**'
     )
-    emd.set_author(
-        icon_url=ctx.guild.icon.url,
-        name=ctx.guild.name
-    )
+    if ctx.guild.icon:
+        emd.set_author(
+            icon_url=ctx.guild.icon.url,
+            name=ctx.guild.name
+        )
+    else:
+        emd.set_author(
+            icon_url=ctx.guild.me.avatar.url,
+            name=ctx.guild.me.name
+        )
 
     view = Option(ctx)
     await interaction.response.edit_message(embed=emd, view=view)
@@ -114,8 +120,8 @@ async def sub_view_prefix(
     elif view.value is False:
         try:
             await interaction.delete_original_message()
-        except Exception as e:
-            print(e.__cause__)
+        except:
+            return
 
     else:
         await interaction.message.edit(

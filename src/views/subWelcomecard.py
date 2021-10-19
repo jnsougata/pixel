@@ -5,7 +5,7 @@ import aiohttp
 from PIL import Image
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import db_push_object, db_fetch_object
+from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
 
 
 
@@ -82,10 +82,16 @@ async def sub_view_welcomecard(
                         f'\n\n**Current Welcome card:**'
         )
 
-        emd.set_author(
-            icon_url=ctx.guild.icon.url,
-            name=ctx.guild.name
-        )
+        if ctx.guild.icon:
+            emd.set_author(
+                icon_url=ctx.guild.icon.url,
+                name=ctx.guild.name
+            )
+        else:
+            emd.set_author(
+                icon_url=ctx.guild.me.avatar.url,
+                name=ctx.guild.me.name
+            )
         if raw and raw['item'][0] != 'removed':
             card = raw['item'][0]
             emd.set_image(url=card)
@@ -152,9 +158,12 @@ async def sub_view_welcomecard(
             )
 
     else:
+        p = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
-            description='Please Set a Text Channel '
-                        '\nfor receiving Welcome Messages & Cards'
+            description=f'Please Set a Text Channel '
+                        f'\nfor receiving Welcome Messages & Cards'
+                        f'\n{p}setup -> select `reception` from menu '
+                        f'\n-> select `text channel option` from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)
