@@ -102,7 +102,10 @@ async def sub_view_prefix(
             await ctx.send('**Bye! you took so long**')
 
     elif view.value is False:
-        await interaction.delete_original_message()
+        try:
+            await interaction.delete_original_message()
+        except Exception as e:
+            print(e.__cause__)
 
     else:
         await interaction.message.edit(

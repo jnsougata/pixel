@@ -313,7 +313,11 @@ async def sub_view_youtube(
 
 
         else:
-            await interaction.delete_original_message()
+            try:
+                await interaction.delete_original_message()
+            except Exception as e:
+                print(e.__cause__)
+
 
 
     else:
