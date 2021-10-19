@@ -51,11 +51,12 @@ class Dropdown(discord.ui.Select):
         self.ctx = context
 
         options = [
-            discord.SelectOption(label='prefix', value='0', emoji=Emo.TAG),
-            discord.SelectOption(label='receiver', value='1', emoji=Emo.PING),
-            discord.SelectOption(label='youtube', value='2', emoji=Emo.YT),
-            discord.SelectOption(label='reception', value='3', emoji=Emo.DEAL),
-            discord.SelectOption(label='welcomecard', value='4', emoji=Emo.IMG),
+            discord.SelectOption(label='Back', value='0'),
+            discord.SelectOption(label='prefix', value='1', emoji=Emo.TAG),
+            discord.SelectOption(label='receiver', value='2', emoji=Emo.PING),
+            discord.SelectOption(label='youtube', value='3', emoji=Emo.YT),
+            discord.SelectOption(label='reception', value='4', emoji=Emo.DEAL),
+            discord.SelectOption(label='welcomecard', value='5', emoji=Emo.IMG),
         ]
 
         super().__init__(
@@ -67,6 +68,35 @@ class Dropdown(discord.ui.Select):
 
 
     async def callback(self, interaction: discord.Interaction):
+
+        raw = await db_fetch_object(
+            guildId=self.ctx.guild.id,
+            key='prefix'
+        )
+
+        if raw and len(raw) > 0:
+            p = raw['item'][0]
+        else:
+            p = '.'
+        page_0 = discord.Embed(
+            description=f'**{self.ctx.guild.me.name} is created for:**'
+                        f'\n\n{Emo.YT}  **`YouTube Alerts`**'
+                        f'\n\n{Emo.IMG}  **`Welcome Cards`**'
+                        f'\n\n**Any one command for everything:**'
+                        f'\n\n{Emo.MOD} **`{p}settings`** | **`{p}setup`** | **`{p}s`** '
+                        f'\n\nAll the features are customizable'
+                        f'\nand free. Use the **dropdown** menu  '
+                        f'\nbelow to get more info about the '
+                        f'\n**features**. If you like these features '
+                        f'\nplease make sure to leave a feedback.'
+                        f'\n For issues you can join **[PixeL Support]'
+                        f'(https://discord.gg/UzyEYeYZF9)**',
+            color=0x005aef
+        )
+        page_0.set_footer(
+            text=f'✅ Thanks | Current Prefix [{p}]'
+        )
+
 
         page_1 = discord.Embed(
             title=f'{Emo.SETTINGS} Prefix',
@@ -105,7 +135,7 @@ class Dropdown(discord.ui.Select):
             colour=0x005aef
         )
 
-        book = [page_1, page_2, page_3, page_4, page_5]
+        book = [page_0, page_1, page_2, page_3, page_4, page_5]
 
 
         if interaction.user == self.ctx.author:
