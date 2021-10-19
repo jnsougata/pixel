@@ -1,9 +1,10 @@
 import io
-
 import discord
-from src.extras.card import *
 from discord.ext import commands
+from src.extras.card import Io,Canvas
 from src.extras.func import db_fetch_object
+
+
 
 class Welcomer(commands.Cog):
 
@@ -40,21 +41,19 @@ class Welcomer(commands.Cog):
                     bg_bytes = await Io.fetch(url)
                     avatar = member.display_avatar.with_format('png')
                     bytes_ = await avatar.read()
-                    round_bg = Io.draw(size=(500, 500), color='white')
+                    round_bg = Io.draw(size=(500, 500), color='#ed0d45')
                     canvas = Canvas(size=(620, 282), color='black')
                     canvas.set_background(_byte=bg_bytes, _blur=True)
-                    canvas.add_round_image(_byte=round_bg, resize=(150, 150), position=(235, 30))
+                    canvas.add_round_image(_byte=round_bg, resize=(140, 140), position=(240, 35))
                     canvas.add_round_image(_byte=io.BytesIO(bytes_), resize=(130, 130), position=(245, 40))
                     canvas.add_text(
                         text=f'{member}',
-                        font_pack='sans.ttf',
                         auto_align=True,
                         size=30,
                         position=(220, 180)
                     )
                     canvas.add_text(
                         text=f'You are {len(member.guild.members)}th Member',
-                        font_pack='sans.ttf',
                         auto_align=True,
                         size=30,
                         position=(220, 215)

@@ -251,12 +251,11 @@ class Canvas:
 
 
 
-    def add_text(self, text: str, font_pack:str, auto_align:bool, size: float = None, color: str = None,
+    def add_text(self, text: str, auto_align:bool, size: float = None, color: str = None,
                  position: Tuple = None):
 
         """
         :param str text: text to be added to the image
-        :param str font_pack: link to the path of font pack [.ttf]
         :param bool auto_align: for horizontal text alignment
         :param int size: size of text
         :param str color: name of color or color code
@@ -270,7 +269,7 @@ class Canvas:
         size = 20 if size is None else size
         color = 'white' if color is None else color
 
-        font = ImageFont.truetype(font_pack, size=size)
+        font = ImageFont.truetype(font = 'sans.ttf', size=size)
 
         text_width, text_height = draw.textsize(text, font=font)
 
