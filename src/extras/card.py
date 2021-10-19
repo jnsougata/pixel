@@ -269,7 +269,7 @@ class Canvas:
         size = 20 if size is None else size
         color = 'white' if color is None else color
 
-        font = ImageFont.truetype(font = 'sans.ttf', size=size)
+        font = ImageFont.truetype(font = 'src/sans.ttf', size=size)
 
         text_width, text_height = draw.textsize(text, font=font)
 
