@@ -42,7 +42,7 @@ class CustomView(discord.ui.View):
             p = await prefix_fetcher(self.ctx.guild.id)
 
             emd = discord.Embed(
-                description=f'**{self.ctx.guild.me.display_name} is created for:**'
+                description=f'**{self.ctx.guild.me.name} is created for:**'
                             f'\n\n{Emo.YT}  **`YouTube Alerts`**'
                             f'\n\n{Emo.IMG}  **`Welcome Cards`**'
                             f'\n\n**One command for everything:**'
@@ -168,7 +168,7 @@ class Help(commands.Cog):
 
 
         emd = discord.Embed(
-            description = f'**{ctx.guild.me.display_name} is created for:**'
+            description = f'**{ctx.guild.me.name} is created for:**'
                           f'\n\n{Emo.YT}  **`YouTube Alerts`**'
                           f'\n\n{Emo.IMG}  **`Welcome Cards`**'
                           f'\n\n**One command for everything:**'
