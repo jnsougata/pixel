@@ -285,12 +285,12 @@ async def sub_view_youtube(
                             key='youtube'
                         )
 
-                        latest = await channel.latest
+                        latest = 'empty'
 
                         if old_data:
                             if len(old_data['item']) > 0:
                                 raw = old_data['item']
-                                raw[data['id']] = {'live': 'empty', 'upload': latest.id}
+                                raw[data['id']] = {'live': 'empty', 'upload': latest}
 
                                 await db_push_object(
                                     guildId=ctx.guild.id,
@@ -299,7 +299,7 @@ async def sub_view_youtube(
                                 )
                             else:
                                 empty = dict()
-                                empty[data['id']] = {'live': 'empty', 'upload': latest.id}
+                                empty[data['id']] = {'live': 'empty', 'upload': latest}
                                 await db_push_object(
                                     guildId=ctx.guild.id,
                                     item=empty,
@@ -308,7 +308,7 @@ async def sub_view_youtube(
 
                         else:
                             empty = dict()
-                            empty[data['id']] = {'live': 'empty', 'upload': latest.id}
+                            empty[data['id']] = {'live': 'empty', 'upload': latest}
                             await db_push_object(
                                 guildId=ctx.guild.id,
                                 item=empty,
