@@ -82,7 +82,7 @@ class ChannelMenu(discord.ui.Select):
 
         if interaction.user == self.ctx.author:
 
-            if int(self.values[0]) != 0:
+            if self.values[0] != '0':
 
                 try:
                     raw = await asynctube.Channel.fetch(self.values[0])
