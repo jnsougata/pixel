@@ -33,22 +33,22 @@ class Handlers(commands.Cog):
                     content=f'Did you mean **{p}setup**?',
                     delete_after=15
                 )
-            elif ctx.message.content.startswith(f'<@!874663148374880287> h'):
+            elif ctx.message.content.startswith(f'<@!{ctx.guild.me.id}> h'):
                 await ctx.reply(
                     content=f'Did you mean **{p}help**?',
                     delete_after=15
                 )
-            elif ctx.message.content.startswith(f'<@874663148374880287> h'):
+            elif ctx.message.content.startswith(f'<@{ctx.guild.me.id}> h'):
                 await ctx.reply(
                     content=f'Did you mean **{p}help**?',
                     delete_after=15
                 )
-            elif ctx.message.content.startswith(f'<@!874663148374880287> s'):
+            elif ctx.message.content.startswith(f'<@!{ctx.guild.me.id}> s'):
                 await ctx.reply(
                     content=f'Did you mean **{p}setup**?',
                     delete_after=15
                 )
-            elif ctx.message.content.startswith(f'<@874663148374880287> s'):
+            elif ctx.message.content.startswith(f'<@{ctx.guild.me.id}> s'):
                 await ctx.reply(
                     content=f'Did you mean **{p}setup**?',
                     delete_after=15
