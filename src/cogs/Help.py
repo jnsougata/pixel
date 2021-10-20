@@ -159,7 +159,7 @@ class Help(commands.Cog):
         self.bot = bot
 
 
-    @commands.command(name='help', invoke_without_command=True)
+    @commands.command(name='help')
     @commands.cooldown(rate=3, per=60, type=commands.BucketType.member)
     async def help(self, ctx):
 

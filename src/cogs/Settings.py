@@ -114,7 +114,7 @@ class Settings(commands.Cog):
 
 
     @commands.has_permissions(administrator = True)
-    @commands.command(aliases = ['settings', 'setup', 's'])
+    @commands.command(aliases = ['settings', 'setup'])
     async def settings_(self, ctx: commands.Context):
 
         emd = discord.Embed(

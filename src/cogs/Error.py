@@ -1,5 +1,6 @@
 import discord.errors
 from discord.ext import commands
+from src.extras.func import prefix_fetcher
 
 
 class Handlers(commands.Cog):
@@ -9,56 +10,92 @@ class Handlers(commands.Cog):
 
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        user = ctx.author
+    async def on_command_error(self, ctx: commands.Context, error):
+
+        p = await prefix_fetcher(ctx.guild.id)
+
         if isinstance(error, commands.MissingRequiredArgument):
-            emo = '<:Question:863155023391358987>'
-            await ctx.send(
-                f'{emo} '
-                f'{user.mention} **Please try again with required argument(s)**',
-                delete_after=10
+
+            await ctx.reply(
+                f'Please try again with required **argument(s)**',
+                delete_after=15
             )
 
         elif isinstance(error, commands.CommandNotFound):
-            emo = '<:Faq:862729604666228738>'
-            await ctx.send(
-                f'{emo} '
-                f'{user.mention} **Command not found. '
-                f'Use `@{ctx.guild.me.display_name} help` for all commands**',
-                delete_after=10
-            )
+
+            if ctx.message.content.startswith(f'{p}h'):
+                await ctx.reply(
+                    content=f'Did you mean **{p}help**?',
+                    delete_after=15
+                )
+            elif ctx.message.content.startswith(f'{p}s'):
+                await ctx.reply(
+                    content=f'Did you mean **{p}setup**?',
+                    delete_after=15
+                )
+            elif ctx.message.content.startswith(f'<@!874663148374880287> h'):
+                await ctx.reply(
+                    content=f'Did you mean **{p}help**?',
+                    delete_after=15
+                )
+            elif ctx.message.content.startswith(f'<@874663148374880287> h'):
+                await ctx.reply(
+                    content=f'Did you mean **{p}help**?',
+                    delete_after=15
+                )
+            elif ctx.message.content.startswith(f'<@!874663148374880287> s'):
+                await ctx.reply(
+                    content=f'Did you mean **{p}setup**?',
+                    delete_after=15
+                )
+            elif ctx.message.content.startswith(f'<@874663148374880287> s'):
+                await ctx.reply(
+                    content=f'Did you mean **{p}setup**?',
+                    delete_after=15
+                )
+
+            else:
+                await ctx.reply(
+                    content=f'Invalid command. Use **{p}help** to know more',
+                    delete_after=15
+                )
+
+
 
         elif isinstance(error, commands.MissingPermissions):
-            emo = '<:mod:878511996184694804>'
-            await ctx.send(
-                f"{emo} "
-                f"{ctx.author.mention} **you are not an administrator**",
+            await ctx.reply(
+                content=f"You are not an **administrator**",
                 delete_after=10
             )
 
         elif isinstance(error, commands.CommandOnCooldown):
             seconds = ctx.command.get_cooldown_retry_after(ctx)
-            await ctx.send(
-                f'{user.mention} command is on cooldown for you!'
+            await ctx.reply(
+                f'This command is on cooldown for you!'
                 f'\nRetry after **{round(seconds)}s**',
-                delete_after=10
+                delete_after=15
             )
 
         elif isinstance(error, commands.BotMissingPermissions):
             try:
-                await ctx.send(
-                    f'{user.mention} **I don\'t have enough permission to do it!**',
-                    delete_after=10
+                await ctx.reply(
+                    f'**I don\'t have enough permission to do it!**',
+                    delete_after=15
                 )
             except discord.errors.Forbidden:
                 pass
+
         elif isinstance(error, commands.NotOwner):
             await ctx.send(
-                f'{user.mention} **Only owner can use this command for now!**',
-                delete_after=10
+                f'Only **Zen#8080** can use this command!',
+                delete_after=15
             )
+
         elif isinstance(error, commands.CheckAnyFailure):
-            await ctx.send(f'{error}')
+            await ctx.reply(
+                content='Something weird happened. Devs will fix it soon!'
+            )
+            print(f'{error.__cause__}')
 
 
 
