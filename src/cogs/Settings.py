@@ -64,7 +64,6 @@ class BaseMenu(discord.ui.Select):
                     interaction = interaction,
                     bot = self.bot
                 )
-
             elif int(self.values[0]) == 1:
 
                 await sub_view_receiver(
@@ -72,29 +71,24 @@ class BaseMenu(discord.ui.Select):
                     interaction=interaction,
                     bot=self.bot
                 )
-
             elif int(self.values[0]) == 2:
                 await sub_view_youtube(
                     ctx=self.ctx,
                     interaction=interaction,
                     bot=self.bot
                 )
-
             elif int(self.values[0]) == 3:
                 await sub_view_reception(
                     ctx=self.ctx,
                     interaction=interaction,
                     bot=self.bot
                 )
-
             elif int(self.values[0]) == 4:
                 await sub_view_welcomecard(
                     ctx=self.ctx,
                     interaction=interaction,
                     bot=self.bot
                 )
-
-
             else:
                 await self.ctx.send('Work in progress!')
 
