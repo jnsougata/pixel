@@ -54,12 +54,14 @@ class Handlers(commands.Cog):
                     delete_after=15
                 )
 
+            elif ctx.message.content.startswith(p) and ctx.message.content[1] == p:
+                pass
+
             else:
                 await ctx.reply(
                     content=f'Invalid command. Use **{p}help** to know more',
                     delete_after=15
                 )
-
 
 
         elif isinstance(error, commands.MissingPermissions):

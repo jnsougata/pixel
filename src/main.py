@@ -31,11 +31,13 @@ cogs = [
     "Activity",
     "Welcomer",
     "Settings",
-    "Listener"
+    "Listener",
 
 ]
 
 for cog in cogs:
     bot.load_extension("cogs." + cog)
+
+
 
 bot.run(os.getenv('DISCORD_TOKEN'))
