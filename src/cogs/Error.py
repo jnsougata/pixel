@@ -22,51 +22,7 @@ class Handlers(commands.Cog):
             )
 
         elif isinstance(error, commands.CommandNotFound):
-
-            if ctx.message.guild.id == 336642139381301249:
-                return 
-
-            elif ctx.message.content.startswith(f'{p}h'):
-                await ctx.reply(
-                    content=f'Did you mean **{p}help**?',
-                    delete_after=15
-                )
-            elif ctx.message.content.startswith(f'{p}s'):
-                await ctx.reply(
-                    content=f'Did you mean **{p}setup**?',
-                    delete_after=15
-                )
-            elif ctx.message.content.startswith(f'<@!{ctx.guild.me.id}> h'):
-                await ctx.reply(
-                    content=f'Did you mean **{p}help**?',
-                    delete_after=15
-                )
-            elif ctx.message.content.startswith(f'<@{ctx.guild.me.id}> h'):
-                await ctx.reply(
-                    content=f'Did you mean **{p}help**?',
-                    delete_after=15
-                )
-            elif ctx.message.content.startswith(f'<@!{ctx.guild.me.id}> s'):
-                await ctx.reply(
-                    content=f'Did you mean **{p}setup**?',
-                    delete_after=15
-                )
-            elif ctx.message.content.startswith(f'<@{ctx.guild.me.id}> s'):
-                await ctx.reply(
-                    content=f'Did you mean **{p}setup**?',
-                    delete_after=15
-                )
-
-            elif ctx.message.content.startswith(p) and ctx.message.content[1] == p:
-                pass
-
-
-            else:
-                await ctx.reply(
-                    content=f'Invalid command. Use **{p}help** to know more',
-                    delete_after=15
-                )
-
+            pass
 
         elif isinstance(error, commands.MissingPermissions):
             await ctx.reply(
