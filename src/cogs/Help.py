@@ -4,15 +4,12 @@ from discord.ext import commands
 from src.extras.emojis import Emo
 
 
-
 class CustomView(discord.ui.View):
-
     def __init__(
             self,
             ctx: commands.Context,
             message: discord.Message = None
     ):
-
         self.ctx = ctx
         self.message = message
 
@@ -21,12 +18,10 @@ class CustomView(discord.ui.View):
             style=discord.ButtonStyle.link,
             url='https://top.gg/bot/848304171814879273/invite'
         )
-
         super().__init__()
         self.value = None
         self.timeout = 60
         self.add_item(INVITE)
-
 
     @discord.ui.button(label='Info', style=discord.ButtonStyle.blurple)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -34,20 +29,17 @@ class CustomView(discord.ui.View):
             self.value = True
             self.stop()
 
-
     async def on_timeout(self) -> None:
-
         try:
             await self.message.delete()
-        except:
+        except Exception as e:
+            print(e)
             return
 
 
 class Help(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
-
 
     @commands.command(name='help')
     @commands.cooldown(rate=3, per=60, type=commands.BucketType.member)
@@ -73,7 +65,7 @@ class Help(commands.Cog):
         )
 
         view = CustomView(ctx)
-        view.message = await ctx.send(embed=emd, view = view)
+        view.message = await ctx.send(embed=emd, view=view)
 
         await view.wait()
 
@@ -100,7 +92,7 @@ class Help(commands.Cog):
                 color=0x005aef,
             )
             emd.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-            await view.message.edit(embed=emd, view = None)
+            await view.message.edit(embed=emd, view=None)
 
 
 def setup(bot):

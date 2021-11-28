@@ -1,9 +1,8 @@
 import io
 import discord
 from discord.ext import commands
-from src.extras.card import Io,Canvas
+from src.extras.card import Io, Canvas
 from src.extras.func import db_fetch_object
-
 
 
 class Welcomer(commands.Cog):
@@ -13,9 +12,7 @@ class Welcomer(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-
         guildId = member.guild.id
-
         raw = await db_fetch_object(
             guildId=guildId,
             key='welcome'
@@ -30,14 +27,11 @@ class Welcomer(commands.Cog):
                     guildId=guildId,
                     key='cover'
                 )
-
                 if urls and len(urls['item']) > 0:
                     url = urls['item'][0]
                 else:
                     url = 'https://i.imgur.com/CLy9KUO.jpg'
-
                 if url != 'removed':
-
                     bg_bytes = await Io.fetch(url)
                     avatar = member.display_avatar.with_format('png')
                     bytes_ = await avatar.read()
@@ -61,19 +55,11 @@ class Welcomer(commands.Cog):
                     file = discord.File(canvas.output, 'author_card.png')
                     emd = discord.Embed(description=f'**Welcome to {member.guild.name}**')
                     emd.set_image(url="attachment://author_card.png")
-
                     await reception.send(embed=emd, file=file)
-
                 else:
                     print(f'[Event:on_member_join | {member.guild.name} | No Welcome Card]')
-
-
         else:
             print(f'[Event:on_member_join | {member.guild.name} | No Welcome Channel]')
-
-
-
-
 
 
 def setup(bot):
