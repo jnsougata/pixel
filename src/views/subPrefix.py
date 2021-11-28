@@ -12,14 +12,11 @@ class Exit(discord.ui.View):
         super().__init__()
         self.value = None
 
-
     @discord.ui.button(label='Exit', style=discord.ButtonStyle.red)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             self.value = True
             self.stop()
-
-
 
 
 class Option(discord.ui.View):
@@ -29,7 +26,6 @@ class Option(discord.ui.View):
 
         super().__init__()
         self.value = None
-
 
     @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -48,8 +44,6 @@ class Option(discord.ui.View):
         if self.ctx.author == interaction.user:
             self.value = False
             self.stop()
-
-
 
 
 async def sub_view_prefix(
@@ -82,11 +76,11 @@ async def sub_view_prefix(
     if view.value is True:
 
         new = await interaction.message.edit(
-            content = f'{ctx.author.mention}',
-            embed = discord.Embed(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
                 description='Please **type** a prefix to set as **custom prefix:**'
             ),
-            view = None
+            view=None
         )
 
         def check(m):
@@ -103,9 +97,9 @@ async def sub_view_prefix(
                 await new.delete()
                 await ctx.send(
                     content=f'{ctx.author.mention}',
-                    embed = discord.Embed(
-                        description = f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                      f'new custom prefix is  ` {response.content} `',
+                    embed=discord.Embed(
+                        description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
+                                    f'new custom prefix is  ` {response.content} `',
                     )
                 )
             else:
@@ -120,7 +114,8 @@ async def sub_view_prefix(
     elif view.value is False:
         try:
             await interaction.delete_original_message()
-        except:
+        except Exception as e:
+            print(e)
             return
 
     else:

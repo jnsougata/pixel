@@ -34,11 +34,13 @@ class BaseMenu(discord.ui.Select):
         self.bot = bot
 
         options = [
-            discord.SelectOption(label='prefix', value='0', emoji=Emo.TAG),
-            discord.SelectOption(label='receiver', value='1', emoji=Emo.PING),
-            discord.SelectOption(label='youtube', value='2', emoji=Emo.YT),
-            discord.SelectOption(label='reception', value='3', emoji=Emo.DEAL),
-            discord.SelectOption(label='welcomecard', value='4', emoji=Emo.IMG),
+            discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
+            discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
+            discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
+            discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
+            discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
+            discord.SelectOption(label='Welcome Message', value='5', emoji=Emo.EDIT),
+            discord.SelectOption(label='Notification Message', value='6', emoji=Emo.EDIT),
         ]
 
         super().__init__(
@@ -49,7 +51,6 @@ class BaseMenu(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
-
         if interaction.user == self.ctx.author:
             if int(self.values[0]) == 0:
                 await sub_view_prefix(
@@ -82,7 +83,7 @@ class BaseMenu(discord.ui.Select):
                     bot=self.bot
                 )
             else:
-                await self.ctx.send('Work in progress!')
+                await self.ctx.send(embed=discord.Embed(title='Coming Soon!'))
         else:
             await interaction.response.send_message(
                 'You are not allowed to control this message!', ephemeral=True

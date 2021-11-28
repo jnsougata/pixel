@@ -4,7 +4,6 @@ from discord.ext import commands
 from src.extras.func import db_push_object, db_fetch_object
 
 
-
 class BaseView(discord.ui.View):
 
     def __init__(
@@ -15,7 +14,6 @@ class BaseView(discord.ui.View):
         super().__init__()
         self.value = None
         self.timeout = 30
-
 
     async def on_timeout(self) -> None:
         try:
@@ -32,7 +30,6 @@ class Option(discord.ui.View):
 
         super().__init__()
         self.value = None
-
 
     @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -53,9 +50,7 @@ class Option(discord.ui.View):
             self.stop()
 
 
-
 class TextMenu(discord.ui.Select):
-
 
     def __init__(
             self,
@@ -65,26 +60,22 @@ class TextMenu(discord.ui.Select):
     ):
         self.ctx = context
         self.bot = bot
-
-
         channels = context.guild.text_channels
-
-        elig = [
+        eligible = [
             channel for channel in channels if channel.permissions_for(
                 context.guild.me
             ).embed_links is True
         ]
-
 
         options = [
             discord.SelectOption(
                 label=channel.name,
                 value=str(channel.id),
                 emoji=Emo.TEXT
-            ) for channel in elig[:24]
+            ) for channel in eligible[:24]
         ]
         options.insert(
-            0, discord.SelectOption(label='Exit',value='0',emoji=Emo.WARN)
+            0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
         )
 
         super().__init__(
@@ -119,11 +110,7 @@ class TextMenu(discord.ui.Select):
                     key='alertchannel'
                 )
             else:
-               await interaction.message.delete()
-
-
-
-
+                await interaction.message.delete()
 
 
 async def sub_view_receiver(
@@ -131,7 +118,6 @@ async def sub_view_receiver(
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-
     raw = await db_fetch_object(
         guildId=ctx.guild.id,
         key='alertchannel'
@@ -171,11 +157,11 @@ async def sub_view_receiver(
         new_view.add_item(TextMenu(ctx, bot))
 
         new_view.message = await interaction.message.edit(
-            content = f'{ctx.author.mention}',
-            embed = discord.Embed(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
                 description='Please **select** a text channel to use as **receiver:**'
             ),
-            view = new_view
+            view=new_view
         )
 
     elif view.value is False:

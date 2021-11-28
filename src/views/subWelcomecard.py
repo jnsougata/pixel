@@ -8,9 +8,7 @@ from discord.ext import commands
 from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
 
 
-
 class BaseView(discord.ui.View):
-
     def __init__(
             self,
             message: discord.Message = None,
@@ -19,7 +17,6 @@ class BaseView(discord.ui.View):
         super().__init__()
         self.value = None
         self.timeout = 30
-
 
     async def on_timeout(self) -> None:
         try:
@@ -36,7 +33,6 @@ class Option(discord.ui.View):
 
         super().__init__()
         self.value = None
-
 
     @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -57,9 +53,6 @@ class Option(discord.ui.View):
             self.stop()
 
 
-
-
-
 async def sub_view_welcomecard(
         ctx: commands.Context,
         interaction: discord.Interaction,
@@ -70,18 +63,14 @@ async def sub_view_welcomecard(
         key='welcome'
     )
     if rcp_raw and len(rcp_raw['item']) > 0:
-
         raw = await db_fetch_object(
             guildId=ctx.guild.id,
             key='cover'
         )
-
-
         emd = discord.Embed(
             description=f'To set new welcome card tap **` Edit `**'
                         f'\n\n**Current Welcome card:**'
         )
-
         if ctx.guild.icon:
             emd.set_author(
                 icon_url=ctx.guild.icon.url,
@@ -99,13 +88,9 @@ async def sub_view_welcomecard(
             card = 'https://i.imgur.com/CLy9KUO.jpg'
             emd.set_image(url=card)
             emd.set_footer(text='(Default Image)')
-
-
         view = Option(ctx)
         await interaction.response.edit_message(embed=emd, view=view)
-
         await view.wait()
-
         if view.value is True:
 
             def check(m):
@@ -133,16 +118,14 @@ async def sub_view_welcomecard(
                         await ctx.send(
                             embed=discord.Embed(description=f"{Emo.CHECK} **Cover picture accepted**")
                         )
-            except:
+            except Exception as e:
+                print(e)
                 await ctx.send(
                     embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
                 )
-
             pass
-
         elif view.value is False:
             await interaction.delete_original_message()
-
         else:
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
@@ -156,7 +139,6 @@ async def sub_view_welcomecard(
                 item=['removed'],
                 key='cover'
             )
-
     else:
         p = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
