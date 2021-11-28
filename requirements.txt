@@ -1,4 +1,4 @@
 deta
 pillow
-asynctube
+aiotube
 git+https://github.com/Rapptz/discord.py

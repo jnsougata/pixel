@@ -7,13 +7,12 @@ intent = discord.Intents().default()
 intent.members = True
 
 
-
-class BOT(commands.Bot):
+class PixeL(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix = custom_prefix,
-            intents = intent,
-            help_command = None
+            command_prefix=custom_prefix,
+            intents=intent,
+            help_command=None
         )
 
     async def on_ready(self):
@@ -21,7 +20,7 @@ class BOT(commands.Bot):
         print('------')
 
 
-bot = BOT()
+pixel = PixeL()
 
 
 cogs = [
@@ -36,8 +35,7 @@ cogs = [
 ]
 
 for cog in cogs:
-    bot.load_extension("cogs." + cog)
+    pixel.load_extension("cogs." + cog)
 
 
-
-bot.run(os.getenv('DISCORD_TOKEN'))
+pixel.run(os.getenv('DISCORD_TOKEN'))

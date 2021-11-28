@@ -8,10 +8,7 @@ from src.views.subReception import sub_view_reception
 from src.views.subWelcomecard import sub_view_welcomecard
 
 
-
-
 class BaseView(discord.ui.View):
-
     def __init__(
             self,
             message: discord.Message = None,
@@ -21,18 +18,17 @@ class BaseView(discord.ui.View):
         self.value = None
         self.timeout = 30
 
-
     async def on_timeout(self) -> None:
         try:
             await self.message.delete()
-        except:
+        except Exception as e:
+            print(e)
             return
-
 
 
 class BaseMenu(discord.ui.Select):
 
-    def __init__(self, context: commands.Context, bot:discord.Client):
+    def __init__(self, context: commands.Context, bot: discord.Client):
 
         self.ctx = context
         self.bot = bot
@@ -52,20 +48,16 @@ class BaseMenu(discord.ui.Select):
             options=options
         )
 
-
     async def callback(self, interaction: discord.Interaction):
 
         if interaction.user == self.ctx.author:
-
             if int(self.values[0]) == 0:
-
                 await sub_view_prefix(
-                    ctx = self.ctx,
-                    interaction = interaction,
-                    bot = self.bot
+                    ctx=self.ctx,
+                    interaction=interaction,
+                    bot=self.bot
                 )
             elif int(self.values[0]) == 1:
-
                 await sub_view_receiver(
                     ctx=self.ctx,
                     interaction=interaction,
@@ -91,14 +83,10 @@ class BaseMenu(discord.ui.Select):
                 )
             else:
                 await self.ctx.send('Work in progress!')
-
-
         else:
             await interaction.response.send_message(
                 'You are not allowed to control this message!', ephemeral=True
             )
-
-
 
 
 class Settings(commands.Cog):
@@ -106,11 +94,9 @@ class Settings(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-
-    @commands.has_permissions(administrator = True)
-    @commands.command(aliases = ['settings', 'setup'])
+    @commands.has_permissions(administrator=True)
+    @commands.command(aliases=['settings', 'setup'])
     async def settings_(self, ctx: commands.Context):
-
         emd = discord.Embed(
             description='\nChoose any command form menu to use:',
             colour=0x005aef
@@ -122,9 +108,6 @@ class Settings(commands.Cog):
         view = BaseView()
         view.add_item(BaseMenu(context=ctx, bot=self.bot))
         view.message = await ctx.send(embed=emd, view=view)
-
-
-
 
 
 def setup(bot):
