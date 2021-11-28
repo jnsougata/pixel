@@ -24,18 +24,15 @@ pixel = PixeL()
 
 
 cogs = [
-
     "Help",
     "Error",
     "Activity",
     "Welcomer",
     "Settings",
     "Listener",
-
 ]
 
 for cog in cogs:
     pixel.load_extension("cogs." + cog)
-
 
 pixel.run(os.getenv('DISCORD_TOKEN'))
