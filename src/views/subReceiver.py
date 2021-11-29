@@ -117,55 +117,56 @@ async def sub_view_receiver(
     )
     if raw['item'] and raw['item'][0].isdigit():
         receiver = ctx.guild.get_channel(int(raw['item'][0]))
-        rm = receiver.mention
-    else:
-        rm = '**`None`**'
-    emd = discord.Embed(
-        description=f'To set new receiver tap **` Edit `**'
-                    f'\n\n{Emo.WARN} Only accepts text channels where'
-                    f'\nit has permission to **embed links** and **urls**'
-                    f'\n\n**{ctx.guild.name}\'s** current receiver is {rm}'
-    )
-    if ctx.guild.icon:
-        emd.set_author(
-            icon_url=ctx.guild.icon.url,
-            name=ctx.guild.name
+        if receiver:
+            mention = receiver.mention
+        else:
+            mention = '**`None`**'
+        emd = discord.Embed(
+            description=f'To set new receiver tap **` Edit `**'
+                        f'\n\n{Emo.WARN} Only accepts text channels where'
+                        f'\nit has permission to **embed links** and **urls**'
+                        f'\n\n**{ctx.guild.name}\'s** current receiver is {mention}'
         )
-    else:
-        emd.set_author(
-            icon_url=ctx.guild.me.avatar.url,
-            name=ctx.guild.me.name
-        )
+        if ctx.guild.icon:
+            emd.set_author(
+                icon_url=ctx.guild.icon.url,
+                name=ctx.guild.name
+            )
+        else:
+            emd.set_author(
+                icon_url=ctx.guild.me.avatar.url,
+                name=ctx.guild.me.name
+            )
 
-    view = Option(ctx)
-    await interaction.response.edit_message(embed=emd, view=view)
+        view = Option(ctx)
+        await interaction.response.edit_message(embed=emd, view=view)
 
-    await view.wait()
+        await view.wait()
 
-    if view.value is True:
+        if view.value is True:
 
-        view.clear_items()
-        new_view = BaseView()
-        new_view.add_item(TextMenu(ctx, bot))
-        new_view.message = await interaction.message.edit(
-            content=f'{ctx.author.mention}',
-            embed=discord.Embed(
-                description='Please **select** a text channel to use as **receiver:**'
-            ),
-            view=new_view
-        )
-    elif view.value is False:
-        await interaction.delete_original_message()
-    else:
-        await interaction.message.edit(
-            content=f'{ctx.author.mention}',
-            embed=discord.Embed(
-                description=f'{Emo.DEL} Receiver removed'
-            ),
-            view=None
-        )
-        await db_push_object(
-            guildId=ctx.guild.id,
-            item=['removed'],
-            key='alertchannel'
-        )
+            view.clear_items()
+            new_view = BaseView()
+            new_view.add_item(TextMenu(ctx, bot))
+            new_view.message = await interaction.message.edit(
+                content=f'{ctx.author.mention}',
+                embed=discord.Embed(
+                    description='Please **select** a text channel to use as **receiver:**'
+                ),
+                view=new_view
+            )
+        elif view.value is False:
+            await interaction.delete_original_message()
+        else:
+            await interaction.message.edit(
+                content=f'{ctx.author.mention}',
+                embed=discord.Embed(
+                    description=f'{Emo.DEL} Receiver removed'
+                ),
+                view=None
+            )
+            await db_push_object(
+                guildId=ctx.guild.id,
+                item=['removed'],
+                key='alertchannel'
+            )
