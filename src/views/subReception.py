@@ -116,61 +116,64 @@ async def sub_view_reception(
         guildId=ctx.guild.id,
         key='welcome'
     )
-    if raw['item'] and raw['item'][0].isdigit():
-        recpt = ctx.guild.get_channel(int(raw['item'][0]))
-        if recpt:
-            mention = recpt.mention
-        else:
-            mention = f'**`None`**'
-        emd = discord.Embed(
-            description=f'To set new reception tap **` Edit `**'
-                        f'\n\n{Emo.WARN} Only accepts text channels where'
-                        f'\nit has permission to **send attachments**'
-                        f'\n\n**{ctx.guild.name}\'s** current reception is {mention}'
+
+    def check(json: dict):
+        if raw['item'] and raw['item'][0].isdigit():
+            reception = ctx.guild.get_channel(int(raw['item'][0]))
+            try:
+                return reception.mention
+            except AttributeError:
+                return '**`None`**'
+
+    emd = discord.Embed(
+        description=f'To set new reception tap **` Edit `**'
+                    f'\n\n{Emo.WARN} Only accepts text channels where'
+                    f'\nit has permission to **send attachments**'
+                    f'\n\n**{ctx.guild.name}\'s** current reception is {check(raw)}'
+    )
+    if ctx.guild.icon:
+        emd.set_author(
+            icon_url=ctx.guild.icon.url,
+            name=ctx.guild.name
         )
-        if ctx.guild.icon:
-            emd.set_author(
-                icon_url=ctx.guild.icon.url,
-                name=ctx.guild.name
-            )
-        else:
-            emd.set_author(
-                icon_url=ctx.guild.me.avatar.url,
-                name=ctx.guild.me.name
-            )
+    else:
+        emd.set_author(
+            icon_url=ctx.guild.me.avatar.url,
+            name=ctx.guild.me.name
+        )
 
-        view = Option(ctx)
-        await interaction.response.edit_message(embed=emd, view=view)
+    view = Option(ctx)
+    await interaction.response.edit_message(embed=emd, view=view)
 
-        await view.wait()
+    await view.wait()
 
-        if view.value is True:
+    if view.value is True:
 
-            view.clear_items()
-            new_view = BaseView()
-            new_view.add_item(TextMenu(ctx, bot))
+        view.clear_items()
+        new_view = BaseView()
+        new_view.add_item(TextMenu(ctx, bot))
 
-            new_view.message = await interaction.message.edit(
-                content=f'{ctx.author.mention}',
-                embed=discord.Embed(
-                    description='Please **select** a text channel to use as **reception:**'
-                ),
-                view=new_view
-            )
+        new_view.message = await interaction.message.edit(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
+                description='Please **select** a text channel to use as **reception:**'
+            ),
+            view=new_view
+        )
 
-        elif view.value is False:
-            await interaction.delete_original_message()
+    elif view.value is False:
+        await interaction.delete_original_message()
 
-        else:
-            await interaction.message.edit(
-                content=f'{ctx.author.mention}',
-                embed=discord.Embed(
-                    description=f'{Emo.DEL} Reception removed'
-                ),
-                view=None
-            )
-            await db_push_object(
-                guildId=ctx.guild.id,
-                item=['removed'],
-                key='welcome'
-            )
+    else:
+        await interaction.message.edit(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
+                description=f'{Emo.DEL} Reception removed'
+            ),
+            view=None
+        )
+        await db_push_object(
+            guildId=ctx.guild.id,
+            item=['removed'],
+            key='welcome'
+        )
