@@ -64,7 +64,7 @@ class TextMenu(discord.ui.Select):
         eligible = [
             channel for channel in channels if channel.permissions_for(
                 context.guild.me
-            ).attach_files is True
+            ).attach_files
         ]
         options = [
             discord.SelectOption(
@@ -76,7 +76,6 @@ class TextMenu(discord.ui.Select):
         options.insert(
             0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
         )
-
         super().__init__(
             placeholder='Select a text channel',
             min_values=1,
@@ -85,25 +84,19 @@ class TextMenu(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
-
         if interaction.user == self.ctx.author:
-
             if int(self.values[0]) != 0:
-
                 channel = self.bot.get_channel(int(self.values[0]))
-
                 emd = discord.Embed(
                     title=f'{Emo.YT} Reception channel edited!',
                     description=f'{Emo.CHECK} The new reception channel is {channel.mention}'
                                 f'\nThis channel will be used to send welcome cards'
                 )
-
                 await interaction.message.edit(
                     embed=emd,
                     view=None
 
                 )
-
                 await db_push_object(
                     guildId=self.ctx.guild.id,
                     item=[self.values[0]],
@@ -123,10 +116,10 @@ async def sub_view_reception(
         guildId=ctx.guild.id,
         key='welcome'
     )
-    try:
-        receiver = ctx.guild.get_channel(int(raw['item'][0]))
-        rm = receiver.mention
-    except (TypeError, ValueError) as e:
+    if raw['item'] and raw['item'][0].isdigit():
+        recpt = ctx.guild.get_channel(int(raw['item'][0]))
+        rm = recpt.mention
+    else:
         rm = f'**`None`**'
     emd = discord.Embed(
         description=f'To set new reception tap **` Edit `**'

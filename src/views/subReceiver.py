@@ -64,9 +64,8 @@ class TextMenu(discord.ui.Select):
         eligible = [
             channel for channel in channels if channel.permissions_for(
                 context.guild.me
-            ).embed_links is True
+            ).embed_links
         ]
-
         options = [
             discord.SelectOption(
                 label=channel.name,
@@ -77,7 +76,6 @@ class TextMenu(discord.ui.Select):
         options.insert(
             0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
         )
-
         super().__init__(
             placeholder='Select a text channel',
             min_values=1,
@@ -86,19 +84,14 @@ class TextMenu(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
-
         if interaction.user == self.ctx.author:
-
             if int(self.values[0]) != 0:
-
                 channel = self.bot.get_channel(int(self.values[0]))
-
                 emd = discord.Embed(
                     title=f'{Emo.YT} Receiver channel edited!',
                     description=f'{Emo.CHECK} The new receiver channel is {channel.mention}'
                                 f'\nThis channel will be used to receive live stream notification'
                 )
-
                 await interaction.message.edit(
                     embed=emd,
                     view=None
@@ -122,7 +115,7 @@ async def sub_view_receiver(
         guildId=ctx.guild.id,
         key='alertchannel'
     )
-    if raw['item']:
+    if raw['item'] and raw['item'][0].isdigit():
         receiver = ctx.guild.get_channel(int(raw['item'][0]))
         rm = receiver.mention
     else:
@@ -154,7 +147,6 @@ async def sub_view_receiver(
         view.clear_items()
         new_view = BaseView()
         new_view.add_item(TextMenu(ctx, bot))
-
         new_view.message = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
@@ -162,10 +154,8 @@ async def sub_view_receiver(
             ),
             view=new_view
         )
-
     elif view.value is False:
         await interaction.delete_original_message()
-
     else:
         await interaction.message.edit(
             content=f'{ctx.author.mention}',
