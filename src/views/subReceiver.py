@@ -90,7 +90,7 @@ class TextMenu(discord.ui.Select):
                 emd = discord.Embed(
                     title=f'{Emo.YT} Receiver channel edited!',
                     description=f'{Emo.CHECK} The new receiver channel is {channel.mention}'
-                                f'\nThis channel will be used to receive live stream notification'
+                                f'\nThis channel will be used to receive livestream & upload notifications'
                 )
                 await interaction.message.edit(
                     embed=emd,
@@ -123,6 +123,8 @@ async def sub_view_receiver(
                 return receiver.mention
             except AttributeError:
                 return '**`None`**'
+        else:
+            return '**`None`**'
 
     emd = discord.Embed(
         description=f'To set new receiver tap **` Edit `**'

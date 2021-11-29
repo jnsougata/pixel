@@ -124,6 +124,8 @@ async def sub_view_reception(
                 return reception.mention
             except AttributeError:
                 return '**`None`**'
+        else:
+            return '**`None`**'
 
     emd = discord.Embed(
         description=f'To set new reception tap **` Edit `**'

@@ -55,7 +55,7 @@ async def sub_view_alert_msg(
     )
     emd = discord.Embed(
         description=f'**{ctx.guild.me.display_name}\'s** current custom alert message:'
-                    f'\n\n**` {data["item"] if data else None} `**'
+                    f'\n\n**` None `**'
                     f'\n\nTo set new alert message tap **` Edit `**'
     )
     if ctx.guild.icon:
@@ -99,6 +99,7 @@ async def sub_view_alert_msg(
             await ctx.send(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
+                    title='Coming Soon!',
                     description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
                                 f'new custom alert message:\n\n` {response.content} `',
                 )
