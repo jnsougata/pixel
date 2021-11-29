@@ -122,7 +122,7 @@ async def sub_view_receiver(
         guildId=ctx.guild.id,
         key='alertchannel'
     )
-    if raw:
+    if raw['item']:
         receiver = ctx.guild.get_channel(int(raw['item'][0]))
         rm = receiver.mention
     else:
