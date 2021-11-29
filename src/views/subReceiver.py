@@ -122,11 +122,10 @@ async def sub_view_receiver(
         guildId=ctx.guild.id,
         key='alertchannel'
     )
-
-    try:
+    if raw:
         receiver = ctx.guild.get_channel(int(raw['item'][0]))
         rm = receiver.mention
-    except (TypeError, ValueError) as e:
+    else:
         rm = '**`None`**'
     emd = discord.Embed(
         description=f'To set new receiver tap **` Edit `**'

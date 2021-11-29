@@ -2,7 +2,7 @@ import asyncio
 import discord
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import prefix_fetcher, db_push_object
+from src.extras.func import db_fetch_object, db_push_object
 
 
 class Exit(discord.ui.View):
@@ -44,15 +44,19 @@ class Option(discord.ui.View):
             self.stop()
 
 
-async def sub_view_prefix(
+async def sub_view_alert_msg(
         ctx: commands.Context,
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-    p = await prefix_fetcher(ctx.guild.id)
+    data: dict = await db_fetch_object(
+        guildId=ctx.guild.id,
+        key='msg'
+    )
     emd = discord.Embed(
-        description=f'**{ctx.guild.me.display_name}\'s** current prefix is **` {p} `**'
-                    f'\n\nTo set new custom prefix tap **` Edit `**'
+        description=f'**{ctx.guild.me.display_name}\'s** current custom alert message:'
+                    f'\n\n**` {data["item"] if data else None} `**'
+                    f'\n\nTo set new alert message tap **` Edit `**'
     )
     if ctx.guild.icon:
         emd.set_author(
@@ -64,18 +68,15 @@ async def sub_view_prefix(
             icon_url=ctx.guild.me.avatar.url,
             name=ctx.guild.me.name
         )
-
     view = Option(ctx)
     await interaction.response.edit_message(embed=emd, view=view)
-
     await view.wait()
 
     if view.value is True:
-
         new = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
-                description='Please **type** a prefix to set as **custom prefix:**'
+                description='Please **type** a **custom alert message:**'
             ),
             view=None
         )
@@ -85,26 +86,23 @@ async def sub_view_prefix(
 
         try:
             response = await bot.wait_for('message', check=check, timeout=20)
-            if 0 < len(response.content) <= 3:
-                await db_push_object(
-                    guildId=ctx.guild.id,
-                    item=[response.content],
-                    key='prefix'
-                )
-                await new.delete()
-                await ctx.send(
-                    content=f'{ctx.author.mention}',
-                    embed=discord.Embed(
-                        description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                    f'new custom prefix is  ` {response.content} `',
-                    )
-                )
+            if data:
+                data["item"]["ytmsg"] = response.content
             else:
-                await new.edit(
-                    embed=discord.Embed(
-                        description=f'{Emo.WARN} Please try with **3** or **less** characters!'
-                    )
+                data = {"ytmsg": response.content}
+            await db_push_object(
+                guildId=ctx.guild.id,
+                item=data,
+                key='msg'
+            )
+            await new.delete()
+            await ctx.send(
+                content=f'{ctx.author.mention}',
+                embed=discord.Embed(
+                    description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
+                                f'new custom alert message:\n\n` {response.content} `',
                 )
+            )
         except asyncio.TimeoutError:
             await ctx.send('**Bye! you took so long**')
 
@@ -114,18 +112,27 @@ async def sub_view_prefix(
         except Exception as e:
             print(e)
             return
-
     else:
-        await interaction.message.edit(
-            content=f'{ctx.author.mention}',
-            embed=discord.Embed(
-                description=f'{Emo.DEL} Custom prefix removed'
-            ),
-            view=None
-        )
-
-        await db_push_object(
-            guildId=ctx.guild.id,
-            item=['.'],
-            key='prefix'
-        )
+        print(data)
+        if data and data["item"].get("ytmsg"):
+            data["item"].pop("ytmsg")
+            await interaction.message.edit(
+                content=f'{ctx.author.mention}',
+                embed=discord.Embed(
+                    description=f'{Emo.DEL} Custom alert message removed'
+                ),
+                view=None
+            )
+            await db_push_object(
+                guildId=ctx.guild.id,
+                item=data["item"],
+                key='msg'
+            )
+        else:
+            await interaction.message.edit(
+                content=f'{ctx.author.mention}',
+                embed=discord.Embed(
+                    description=f'{Emo.WARN} Please add custom alert message'
+                ),
+                view=None
+            )

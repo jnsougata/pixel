@@ -4,10 +4,8 @@ from typing import Union
 from discord.ext import commands
 
 
-
 deta = Deta(os.getenv('DETA_TOKEN'))
 DEFAULT_PREFIX = '.'
-
 
 
 async def db_push_object(
@@ -19,8 +17,6 @@ async def db_push_object(
     db.put({'item': item}, key)
 
 
-
-
 async def db_fetch_object(
         guildId: int,
         key: str
@@ -29,27 +25,17 @@ async def db_fetch_object(
     return db.get(key)
 
 
-
-
 async def prefix_fetcher(id):
-
     prefix = await db_fetch_object(guildId=id, key='prefix')
     return prefix['item'][0] if prefix and len(prefix['item']) > 0 else DEFAULT_PREFIX
 
 
-
-
 async def custom_prefix(bot, msg):
-
     if msg.guild:
-
-        prefixes = await db_fetch_object(guildId = msg.guild.id, key='prefix')
-
-        if prefixes and len(prefixes['item']) > 0:
+        prefixes = await db_fetch_object(guildId=msg.guild.id, key='prefix')
+        if prefixes and prefixes['item']:
             return commands.when_mentioned_or(prefixes['item'][0])(bot, msg)
-
-        return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
-
+        else:
+            return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
     else:
         return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
-

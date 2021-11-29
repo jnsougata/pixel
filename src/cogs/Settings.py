@@ -6,6 +6,7 @@ from src.views.subYouTube import sub_view_youtube
 from src.views.subReceiver import sub_view_receiver
 from src.views.subReception import sub_view_reception
 from src.views.subWelcomecard import sub_view_welcomecard
+from src.views.subMsg import sub_view_alert_msg
 
 
 class BaseView(discord.ui.View):
@@ -78,6 +79,12 @@ class BaseMenu(discord.ui.Select):
                 )
             elif int(self.values[0]) == 4:
                 await sub_view_welcomecard(
+                    ctx=self.ctx,
+                    interaction=interaction,
+                    bot=self.bot
+                )
+            elif int(self.values[0]) == 6:
+                await sub_view_alert_msg(
                     ctx=self.ctx,
                     interaction=interaction,
                     bot=self.bot
