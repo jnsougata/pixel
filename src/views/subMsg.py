@@ -55,7 +55,7 @@ async def sub_view_alert_msg(
     )
     emd = discord.Embed(
         description=f'**{ctx.guild.me.display_name}\'s** current custom alert message:'
-                    f'\n\n**` None `**'
+                    f'\n\n**` {data["item"] if data else None} `**'
                     f'\n\nTo set new alert message tap **` Edit `**'
     )
     if ctx.guild.icon:
@@ -92,7 +92,7 @@ async def sub_view_alert_msg(
                 data = {"ytmsg": response.content}
             await db_push_object(
                 guildId=ctx.guild.id,
-                item=data,
+                item=data['item'],
                 key='msg'
             )
             await new.delete()

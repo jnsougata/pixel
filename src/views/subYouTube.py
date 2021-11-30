@@ -67,37 +67,35 @@ class ChannelMenu(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         if interaction.user == self.ctx.author:
             if self.values[0] != '0':
-                try:
-                    raw = Channel(self.values[0])
-                    data = raw.info
-                    emd = discord.Embed(
-                        title=f'{Emo.DEL} {data["name"]}',
-                        description=f'**` Subs `  {data["subscribers"]}**'
-                                    f'\n\n**` Views `  {data["views"]}**'
-                                    f'\n\n**` Id `  {data["id"]}**',
-                        url=data["url"]
-                    )
+                ch = Channel(self.values[0])
+                data = ch.info
+                emd = discord.Embed(
+                    title=f'{Emo.DEL} {data["name"]}',
+                    description=f'**` Subs `  {data["subscribers"]}**'
+                                f'\n\n**` Views `  {data["views"]}**'
+                                f'\n\n**` Id `  {data["id"]}**',
+                    url=data["url"]
+                )
+                if data["avatar_url"] and data["banner_url"]:
                     emd.set_thumbnail(url=data["avatar_url"])
                     emd.set_image(url=data["banner_url"])
-                    emd.set_footer(text='❌ This channel has been removed.')
-                    await interaction.message.edit(
-                        embed=emd,
-                        view=None
-                    )
-                    db_raw = await db_fetch_object(
-                        guildId=self.ctx.guild.id,
-                        key='youtube'
-                    )
-                    new_data = db_raw['item']
-                    new_data.pop(self.values[0])
+                emd.set_footer(text='❌ This channel has been removed.')
+                await interaction.message.edit(
+                    embed=emd,
+                    view=None
+                )
+                db_raw = await db_fetch_object(
+                    guildId=self.ctx.guild.id,
+                    key='youtube'
+                )
+                new_data = db_raw['item']
+                new_data.pop(self.values[0])
 
-                    await db_push_object(
-                        guildId=self.ctx.guild.id,
-                        item=new_data,
-                        key='youtube'
-                    )
-                except AttributeError:
-                    return
+                await db_push_object(
+                    guildId=self.ctx.guild.id,
+                    item=new_data,
+                    key='youtube'
+                )
             else:
                 await interaction.message.delete()
 
@@ -165,7 +163,12 @@ async def sub_view_youtube(
         guildId=ctx.guild.id,
         key='alertchannel'
     )
-    if raw:
+
+    def check(json: dict):
+        if raw['item'] and raw['item'][0].isdigit():
+            return ctx.guild.get_channel(int(raw['item'][0]))
+
+    if raw and check(raw):
         emd = discord.Embed(
             description=f'**{ctx.guild.name}\'s** YouTube channel Settings'
                         f'\n\nTo add new channel tap **` Add `**'
