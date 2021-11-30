@@ -21,7 +21,7 @@
  
  #
 
-**Single command to setup everything**
+**Single command to set up everything**
 
    **` .settings `** 
         or
@@ -31,8 +31,8 @@
 
 **About:**
 
-🤖 It uses latest Discord UI and Interaction to provide easy and simple setup. 
+🤖 It uses the latest Discord UI and Interaction to provide easy and simple setup. 
 
-You don't have to remember commands and syntaxes. 
+You don't have to remember commands and syntax. 
 
-Just select and setup your server.
+Just select and set up your server.
