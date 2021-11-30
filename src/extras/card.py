@@ -4,7 +4,6 @@ from typing import Tuple
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
-
 class Io:
 
     def __init__(self):
@@ -12,7 +11,6 @@ class Io:
 
     @staticmethod
     def draw(size: Tuple, color: str = None):
-
         """
         :param size: dimension of the image to be created
         :param color: color of the image (hex string or hex)
@@ -28,7 +26,6 @@ class Io:
 
     @classmethod
     async def fetch(cls, url: str):
-
         """
         :param url: url of the image to be fetched
         :return: image form the url in the form of BytesIO Object
@@ -39,10 +36,8 @@ class Io:
                 resp = await response.read()
                 return io.BytesIO(resp)
 
-
     @classmethod
-    def save(cls, _byte, name:str):
-
+    def save(cls, _byte, name: str):
         """
         :param _byte: image of BytesIO form
         :param str name: name of the image with extension
@@ -73,9 +68,7 @@ class Canvas:
         self.height = size[1]
         self.output = buff
 
-
-
-    def set_background(self, _byte = None, _path: str = None, _blur:bool = False):
+    def set_background(self, _byte=None, _path: str = None, _blur: bool = False):
 
         """
         :param _byte: bytesio form of the image
@@ -111,9 +104,7 @@ class Canvas:
         else:
             raise TypeError("Image can not be NoneType")
 
-
-
-    def add_image(self, _path: str = None, _byte = None, resize: Tuple = None, crop: Tuple = None,
+    def add_image(self, _path: str = None, _byte=None, resize: Tuple = None, crop: Tuple = None,
                   position: Tuple = None):
 
         """
@@ -174,9 +165,7 @@ class Canvas:
         else:
             raise TypeError('Image can not be NoneType')
 
-
-
-    def add_round_image(self, _path: str = None, _byte = None, resize: Tuple = None, crop: Tuple = None,
+    def add_round_image(self, _path: str = None, _byte=None, resize: Tuple = None, crop: Tuple = None,
                         position: Tuple = None):
 
         """
@@ -249,9 +238,7 @@ class Canvas:
         else:
             raise TypeError('Image can not be NoneType')
 
-
-
-    def add_text(self, text: str, auto_align:bool, size: float = None, color: str = None,
+    def add_text(self, text: str, auto_align: bool, size: float = None, color: str = None,
                  position: Tuple = None):
 
         """
@@ -269,11 +256,11 @@ class Canvas:
         size = 20 if size is None else size
         color = 'white' if color is None else color
 
-        font = ImageFont.truetype(font = 'src/sans.ttf', size=size)
+        font = ImageFont.truetype(font='src/sans.ttf', size=size)
 
         text_width, text_height = draw.textsize(text, font=font)
 
-        def align(auto:bool, pos):
+        def align(auto: bool, pos):
             if auto is True and pos is None:
                 return (self.width - text_width) // 2, (self.height - text_height) // 2
 
@@ -304,8 +291,7 @@ class Canvas:
         image.show()
         return None
 
-
-    def save(self, name:str):
+    def save(self, name: str):
 
         """
         :param name: name of the image with extension

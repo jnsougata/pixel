@@ -117,11 +117,14 @@ async def sub_view_receiver(
     )
 
     def check(json: dict):
-        if raw['item'] and raw['item'][0].isdigit():
-            receiver = ctx.guild.get_channel(int(raw['item'][0]))
-            try:
-                return receiver.mention
-            except AttributeError:
+        if raw:
+            if raw['item'] and raw['item'][0].isdigit():
+                receiver = ctx.guild.get_channel(int(raw['item'][0]))
+                try:
+                    return receiver.mention
+                except AttributeError:
+                    return '**`None`**'
+            else:
                 return '**`None`**'
         else:
             return '**`None`**'

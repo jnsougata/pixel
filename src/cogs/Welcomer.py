@@ -17,17 +17,14 @@ class Welcomer(commands.Cog):
             guildId=guildId,
             key='welcome'
         )
-        if raw and len(raw['item']) > 0:
-
+        if raw and raw['item'] > 0:
             if raw['item'][0].isdigit():
-
                 reception = self.bot.get_channel(int(raw['item'][0]))
-
                 urls = await db_fetch_object(
                     guildId=guildId,
                     key='cover'
                 )
-                if urls and len(urls['item']) > 0:
+                if urls and urls['item']:
                     url = urls['item'][0]
                 else:
                     url = 'https://i.imgur.com/CLy9KUO.jpg'
@@ -52,14 +49,14 @@ class Welcomer(commands.Cog):
                         size=30,
                         position=(220, 215)
                     )
-                    file = discord.File(canvas.output, 'author_card.png')
+                    file = discord.File(canvas.output, 'welcome_card.png')
                     emd = discord.Embed(description=f'**Welcome to {member.guild.name}**')
-                    emd.set_image(url="attachment://author_card.png")
+                    emd.set_image(url="attachment://welcome_card.png")
                     await reception.send(embed=emd, file=file)
                 else:
                     print(f'[Event:on_member_join | {member.guild.name} | No Welcome Card]')
         else:
-            print(f'[Event:on_member_join | {member.guild.name} | No Welcome Channel]')
+            pass
 
 
 def setup(bot):

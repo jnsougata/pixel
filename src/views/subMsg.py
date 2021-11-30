@@ -88,11 +88,12 @@ async def sub_view_alert_msg(
             response = await bot.wait_for('message', check=check, timeout=20)
             if data:
                 data["item"]["ytmsg"] = response.content
+                temp = data['item']
             else:
-                data = {"ytmsg": response.content}
+                temp = {"ytmsg": response.content}
             await db_push_object(
                 guildId=ctx.guild.id,
-                item=data['item'],
+                item=temp,
                 key='msg'
             )
             await new.delete()
@@ -110,9 +111,8 @@ async def sub_view_alert_msg(
     elif view.value is False:
         try:
             await interaction.delete_original_message()
-        except Exception as e:
-            print(e)
-            return
+        except discord.NotFound:
+            pass
     else:
         print(data)
         if data and data["item"].get("ytmsg"):
