@@ -17,7 +17,7 @@ class Welcomer(commands.Cog):
             guildId=guildId,
             key='welcome'
         )
-        if raw and raw['item'] > 0:
+        if raw and raw['item']:
             if raw['item'][0].isdigit():
                 reception = self.bot.get_channel(int(raw['item'][0]))
                 urls = await db_fetch_object(
