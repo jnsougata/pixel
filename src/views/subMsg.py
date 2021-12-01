@@ -54,9 +54,9 @@ async def sub_view_alert_msg(
         key='msg'
     )
     emd = discord.Embed(
-        description=f'**{ctx.guild.me.display_name}\'s** current custom alert message:'
-                    f'\n\n**` {data["item"] if data else None} `**'
-                    f'\n\nTo set new alert message tap **` Edit `**'
+        description=f'**{ctx.guild.me.display_name}\'s current notification roles:**'
+                    f'\n\n{data["item"]["ytmsg"] if data and data["item"] else "**None**"}'
+                    f'\n\nTo set new notification roles tap **` Edit `**'
     )
     if ctx.guild.icon:
         emd.set_author(
@@ -76,7 +76,7 @@ async def sub_view_alert_msg(
         new = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
-                description='Please **type** a **custom alert message:**'
+                description='**Please mention target roles:**'
             ),
             view=None
         )
@@ -102,7 +102,7 @@ async def sub_view_alert_msg(
                 embed=discord.Embed(
                     title='Coming Soon!',
                     description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                f'new custom alert message:\n\n` {response.content} `',
+                                f'**new notification roles:**\n\n{response.content}',
                 )
             )
         except asyncio.TimeoutError:
@@ -119,7 +119,7 @@ async def sub_view_alert_msg(
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
-                    description=f'{Emo.DEL} Custom alert message removed'
+                    description=f'{Emo.DEL} **All notification roles removed**'
                 ),
                 view=None
             )
@@ -132,7 +132,7 @@ async def sub_view_alert_msg(
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
-                    description=f'{Emo.WARN} Please add custom alert message'
+                    description=f'{Emo.WARN} **Please add notification roles**'
                 ),
                 view=None
             )
