@@ -114,7 +114,6 @@ async def sub_view_alert_msg(
         except discord.NotFound:
             pass
     else:
-        print(data)
         if data and data["item"].get("ytmsg"):
             data["item"].pop("ytmsg")
             await interaction.message.edit(

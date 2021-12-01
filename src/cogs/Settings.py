@@ -39,8 +39,8 @@ class BaseMenu(discord.ui.Select):
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
             discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
-            discord.SelectOption(label='Welcome Message', value='5', emoji=Emo.EDIT),
-            discord.SelectOption(label='Notification Message', value='6', emoji=Emo.EDIT),
+            discord.SelectOption(label='Feed Dialogue', value='5', emoji=Emo.EDIT),
+            discord.SelectOption(label='Welcome Dialogue', value='6', emoji=Emo.EDIT),
         ]
 
         super().__init__(
@@ -82,6 +82,10 @@ class BaseMenu(discord.ui.Select):
                     interaction=interaction,
                     bot=self.bot
                 )
+            elif int(self.values[0]) == 5:
+                await interaction.response.edit_message(embed=discord.Embed(title='Coming Soon!'), view=None)
+            elif int(self.values[0]) == 6:
+                await interaction.response.edit_message(embed=discord.Embed(title='Coming Soon!'), view=None)
             else:
                 await self.ctx.send(embed=discord.Embed(title='Coming Soon!'))
         else:
