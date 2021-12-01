@@ -102,7 +102,7 @@ async def sub_view_alert_msg(
                 embed=discord.Embed(
                     title='Coming Soon!',
                     description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                f'**new notification roles:**\n\n{response.content}',
+                                f'new notification roles:\n\n{response.content}',
                 )
             )
         except asyncio.TimeoutError:
@@ -132,7 +132,7 @@ async def sub_view_alert_msg(
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
-                    description=f'{Emo.WARN} **Please add notification roles**'
+                    description=f'{Emo.WARN} **Please add notification roles!**'
                 ),
                 view=None
             )
