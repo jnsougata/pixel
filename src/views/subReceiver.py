@@ -162,9 +162,7 @@ async def sub_view_receiver(
             ),
             view=new_view
         )
-    elif view.value is False:
-        await interaction.delete_original_message()
-    else:
+    elif view.value is None:
         await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
@@ -177,3 +175,5 @@ async def sub_view_receiver(
             item=['removed'],
             key='alertchannel'
         )
+    elif view.value is False:
+        await interaction.delete_original_message()

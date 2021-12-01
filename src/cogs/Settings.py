@@ -22,7 +22,7 @@ class BaseView(discord.ui.View):
     async def on_timeout(self) -> None:
         try:
             await self.message.delete()
-        except discord.NotFound:
+        except discord.errors.NotFound:
             pass
 
 
