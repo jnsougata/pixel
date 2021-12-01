@@ -27,7 +27,6 @@ class Option(discord.ui.View):
     def __init__(self, ctx: commands.Context):
         self.ctx = ctx
         self.message = None
-
         super().__init__()
         self.value = None
 
