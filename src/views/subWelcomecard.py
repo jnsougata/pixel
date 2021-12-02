@@ -15,7 +15,7 @@ class BaseView(discord.ui.View):
     ):
         self.message = message
         super().__init__()
-        self.value = None
+        self.value = 1
         self.timeout = 30
 
     async def on_timeout(self) -> None:
@@ -28,28 +28,27 @@ class BaseView(discord.ui.View):
 
 class Option(discord.ui.View):
     def __init__(self, ctx: commands.Context):
-        self.ctx = ctx
-        self.message = None
-
         super().__init__()
+        self.ctx = ctx
         self.value = None
+        self.message = None
 
     @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = True
+            self.value = 1
             self.stop()
 
     @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
     async def remove(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = None
+            self.value = 2
             self.stop()
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = False
+            self.value = 0
             self.stop()
 
 
@@ -89,7 +88,8 @@ async def sub_view_welcomecard(
         view = Option(ctx)
         await interaction.response.edit_message(embed=emd, view=view)
         await view.wait()
-        if view.value is True:
+
+        if view.value == 1:
 
             def check(m):
                 return m.author == ctx.author
@@ -121,7 +121,7 @@ async def sub_view_welcomecard(
             except asyncio.TimeoutError:
                 await ctx.send('**Bye! you took so long!**')
                 return
-        elif view.value is None:
+        elif view.value == 2:
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
@@ -134,7 +134,7 @@ async def sub_view_welcomecard(
                 item=['removed'],
                 key='cover'
             )
-        elif view.value is False:
+        elif view.value == 0:
             await interaction.delete_original_message()
     else:
         p = await prefix_fetcher(ctx.guild.id)
