@@ -62,7 +62,7 @@ async def sub_view_welcomecard(
         guildId=ctx.guild.id,
         key='welcome'
     )
-    if rcp_raw and rcp_raw['item']:
+    if rcp_raw and rcp_raw['item'] and rcp_raw['item'][0].isdigit():
         raw = await db_fetch_object(
             guildId=ctx.guild.id,
             key='cover'
@@ -82,11 +82,9 @@ async def sub_view_welcomecard(
                 name=ctx.guild.me.name
             )
         if raw and raw['item'][0] != 'removed':
-            card = raw['item'][0]
-            emd.set_image(url=card)
+            emd.set_image(url=raw['item'][0])
         else:
-            card = 'https://i.imgur.com/CLy9KUO.jpg'
-            emd.set_image(url=card)
+            emd.set_image(url='https://i.imgur.com/CLy9KUO.jpg')
             emd.set_footer(text='(Default Image)')
         view = Option(ctx)
         await interaction.response.edit_message(embed=emd, view=view)
@@ -102,28 +100,27 @@ async def sub_view_welcomecard(
             )
             try:
                 reply = await bot.wait_for('message', timeout=20, check=check)
+                try:
+                    async with aiohttp.ClientSession() as session:
+                        async with session.get(reply.content) as response:
+                            resp = await response.read()
+                            Image.open(io.BytesIO(resp))
+                            await db_push_object(
+                                guildId=ctx.guild.id,
+                                item=[reply.content],
+                                key='cover'
+                            )
+                            await ctx.send(
+                                embed=discord.Embed(description=f"{Emo.CHECK} **Cover picture accepted**")
+                            )
+                except Exception as e:
+                    print(e.__class__.__name__, '\n', e)
+                    await ctx.send(
+                        embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
+                    )
             except asyncio.TimeoutError:
                 await ctx.send('**Bye! you took so long!**')
                 return
-            try:
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(reply.content) as response:
-                        resp = await response.read()
-                        Image.open(io.BytesIO(resp))
-                        await db_push_object(
-                            guildId=ctx.guild.id,
-                            item=[reply.content],
-                            key='cover'
-                        )
-                        await ctx.send(
-                            embed=discord.Embed(description=f"{Emo.CHECK} **Cover picture accepted**")
-                        )
-            except Exception as e:
-                print(e)
-                await ctx.send(
-                    embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
-                )
-            pass
         elif view.value is None:
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
