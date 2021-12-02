@@ -62,7 +62,7 @@ async def sub_view_welcomecard(
         guildId=ctx.guild.id,
         key='welcome'
     )
-    if rcp_raw and len(rcp_raw['item']) > 0:
+    if rcp_raw and rcp_raw['item']:
         raw = await db_fetch_object(
             guildId=ctx.guild.id,
             key='cover'
@@ -124,9 +124,7 @@ async def sub_view_welcomecard(
                     embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
                 )
             pass
-        elif view.value is False:
-            await interaction.delete_original_message()
-        else:
+        elif view.value is None:
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
@@ -139,6 +137,8 @@ async def sub_view_welcomecard(
                 item=['removed'],
                 key='cover'
             )
+        elif view.value is False:
+            await interaction.delete_original_message()
     else:
         p = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
