@@ -34,19 +34,19 @@ class Option(discord.ui.View):
     @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = True
+            self.value = 1
             self.stop()
 
     @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
     async def remove(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = None
+            self.value = 2
             self.stop()
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = False
+            self.value = 0
             self.stop()
 
 
@@ -149,15 +149,12 @@ async def sub_view_reception(
 
     view = Option(ctx)
     await interaction.response.edit_message(embed=emd, view=view)
-
     await view.wait()
 
-    if view.value is True:
-
+    if view.value == 1:
         view.clear_items()
         new_view = BaseView()
         new_view.add_item(TextMenu(ctx, bot))
-
         new_view.message = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
@@ -165,7 +162,7 @@ async def sub_view_reception(
             ),
             view=new_view
         )
-    elif view.value is None:
+    elif view.value == 2:
         await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
@@ -178,5 +175,8 @@ async def sub_view_reception(
             item=['removed'],
             key='welcome'
         )
-    elif view.value is False:
-        await interaction.delete_original_message()
+    elif view.value == 0:
+        try:
+            await interaction.delete_original_message()
+        except discord.errors.NotFound:
+            pass

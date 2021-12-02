@@ -5,19 +5,6 @@ from discord.ext import commands
 from src.extras.func import db_fetch_object, db_push_object
 
 
-class Exit(discord.ui.View):
-    def __init__(self, ctx: commands.Context):
-        self.ctx = ctx
-        super().__init__()
-        self.value = None
-
-    @discord.ui.button(label='Exit', style=discord.ButtonStyle.red)
-    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = True
-            self.stop()
-
-
 class Option(discord.ui.View):
     def __init__(self, ctx: commands.Context):
         self.ctx = ctx
@@ -28,19 +15,19 @@ class Option(discord.ui.View):
     @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = True
+            self.value = 1
             self.stop()
 
     @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
     async def remove(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = None
+            self.value = 2
             self.stop()
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = False
+            self.value = 0
             self.stop()
 
 
@@ -72,7 +59,7 @@ async def sub_view_alert_msg(
     await interaction.response.edit_message(embed=emd, view=view)
     await view.wait()
 
-    if view.value is True:
+    if view.value == 1:
         new = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
@@ -107,13 +94,7 @@ async def sub_view_alert_msg(
             )
         except asyncio.TimeoutError:
             await ctx.send('**Bye! you took so long**')
-
-    elif view.value is False:
-        try:
-            await interaction.delete_original_message()
-        except discord.NotFound:
-            pass
-    else:
+    elif view.value == 2:
         if data and data["item"].get("ytmsg"):
             data["item"].pop("ytmsg")
             await interaction.message.edit(
@@ -136,3 +117,8 @@ async def sub_view_alert_msg(
                 ),
                 view=None
             )
+    elif view.value == 0:
+        try:
+            await interaction.delete_original_message()
+        except discord.NotFound:
+            pass

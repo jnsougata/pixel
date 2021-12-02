@@ -111,19 +111,19 @@ class Option(discord.ui.View):
     @discord.ui.button(label='Add', style=discord.ButtonStyle.green)
     async def add(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = 'add'
+            self.value = 1
             self.stop()
 
     @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = 'edit'
+            self.value = 2
             self.stop()
 
     @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = '_'
+            self.value = 0
             self.stop()
 
 
@@ -187,10 +187,10 @@ async def sub_view_youtube(
         view = Option(ctx, bot)
         await interaction.response.edit_message(embed=emd, view=view)
         await view.wait()
-        if view.value == 'edit':
+
+        if view.value == 2:
             view = Temp()
             view.add_item(await ChannelMenu.create(ctx, bot))
-
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
@@ -198,7 +198,7 @@ async def sub_view_youtube(
                 ),
                 view=view
             )
-        elif view.value == 'add':
+        elif view.value == 1:
             view.clear_items()
             new = await interaction.message.edit(
                 content=f'{ctx.author.mention}',
@@ -273,12 +273,11 @@ async def sub_view_youtube(
             except asyncio.TimeoutError:
                 await ctx.send('**Bye! you took so long**')
 
-        else:
+        elif view.value == 0:
             try:
                 await interaction.delete_original_message()
-            except Exception as e:
-                print(e)
-                return
+            except discord.errors.NotFound:
+                pass
 
     else:
         p = await prefix_fetcher(ctx.guild.id)
