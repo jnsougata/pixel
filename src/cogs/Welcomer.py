@@ -52,7 +52,10 @@ class Welcomer(commands.Cog):
                 emd = discord.Embed(description=f'**Welcome to {member.guild.name}**')
                 emd.set_image(url="attachment://welcome_card.png")
                 if reception:
-                    await reception.send(embed=emd, file=file)
+                    try:
+                        await reception.send(embed=emd, file=file)
+                    except discord.errors.Forbidden:
+                        print(f'[Event:on_member_join | {member.guild.name} | No Permission]')
                 else:
                     print(f'[Event:on_member_join | {member.guild.name} | No Reception Found]')
             else:
