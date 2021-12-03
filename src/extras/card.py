@@ -71,7 +71,7 @@ class Canvas:
         """
         canvas = Image.open(self.output)
         size = canvas.size
-        bg = Image.open(_byte)
+        bg = Image.open(_byte).convert('RGB')
         _bg = bg.resize(size)
         if _blur:
             buff = io.BytesIO()
@@ -151,7 +151,7 @@ class Canvas:
             main = img.resize(resize)
             mask = Image.new("L", main.size, 0)
             draw = ImageDraw.Draw(mask)
-            draw.pieslice([(0, 0), main.size], 0, 360, fill=255, outline="white")
+            draw.pieslice(((0, 0), main.size), 0, 360, fill=255, outline="white")
             dim = main.size
             auto_align = ((self.width - dim[0]) // 2, (self.height - dim[1]) // 2)
             manual_align = position
@@ -165,7 +165,7 @@ class Canvas:
             main = img.crop(crop)
             mask = Image.new("L", main.size, 0)
             draw = ImageDraw.Draw(mask)
-            draw.pieslice([(0, 0), main.size], 0, 360, fill=255, outline="white")
+            draw.pieslice(((0, 0), main.size), 0, 360, fill=255, outline="white")
             dim = main.size
             auto_align = ((self.width - dim[0]) // 2, (self.height - dim[1]) // 2)
             manual_align = position
@@ -179,7 +179,7 @@ class Canvas:
             main = img
             mask = Image.new("L", main.size, 0)
             draw = ImageDraw.Draw(mask)
-            draw.pieslice([(0, 0), main.size], 0, 360, fill=255, outline="white")
+            draw.pieslice(((0, 0), main.size), 0, 360, fill=255, outline="white")
             dim = main.size
             auto_align = ((self.width - dim[0]) // 2, (self.height - dim[1]) // 2)
             manual_align = position
