@@ -83,7 +83,10 @@ async def sub_view_alert_msg(
                 item=temp,
                 key='msg'
             )
-            await new.delete()
+            try:
+                await new.delete()
+            except discord.errors.NotFound:
+                pass
             await ctx.send(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
@@ -120,5 +123,5 @@ async def sub_view_alert_msg(
     elif view.value == 0:
         try:
             await interaction.delete_original_message()
-        except discord.NotFound:
+        except discord.errors.NotFound:
             pass
