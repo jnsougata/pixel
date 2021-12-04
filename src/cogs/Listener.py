@@ -19,7 +19,7 @@ class Listeners(commands.Cog):
                         f'\n`.settings` | `.setup`'
                         f'\n\n**Important Links**'
                         f'\n[Invite]({invite}) - Add the bot to another server'
-                        f'\n[Support Server]({support}) - Get some bot support for issues!',
+                        f'\n[Support Server]({support}) - Get some bot support here!',
             color=0xf2163b,
         )
         for channel in guild.text_channels:
