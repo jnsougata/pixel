@@ -16,7 +16,7 @@ class Listeners(commands.Cog):
             description=f'{Emo.MIC} Sup geeks. I\'m **PixeL**'
                         f'\n\nTo get started, send `.help` | `@{guild.me.display_name} help` '
                         f'\n\nUse any one commands for everything:'
-                        f'\n`.settings` | `.setup` | `.s` '
+                        f'\n`.settings` | `.setup`'
                         f'\n\n**Important Links**'
                         f'\n[Invite]({invite}) - Add the bot to another server'
                         f'\n[Support Server]({support}) - Get some bot support for issues!',
@@ -24,8 +24,11 @@ class Listeners(commands.Cog):
         )
         for channel in guild.text_channels:
             if channel.permissions_for(guild.me).send_messages:
-                await channel.send(embed=emd)
-                break
+                try:
+                    await channel.send(embed=emd)
+                    break
+                except discord.errors.Forbidden:
+                    continue
 
         registry = self.bot.get_channel(899864601057976330)
         await registry.send(
