@@ -20,7 +20,7 @@ class Handlers(commands.Cog):
             pass
         elif isinstance(error, commands.MissingPermissions):
             await ctx.reply(
-                content=f"You are not an **administrator**",
+                content=f"You are not an **`ADMIN`**",
                 delete_after=10
             )
         elif isinstance(error, commands.CommandOnCooldown):
