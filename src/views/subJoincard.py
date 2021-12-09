@@ -1,11 +1,17 @@
 import io
+import sys
 import discord
 import asyncio
 import aiohttp
+import traceback
 from PIL import Image
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
+from src.extras.func import (
+    db_push_object,
+    db_fetch_object,
+    prefix_fetcher
+)
 
 
 class BaseView(discord.ui.View):
@@ -113,11 +119,11 @@ async def sub_view_welcomecard(
                             await ctx.send(
                                 embed=discord.Embed(description=f"{Emo.CHECK} **Cover picture accepted**")
                             )
-                except Exception as e:
-                    print(e.__class__.__name__, '\n', e)
+                except Exception:
                     await ctx.send(
                         embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
                     )
+                    traceback.print_exception(*sys.exc_info())
             except asyncio.TimeoutError:
                 await ctx.send('**Bye! you took so long!**')
                 return

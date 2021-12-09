@@ -10,7 +10,6 @@ class Handlers(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error):
-        p = await prefix_fetcher(ctx.guild.id)
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply(
                 f'Please try again with required **argument(s)**',
