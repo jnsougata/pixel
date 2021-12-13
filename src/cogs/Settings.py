@@ -35,8 +35,9 @@ class BaseMenu(discord.ui.Select):
 
         options = [
             discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
-            discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
+            discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
+            discord.SelectOption(label='Alert Role', value='5', emoji=Emo.BELL),
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
             discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
         ]
@@ -80,6 +81,8 @@ class BaseMenu(discord.ui.Select):
                     interaction=interaction,
                     bot=self.bot
                 )
+            elif int(self.values[0]) == 5:
+                await self.ctx.send('Not implemented yet')
             else:
                 pass
         else:
