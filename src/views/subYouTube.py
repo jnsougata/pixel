@@ -261,14 +261,16 @@ async def sub_view_youtube(
                         )
                     else:
                         await nxt.delete()
-                except Exception as e:
-                    await interaction.delete_original_message()
+                except Exception:
                     await ctx.send(
                         embed=discord.Embed(
                             description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'
                         )
                     )
-                    print(e)
+                    try:
+                        await interaction.delete_original_message()
+                    except discord.errors.NotFound:
+                        pass
 
             except asyncio.TimeoutError:
                 await ctx.send('**Bye! you took so long**')
