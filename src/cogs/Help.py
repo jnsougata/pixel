@@ -77,9 +77,6 @@ class Help(commands.Cog):
                             f'\n\n{Emo.TAG}**Prefix**'
                             f'\nUsed to add or remove custom prefix '
                             f'\nto your server. you can change it anytime'
-                            f'\n\n{Emo.BELL} **Alert Role**'
-                            f'\nUsed to add or remove a custom role'
-                            f'\nto be mentioned in the YT Notifications'
                             f'\n\n{Emo.PING} **Receiver**'
                             f'\nUsed to add or remove a text channel'
                             f'\nto receive youtube alerts for your server'
@@ -91,7 +88,10 @@ class Help(commands.Cog):
                             f'\nchannel for receiving welcome cards'
                             f'\n\n{Emo.IMG} **Welcome Card**'
                             f'\nUsed to add or remove a welcome card'
-                            f'\nfor your server to welcome new members',
+                            f'\nfor your server to welcome new members'
+                            f'\n\n{Emo.BELL} **Alert Role (BETA)**'
+                            f'\nUsed to add or remove a custom role'
+                            f'\nto be mentioned in the YT Notifications',
                 color=0x005aef,
             )
             emd.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)

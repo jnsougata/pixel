@@ -1,10 +1,10 @@
 import discord
 from src.extras.emojis import *
 from discord.ext import commands
+from src.views.subARole import sub_view_arole
 from src.views.subPrefix import sub_view_prefix
 from src.views.subYouTube import sub_view_youtube
 from src.views.subReceiver import sub_view_receiver
-from src.views.subMentions import sub_view_alert_msg
 from src.views.subReception import sub_view_reception
 from src.views.subJoincard import sub_view_welcomecard
 
@@ -37,9 +37,9 @@ class BaseMenu(discord.ui.Select):
             discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
-            discord.SelectOption(label='Alert Role', value='5', emoji=Emo.BELL),
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
             discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
+            discord.SelectOption(label='Alert Role (BETA)', value='5', emoji=Emo.BELL),
         ]
 
         super().__init__(
@@ -82,7 +82,11 @@ class BaseMenu(discord.ui.Select):
                     bot=self.bot
                 )
             elif int(self.values[0]) == 5:
-                await self.ctx.send('Not implemented yet')
+                await sub_view_arole(
+                    ctx=self.ctx,
+                    interaction=interaction,
+                    bot=self.bot
+                )
             else:
                 pass
         else:

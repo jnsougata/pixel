@@ -31,19 +31,25 @@ class Option(discord.ui.View):
             self.stop()
 
 
-async def sub_view_alert_msg(
+async def sub_view_arole(
         ctx: commands.Context,
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-    data: dict = await db_fetch_object(
+    data = await db_fetch_object(
         guildId=ctx.guild.id,
-        key='msg'
+        key='arole'
     )
+    if data and data['item'][0].isdigit():
+        role = ctx.guild.get_role(int(data['item'][0]))
+    else:
+        role = None
+
+    string = role.mention if role else '**None**'
+
     emd = discord.Embed(
-        description=f'**{ctx.guild.me.display_name}\'s current notification roles:**'
-                    f'\n\n{data["item"]["ytmsg"] if data and data["item"] else "**None**"}'
-                    f'\n\nTo set new notification roles tap **` Edit `**'
+        description=f'**{ctx.guild.me.display_name}\'s** current **alert role** is {string}'
+                    f'\n\nTo set new **Alert Role** tap **` Edit `**'
     )
     if ctx.guild.icon:
         emd.set_author(
@@ -55,6 +61,7 @@ async def sub_view_alert_msg(
             icon_url=ctx.guild.me.avatar.url,
             name=ctx.guild.me.name
         )
+
     view = Option(ctx)
     await interaction.response.edit_message(embed=emd, view=view)
     await view.wait()
@@ -63,7 +70,8 @@ async def sub_view_alert_msg(
         new = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
-                description='**Please mention target roles:**'
+                description='Please mention a **Role** to set as **Alert Role:**'
+                            '\n **Note:** `@everyone` isn\'t even a proper role'
             ),
             view=None
         )
@@ -73,53 +81,46 @@ async def sub_view_alert_msg(
 
         try:
             response = await bot.wait_for('message', check=check, timeout=20)
-            if data:
-                data["item"]["ytmsg"] = response.content
-                temp = data['item']
-            else:
-                temp = {"ytmsg": response.content}
-            await db_push_object(
-                guildId=ctx.guild.id,
-                item=temp,
-                key='msg'
-            )
-            try:
-                await new.delete()
-            except discord.errors.NotFound:
-                pass
-            await ctx.send(
-                content=f'{ctx.author.mention}',
-                embed=discord.Embed(
-                    title='Coming Soon!',
-                    description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                f'new notification roles:\n\n{response.content}',
+            mentions = response.role_mentions
+            role = mentions[0] if mentions else None
+            await new.delete()
+            if role:
+                await ctx.send(
+                    content=f'{ctx.author.mention}',
+                    embed=discord.Embed(
+                        description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
+                                    f'new alert role is {role.mention}',
+                    )
                 )
-            )
+                await db_push_object(
+                    guildId=ctx.guild.id,
+                    key='arole',
+                    item=[str(role.id)]
+                )
+            else:
+                await ctx.send(
+                    content=f'{ctx.author.mention}',
+                    embed=discord.Embed(
+                        description=f'{Emo.WARN}'
+                                    f' you did not mention a role',
+                    )
+                )
         except asyncio.TimeoutError:
             await ctx.send('**Bye! you took so long**')
     elif view.value == 2:
-        if data and data["item"].get("ytmsg"):
-            data["item"].pop("ytmsg")
-            await interaction.message.edit(
-                content=f'{ctx.author.mention}',
-                embed=discord.Embed(
-                    description=f'{Emo.DEL} **All notification roles removed**'
-                ),
-                view=None
+        await interaction.delete_original_message()
+        await ctx.send(
+            content=f'{ctx.author.mention}',
+            embed=discord.Embed(
+                description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
+                            f'alert role has been removed',
             )
-            await db_push_object(
-                guildId=ctx.guild.id,
-                item=data["item"],
-                key='msg'
-            )
-        else:
-            await interaction.message.edit(
-                content=f'{ctx.author.mention}',
-                embed=discord.Embed(
-                    description=f'{Emo.WARN} **Please add notification roles!**'
-                ),
-                view=None
-            )
+        )
+        await db_push_object(
+            guildId=ctx.guild.id,
+            key='arole',
+            item=['REMOVED']
+        )
     elif view.value == 0:
         try:
             await interaction.delete_original_message()
