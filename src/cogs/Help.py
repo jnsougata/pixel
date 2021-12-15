@@ -91,7 +91,11 @@ class Help(commands.Cog):
                             f'\nfor your server to welcome new members'
                             f'\n\n{Emo.BELL} **Alert Role (BETA)**'
                             f'\nUsed to add or remove a custom role'
-                            f'\nto be mentioned in the YT Notifications',
+                            f'\nto be mentioned in the YT Notifications'
+                            f'\n\n{Emo.STREAMER} **Add Streamer (BETA)**'
+                            f'\nUsed to add or remove a Streamer'
+                            f'\nto be shown during YT Livestreams',
+
                 color=0x005aef,
             )
             emd.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
