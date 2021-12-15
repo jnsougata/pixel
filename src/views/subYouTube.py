@@ -203,7 +203,7 @@ async def sub_view_youtube(
             new = await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
-                    description='Please **type** a youtube channel ** Id or url:**'
+                    description='Please **type** a youtube channel **ID** or **URL:**'
                 ),
                 view=view
             )

@@ -38,10 +38,11 @@ class StreamerList(discord.ui.Select):
             bot: discord.Client,
             raw: dict,
     ):
+        self.raw = raw
         self.ctx = context
         self.bot = bot
 
-        if raw:
+        if raw and raw['item']['channels']:
             ids = list(raw['item']['channels'])
             members = [context.guild.get_member(int(raw['item']['channels'][i])) for i in ids]
             options = [
@@ -88,6 +89,13 @@ class StreamerList(discord.ui.Select):
                     emd.set_thumbnail(url=data["avatar_url"])
                     emd.set_image(url=data["banner_url"])
                 emd.set_footer(text='❌ This channel has been removed.')
+                raw = self.raw
+                raw['item']['channels'].pop(self.values[0])
+                await db_push_object(
+                    guildId=self.ctx.guild.id,
+                    key='streamer',
+                    item=raw['item']
+                )
                 await interaction.message.edit(
                     embed=emd,
                     view=None
