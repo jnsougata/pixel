@@ -111,7 +111,7 @@ async def sub_view_arole(
         except asyncio.TimeoutError:
             await ctx.send('**Bye! you took so long**')
     elif view.value == 2:
-        await interaction.delete_original_message()
+        await interaction.message.delete()
         await ctx.send(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
@@ -126,6 +126,6 @@ async def sub_view_arole(
         )
     elif view.value == 0:
         try:
-            await interaction.delete_original_message()
+            await interaction.message.delete()
         except discord.errors.NotFound:
             pass

@@ -92,7 +92,7 @@ class Help(commands.Cog):
                             f'\n\n{Emo.BELL} **Alert Role (BETA)**'
                             f'\nUsed to add or remove a custom role'
                             f'\nto be mentioned in the YT Notifications'
-                            f'\n\n{Emo.STREAMER} **Add Streamer (BETA)**'
+                            f'\n\n{Emo.STREAMER} **Manage Streamer (BETA)**'
                             f'\nUsed to add or remove a Streamer'
                             f'\nto be shown during YT Livestreams',
 

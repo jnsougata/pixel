@@ -4,6 +4,7 @@ from discord.ext import commands
 from src.views.subARole import sub_view_arole
 from src.views.subPrefix import sub_view_prefix
 from src.views.subYouTube import sub_view_youtube
+from src.views.subStreamer import sub_view_streamer
 from src.views.subReceiver import sub_view_receiver
 from src.views.subReception import sub_view_reception
 from src.views.subJoincard import sub_view_welcomecard
@@ -40,7 +41,7 @@ class BaseMenu(discord.ui.Select):
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
             discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
             discord.SelectOption(label='Alert Role (BETA)', value='5', emoji=Emo.BELL),
-            discord.SelectOption(label='Add Streamer (BETA)', value='6', emoji=Emo.STREAMER)
+            discord.SelectOption(label='Manage Streamer (BETA)', value='6', emoji=Emo.STREAMER)
         ]
 
         super().__init__(
@@ -84,6 +85,12 @@ class BaseMenu(discord.ui.Select):
                 )
             elif int(self.values[0]) == 5:
                 await sub_view_arole(
+                    ctx=self.ctx,
+                    interaction=interaction,
+                    bot=self.bot
+                )
+            elif int(self.values[0]) == 6:
+                await sub_view_streamer(
                     ctx=self.ctx,
                     interaction=interaction,
                     bot=self.bot
