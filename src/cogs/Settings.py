@@ -40,6 +40,7 @@ class BaseMenu(discord.ui.Select):
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
             discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
             discord.SelectOption(label='Alert Role (BETA)', value='5', emoji=Emo.BELL),
+            discord.SelectOption(label='Add Streamer (BETA)', value='6', emoji=Emo.STREAMER)
         ]
 
         super().__init__(

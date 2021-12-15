@@ -29,3 +29,4 @@ class Emo:
     CUSTOM = '<:custom:914457392773734450>'
     EDIT = '<:edit:914467921667981372>'
     BELL = '<:bell_alert:920012852448862258>'
+    STREAMER = '<:streamer:920699855607840808>'
