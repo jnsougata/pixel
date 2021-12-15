@@ -83,7 +83,10 @@ async def sub_view_arole(
             response = await bot.wait_for('message', check=check, timeout=20)
             mentions = response.role_mentions
             role = mentions[0] if mentions else None
-            await new.delete()
+            try:
+                await new.delete()
+            except discord.errors.NotFound:
+                pass
             if role:
                 await ctx.send(
                     content=f'{ctx.author.mention}',
