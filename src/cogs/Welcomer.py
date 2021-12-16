@@ -29,39 +29,38 @@ class Welcomer(commands.Cog):
                 url = 'https://i.imgur.com/CLy9KUO.jpg'
             if url != 'removed':
                 bg_bytes = await Io.fetch(url)
-                avatar = member.display_avatar.with_format('png')
-                bytes_ = await avatar.read()
-                round_bg = Io.draw(size=(1500, 1500), color='#FFFFFF')
-                canvas = Canvas(size=(1860, 846), color='black')
-                canvas.set_background(_byte=bg_bytes, _blur=True)
-                canvas.add_round_image(_byte=round_bg, resize=(420, 420), position=(720, 105))
-                canvas.add_round_image(_byte=io.BytesIO(bytes_), resize=(390, 390), position=(735, 120))
-                canvas.add_text(
-                    text=f'{member}',
-                    auto_align=True,
-                    size=90,
-                    position=(660, 540)
-                )
-                canvas.add_text(
-                    text=f'You are {len(member.guild.members)}th Member',
-                    auto_align=True,
-                    size=90,
-                    position=(660, 645)
-                )
-                file = discord.File(canvas.output, 'welcome_card.png')
-                emd = discord.Embed(description=f'**Welcome to {member.guild.name}**')
-                emd.set_image(url="attachment://welcome_card.png")
-                if reception:
-                    try:
-                        await reception.send(embed=emd, file=file)
-                    except discord.errors.Forbidden:
-                        print(f'[Event:on_member_join | {member.guild.name} | No Permission]')
-                else:
-                    print(f'[Event:on_member_join | {member.guild.name} | No Reception Found]')
+                if bg_bytes:
+                    avatar = member.display_avatar.with_format('png')
+                    bytes_ = await avatar.read()
+                    round_bg = Io.draw(size=(1500, 1500), color='#FFFFFF')
+                    canvas = Canvas(size=(1860, 846), color='black')
+                    canvas.set_background(_byte=bg_bytes, _blur=True)
+                    canvas.add_round_image(_byte=round_bg, resize=(420, 420), position=(720, 105))
+                    canvas.add_round_image(_byte=io.BytesIO(bytes_), resize=(390, 390), position=(735, 120))
+                    canvas.add_text(
+                        text=f'{member}',
+                        auto_align=True,
+                        size=90,
+                        position=(660, 540)
+                    )
+                    canvas.add_text(
+                        text=f'You are {len(member.guild.members)}th Member',
+                        auto_align=True,
+                        size=90,
+                        position=(660, 645)
+                    )
+                    file = discord.File(canvas.output, 'welcome_card.png')
+                    emd = discord.Embed(description=f'**Welcome to {member.guild.name}**')
+                    emd.set_image(url="attachment://welcome_card.png")
+                    if reception:
+                        try:
+                            await reception.send(embed=emd, file=file)
+                        except discord.errors.Forbidden:
+                            print(f'[Event:on_member_join | {member.guild.name} | No Permission]')
+                    else:
+                        print(f'[Event:on_member_join | {member.guild.name} | No Reception Found]')
             else:
                 print(f'[Event:on_member_join | {member.guild.name} | No Welcome Card]')
-        else:
-            pass
 
 
 def setup(bot):

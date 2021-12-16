@@ -1,5 +1,9 @@
 import io
+import sys
+import PIL
+import asyncio
 import aiohttp
+import traceback
 from typing import Tuple
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
@@ -32,18 +36,13 @@ class Io:
         async with aiohttp.ClientSession() as session:
             async with session.get(url) as response:
                 resp = await response.read()
-                return io.BytesIO(resp)
-
-    @classmethod
-    def save(cls, _byte, name: str):
-        """
-        :param _byte: image of BytesIO form
-        :param str name: name of the image with extension
-        :return: None
-        """
-        img = Image.open(_byte)
-        img.save(name)
-        return None
+                await session.close()
+                try:
+                    Image.open(io.BytesIO(resp))
+                except PIL.UnidentifiedImageError:
+                    return None
+                else:
+                    return io.BytesIO(resp)
 
 
 class Canvas:
@@ -54,7 +53,7 @@ class Canvas:
         :param color: Hex or String of the desired color-code
         """
         color = 0x36393f if color is None else color
-        size = size if size is not None and len(size) == 2 else None
+        size = size if len(size) >= 2 else None
         card = Image.new("RGB", size, color=color)
         buff = io.BytesIO()
         card.save(buff, 'png')
@@ -190,7 +189,7 @@ class Canvas:
             buff.seek(0)
             self.output = buff
         else:
-            raise Exception('Use either Resize or Crop')
+            raise RuntimeError('Use either Resize or Crop')
 
     def add_text(self, text: str, auto_align: bool, size: float = None, color: str = None,
                  position: Tuple = None):
@@ -227,21 +226,3 @@ class Canvas:
         canvas.save(buff, 'png')
         buff.seek(0)
         self.output = buff
-
-    @property
-    def show(self):
-        """
-        Shows the Canvas object. Use to preview the canvas or image
-        :return: None
-        """
-        image = Image.open(self.output)
-        image.show()
-        return None
-
-    def save(self, name: str):
-        """
-        :param name: name of the image with extension
-        :return: None
-        """
-        img = Image.open(self.output)
-        img.save(name)
