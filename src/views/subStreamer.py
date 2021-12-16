@@ -1,5 +1,7 @@
+import sys
 import asyncio
 import discord
+import traceback
 from aiotube import Channel
 from src.extras.emojis import *
 from discord.ext import commands
@@ -58,8 +60,9 @@ class StreamerList(discord.ui.Select):
         else:
             options = [
                 discord.SelectOption(
-                    label='Please add a streamer',
-                    emoji=Emo.WARN
+                    label='Please add a streamer first',
+                    emoji=Emo.WARN,
+                    value='0'
                 )
             ]
             options.insert(
@@ -100,7 +103,7 @@ class StreamerList(discord.ui.Select):
                     embed=emd,
                     view=None
                 )
-            else:
+            elif self.values[0] == '0':
                 try:
                     await interaction.message.delete()
                 except discord.errors.NotFound:
@@ -272,12 +275,12 @@ async def sub_view_streamer(
                                 item=empty,
                                 key='youtube'
                             )
-                    except Exception as e:
-                        print(e.__class__.__name__)
+                    except Exception:
+                        traceback.print_exception(*sys.exc_info())
                         await prompt.edit(
                             embed=discord.Embed(
-                                description=f'{Emo.WARN} **[{resp.content}]** '
-                                            f'\nThis given input is not a valid YouTube Channel ID or URL.'
+                                description=f'{Emo.WARN} Something went wrong, please try again.'
+                                            f'\nProbably the given YouTube Channel ID or URL is invalid.'
                             )
                         )
                         return
