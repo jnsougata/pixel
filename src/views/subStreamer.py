@@ -284,45 +284,6 @@ async def sub_view_streamer(
             view=view
         )
 
-        '''try:
-            channel = Channel(resp.content)
-            member = data['item']['channels'].get(channel.id)
-            if member:
-                streamer = bot.get_user(int(member))
-                info = channel.info
-                emd = discord.Embed(
-                    title=f'{Emo.YT} {info["name"]}',
-                    description=f'**` Subs `  {info["subscribers"]}**'
-                                f'\n\n**` Views `  {info["views"]}**'
-                                f'\n\n**` Id `  {info["id"]}**',
-                    url=info["url"]
-                )
-                if info["avatar_url"] and info["banner_url"]:
-                    emd.set_thumbnail(url=info["avatar_url"])
-                    emd.set_image(url=info["banner_url"])
-                emd.set_footer(text='Streamer has been removed successfully.')
-                await interaction.message.edit(
-                    content=f'{Emo.WARN} **{ctx.author}** has been removed from the streamers list.',
-                    embed=emd,
-                    view=None
-                )
-                data['item']['channels'].pop(channel.id)
-                await db_push_object(
-                    guildId=ctx.guild.id,
-                    key='streamer',
-                    item=data['item']
-                )
-            else:
-                await interaction.message.edit(
-                    embed=discord.Embed(
-                        description=f'{Emo.WARN} **{resp.content}** '
-                                    f'\n\nCan\'t find a streamer with this YouTube Channel.'
-                    )
-                )
-                return
-        except asyncio.TimeoutError:
-            await ctx.send('**Bye! you took so long**')'''
-
     elif view.value == 0:
         try:
             await interaction.delete_original_message()
