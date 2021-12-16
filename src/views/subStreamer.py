@@ -138,7 +138,7 @@ async def sub_view_streamer(
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-    await ctx.send("` NOT FULLY IMPLEMENTED YET `")
+    await ctx.send(f"{Emo.WARN} **`NOT FULLY IMPLEMENTED YET`** {Emo.WARN}")
     data = await db_fetch_object(
         guildId=ctx.guild.id,
         key='streamer'
