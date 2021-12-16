@@ -253,6 +253,26 @@ async def sub_view_streamer(
                             key='streamer',
                             item=data['item']
                         )
+                        old_data = await db_fetch_object(
+                            guildId=ctx.guild.id,
+                            key='youtube'
+                        )
+                        if old_data:
+                            raw = old_data['item']
+                            raw[channel.id] = {'live': 'empty', 'upload': channel.latest.id}
+                            await db_push_object(
+                                guildId=ctx.guild.id,
+                                item=raw,
+                                key='youtube'
+                            )
+                        else:
+                            init_dict = dict()
+                            init_dict[channel.id] = {'live': 'empty', 'upload': channel.latest.id}
+                            await db_push_object(
+                                guildId=ctx.guild.id,
+                                item=empty,
+                                key='youtube'
+                            )
                     except Exception as e:
                         print(e.__class__.__name__)
                         await prompt.edit(
