@@ -138,6 +138,7 @@ async def sub_view_streamer(
         interaction: discord.Interaction,
         bot: discord.Client
 ):
+    await ctx.send("` NOT FULLY IMPLEMENTED YET `")
     data = await db_fetch_object(
         guildId=ctx.guild.id,
         key='streamer'
@@ -152,7 +153,7 @@ async def sub_view_streamer(
     else:
         try:
             role = await ctx.guild.create_role(
-                name='Streamer',
+                name='STREAMING NOW',
                 mentionable=False,
                 hoist=True,
             )
