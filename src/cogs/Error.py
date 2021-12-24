@@ -1,9 +1,8 @@
 import discord.errors
 from discord.ext import commands
-from src.extras.func import prefix_fetcher
 
 
-class Handlers(commands.Cog):
+class EH(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
@@ -50,4 +49,4 @@ class Handlers(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Handlers(bot))
+    bot.add_cog(EH(bot))

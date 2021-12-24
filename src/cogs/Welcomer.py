@@ -12,15 +12,15 @@ class Welcomer(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
-        guildId = member.guild.id
+        guild_id = member.guild.id
         raw = await db_fetch_object(
-            guildId=guildId,
+            guildId=guild_id,
             key='welcome'
         )
         if raw and raw['item'] and raw['item'][0].isdigit():
             reception = self.bot.get_channel(int(raw['item'][0]))
             urls = await db_fetch_object(
-                guildId=guildId,
+                guildId=guild_id,
                 key='cover'
             )
             if urls and urls['item']:
