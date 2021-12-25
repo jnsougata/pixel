@@ -35,6 +35,7 @@ class BaseMenu(discord.ui.Select):
         self.bot = bot
 
         options = [
+            discord.SelectOption(label='​', value='100', emoji=Emo.CROSS),
             discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
@@ -53,6 +54,11 @@ class BaseMenu(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user == self.ctx.author:
+            if int(self.values[0]) == 100:
+                try:
+                    await interaction.message.delete()
+                except discord.errors.NotFound:
+                    pass
             if int(self.values[0]) == 0:
                 await sub_view_prefix(
                     ctx=self.ctx,

@@ -55,7 +55,7 @@ class StreamerList(discord.ui.Select):
                 ) for i in range(len(ids))
             ]
             options.insert(
-                0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
+                0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS)
             )
         else:
             options = [
@@ -66,7 +66,7 @@ class StreamerList(discord.ui.Select):
                 )
             ]
             options.insert(
-                0, discord.SelectOption(label='Cancel', value='0', emoji=Emo.WARN)
+                0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS)
             )
 
         super().__init__(
