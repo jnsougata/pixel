@@ -31,8 +31,8 @@ class BaseMenu(discord.ui.Select):
 
     def __init__(self, context: commands.Context, bot: discord.Client):
 
-        self.ctx = context
         self.bot = bot
+        self.ctx = context
 
         options = [
             discord.SelectOption(label='​', value='100', emoji=Emo.CROSS),

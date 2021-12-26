@@ -16,8 +16,8 @@ class Io:
     @staticmethod
     def draw(size: Tuple, color: str = None):
         """
-        :param size: dimension of the image to be created
-        :param color: color of the image (hex string or hex)
+        :param: dimension of the image to be created
+        :param: color of the image (hex string or hex)
         :return: image in form BytesIO object
         """
         color = 0x36393f if color is None else color
@@ -30,27 +30,30 @@ class Io:
     @classmethod
     async def fetch(cls, url: str):
         """
-        :param url: url of the image to be fetched
+        :param: url of the image to be fetched
         :return: image form the url in the form of BytesIO Object
         """
         async with aiohttp.ClientSession() as session:
-            async with session.get(url) as response:
-                resp = await response.read()
-                await session.close()
+            try:
+                resp = await session.get(url)
+                file = io.BytesIO(await resp.read())
                 try:
-                    Image.open(io.BytesIO(resp))
+                    Image.open(file)
+                    return file
                 except PIL.UnidentifiedImageError:
                     return None
-                else:
-                    return io.BytesIO(resp)
+            except Exception:
+                return None
+            finally:
+                await session.close()
 
 
 class Canvas:
 
     def __init__(self, size: Tuple, color: str = None):
         """
-        :param size: Tuple of width and height of Canvas
-        :param color: Hex or String of the desired color-code
+        :param: tuple of width and height of Canvas
+        :param: Hex or String of the desired color-code
         """
         color = 0x36393f if color is None else color
         size = size if len(size) >= 2 else None
@@ -64,8 +67,8 @@ class Canvas:
 
     def set_background(self, _byte, _blur: bool = False):
         """
-        :param _byte: bytesio form of the image
-        :param _blur: to make the background blurry
+        :param:  bytesio form of the image
+        :param: to make the background blurry
         :return: None
         """
         canvas = Image.open(self.output)
@@ -87,13 +90,13 @@ class Canvas:
     def add_image(self, _byte, resize: Tuple = None, crop: Tuple = None,
                   position: Tuple = None):
         """
-        :param _byte: bytesio form of the image
-        :param Tuple resize: tuple of length 2 (width, height) to resize the image
-        :param Tuple crop: tuple of length 4 (left, top, right, bottom) to crop the image
-        :param Tuple position: tuple of coordinate (x,y) to where the image will be added into canvas
-        :raises Exception: if _path and _byte both are available
-        :raises TypeError: if NoneType is passed as image
-        :raises Exception: if crop and resize both are available
+        :param: _byte: bytesio form of the image
+        :param: tuple of length 2 (width, height) to resize the image
+        :param: tuple of length 4 (left, top, right, bottom) to crop the image
+        :param: tuple of coordinate (x,y) to where the image will be added into canvas
+        :raises: if _path and _byte both are available
+        :raises: if NoneType is passed as image
+        :raises: if crop and resize both are available
         :return: None
         """
         img = Image.open(_byte)
@@ -135,13 +138,13 @@ class Canvas:
     def add_round_image(self, _byte, resize: Tuple = None, crop: Tuple = None,
                         position: Tuple = None):
         """
-        :param  _byte: bytesio form of the image
-        :param Tuple resize: tuple of length 2 (width, height) to resize the image
-        :param Tuple crop: tuple of length 4 (left, top, right, bottom) to crop the image
-        :param Tuple position: tuple of coordinate (x,y) to where the image will be added into canvas
-        :raises Exception: if _path and _byte both are available
-        :raises TypeError: if NoneType is passed as image
-        :raises Exception: if crop and resize both are available
+        :param: bytesio form of the image
+        :param: tuple of length 2 (width, height) to resize the image
+        :param: tuple of length 4 (left, top, right, bottom) to crop the image
+        :param: tuple of coordinate (x,y) to where the image will be added into canvas
+        :raises: if _path and _byte both are available
+        :raises: if NoneType is passed as image
+        :raises: if crop and resize both are available
         :return: None
         """
         canvas = Image.open(self.output)

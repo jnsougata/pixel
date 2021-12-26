@@ -7,11 +7,7 @@ import traceback
 from PIL import Image
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import (
-    db_push_object,
-    db_fetch_object,
-    prefix_fetcher
-)
+from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
 
 
 class BaseView(discord.ui.View):
@@ -73,8 +69,8 @@ async def sub_view_welcomecard(
             key='cover'
         )
         emd = discord.Embed(
-            description=f'To set new welcome card tap **` Edit `**'
-                        f'\n\n**Current Welcome card:**'
+            description=f'Tap **`Edit`** to set new.'
+                        f'\n\nCurrent Image:'
         )
         if ctx.guild.icon:
             emd.set_author(
@@ -90,7 +86,7 @@ async def sub_view_welcomecard(
             emd.set_image(url=raw['item'][0])
         else:
             emd.set_image(url='https://i.imgur.com/CLy9KUO.jpg')
-            emd.set_footer(text='(Default Image)')
+            emd.set_footer(text='Default Card')
         view = Option(ctx)
         await interaction.response.edit_message(embed=emd, view=view)
         await view.wait()
@@ -101,31 +97,33 @@ async def sub_view_welcomecard(
                 return m.author == ctx.author
 
             await interaction.message.edit(
-                embed=discord.Embed(description='Please paste URL of an Image **700x300(min)**:'),
+                embed=discord.Embed(description='Paste url of an image min *(700x300)* :'),
                 view=None
             )
             try:
                 reply = await bot.wait_for('message', timeout=20, check=check)
                 try:
                     async with aiohttp.ClientSession() as session:
-                        async with session.get(reply.content) as response:
-                            resp = await response.read()
-                            Image.open(io.BytesIO(resp))
-                            await db_push_object(
-                                guildId=ctx.guild.id,
-                                item=[reply.content],
-                                key='cover'
-                            )
-                            await ctx.send(
-                                embed=discord.Embed(description=f"{Emo.CHECK} **Cover picture accepted**")
-                            )
+                        resp = await session.get(reply.content)
+                        file = await resp.read()
+                        Image.open(io.BytesIO(file))
+                        await db_push_object(
+                            guildId=ctx.guild.id,
+                            item=[reply.content],
+                            key='cover'
+                        )
+                        emd = discord.Embed(description=f"{Emo.CHECK}  Welcome card accepted")
+                        emd.set_image(url='attachment://welcome_card.png')
+                        await ctx.send(
+                            embed=emd,
+                            file=discord.File(io.BytesIO(file), filename='welcome_card.png')
+                        )
                 except Exception:
                     await ctx.send(
-                        embed=discord.Embed(description=f"{Emo.WARN} **URL is not acceptable**")
+                        embed=discord.Embed(description=f"{Emo.WARN} This url is not acceptable")
                     )
-                    traceback.print_exception(*sys.exc_info())
             except asyncio.TimeoutError:
-                await ctx.send('**Bye! you took so long!**')
+                await ctx.send('Bye! you took so long...')
                 return
         elif view.value == 2:
             await interaction.message.edit(
@@ -147,9 +145,9 @@ async def sub_view_welcomecard(
         emd = discord.Embed(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
             description=f'Please set a Text Channel '
-                        f'\nfor receiving Welcome Message Cards'
+                        f'\nfor receiving Welcome Cards'
                         f'\n\n**`Steps`**'
-                        f'\n**{p}setup**  select **reception** from menu '
-                        f'\nThen tap **Edit**  select **text channel** from menu'
+                        f'\n**{p}setup**  select **reception** from menu'
+                        f'\nThen tap **Edit**  select a **text channel** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)
