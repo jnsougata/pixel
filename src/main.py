@@ -24,7 +24,6 @@ pixel = PixeL()
 
 
 cogs = [
-    "_dev",
     "help",
     "error",
     "activity",
