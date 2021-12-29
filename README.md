@@ -2,20 +2,15 @@
 # PixeL
 
 <a href="https://top.gg/bot/848304171814879273">
-  <img src="https://top.gg/api/widget/servers/848304171814879273.svg">
-</a>
-<a href="https://top.gg/bot/848304171814879273">
-  <img src="https://top.gg/api/widget/upvotes/848304171814879273.svg">
-</a>
-<a href="https://top.gg/bot/848304171814879273">
-  <img src="https://top.gg/api/widget/owner/848304171814879273.svg">
+  <img src="https://top.gg/api/widget/servers/848304171814879273.svg?noavatar=true">
+  <img src="https://top.gg/api/widget/upvotes/848304171814879273.svg?noavatar=true">
+  <img src="https://top.gg/api/widget/owner/848304171814879273.svg?noavatar=true">
 </a>
 
-#
 
 **Features:**
 
- ✅ Add Unlimited YouTube Channels for Livestream Updates
+ ✅ Add Unlimited YouTube Channels for Notifications
 
  ✅ Customizable Welcome Card
  
