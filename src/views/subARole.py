@@ -45,11 +45,16 @@ async def sub_view_arole(
     else:
         role = None
 
-    string = role.mention if role else '**None**'
+    if role and role == ctx.guild.default_role:
+        string = role
+    elif role:
+        string = role.mention
+    else:
+        string = '**None**'
 
     emd = discord.Embed(
-        description=f'**{ctx.guild.me.display_name}\'s** current **alert role** is {string}'
-                    f'\n\nTo set new **Alert Role** tap **` Edit `**'
+        description=f'**{ctx.guild.name}\'s** current **alert role** is {string}'
+                    f'\n\nTo set new **alert role** tap **` Edit `**'
     )
     if ctx.guild.icon:
         emd.set_author(
@@ -70,7 +75,8 @@ async def sub_view_arole(
         new = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
-                description='Please mention a **Role** to set as **Alert Role:**'
+                description=f'{Emo.CHECK} You can now set `@everyone` as alert role'
+                            f'\n\n{Emo.BELL} Please mention a **role** to set as **alert role:**'
             ),
             view=None
         )
