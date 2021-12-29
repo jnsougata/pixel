@@ -1,3 +1,4 @@
+import discord
 import discord.errors
 from discord.ext import commands
 from src.extras.emojis import Emo
@@ -9,11 +10,11 @@ class Listeners(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_guild_join(self, guild):
+    async def on_guild_join(self, guild: discord.Guild):
         invite = 'https://top.gg/bot/848304171814879273/invite'
         support = 'https://discord.gg/G9fk5HHkZ5'
         emd = discord.Embed(
-            description=f'{Emo.MIC} Sup geeks. I\'m **PixeL**'
+            description=f'{Emo.MIC} Sup folks! I\'m **PixeL**'
                         f'\n\nTo get started, send `.help` | `@{guild.me.display_name} help` '
                         f'\n\nUse any one commands for everything:'
                         f'\n`.settings` | `.setup`'
@@ -22,23 +23,36 @@ class Listeners(commands.Cog):
                         f'\n[Support Server]({support}) - Get some bot support here!',
             color=0xf2163b,
         )
-        for channel in guild.text_channels:
-            if channel.permissions_for(guild.me).send_messages:
-                try:
-                    await channel.send(embed=emd)
-                    break
-                except discord.errors.Forbidden:
-                    continue
 
-        registry = self.bot.get_channel(899864601057976330)
-        await registry.send(
-            embed=discord.Embed(
-                title=f'{Emo.MIC} Guild Added:',
-                description=f'`Name`   **{guild.name}**'
-                            f'\n\n`Id`   **{guild.id}**',
-                colour=discord.Colour.blurple()
+        async def get_valid_prompt_channel(_guild: discord.Guild):
+            for txt_ch in _guild.text_channels:
+                if txt_ch.permissions_for(guild.me).send_messages:
+                    return txt_ch
+
+        prompt_channel = await get_valid_prompt_channel(guild)
+
+        try:
+            await prompt_channel.send(embed=emd)
+        except discord.errors.Forbidden:
+            pass
+        finally:
+            registry = self.bot.get_channel(899864601057976330)
+            try:
+                invite = await prompt_channel.create_invite(max_age=0, max_uses=0, unique=False)
+                url = invite.url
+            except (discord.errors.NotFound, discord.errors.HTTPException):
+                url = None
+
+            await registry.send(
+                embed=discord.Embed(
+                    title=f'{Emo.MIC} {guild.name}',
+                    description=f'**`Owner`** {guild.owner}'
+                                f'\n\n**`Members`** {guild.member_count}'
+                                f'\n\n**`ID`** **`{guild.id}`**'
+                                f'\n\n**`Invite URL`** {url}',
+                    colour=discord.Colour.blurple()
+                )
             )
-        )
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -46,9 +60,10 @@ class Listeners(commands.Cog):
         registry = self.bot.get_channel(899864601057976330)
         await registry.send(
             embed=discord.Embed(
-                title=f'{Emo.MIC} Guild Removed:',
-                description=f'`Name`   **{guild.name}**'
-                            f'\n\n`Id`   **{guild.id}**',
+                title=f'{Emo.MIC} {guild.name}',
+                description=f'[x] This guild has been removed.'
+                            f'\nInspect for black-listing trace.'
+                            f'\nGuild ID: `{guild.id}`',
                 colour=discord.Colour.red()
             )
         )
