@@ -24,12 +24,13 @@ pixel = PixeL()
 
 
 cogs = [
-    "Help",
-    "Error",
-    "Activity",
-    "Welcomer",
-    "Settings",
-    "Listener",
+    "_dev",
+    "help",
+    "error",
+    "activity",
+    "welcomer",
+    "settings",
+    "listener",
 ]
 
 for cog in cogs:

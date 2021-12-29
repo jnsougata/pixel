@@ -13,7 +13,7 @@ class CustomView(discord.ui.View):
         self.ctx = ctx
         self.message = message
 
-        INVITE = discord.ui.Button(
+        _invite = discord.ui.Button(
             label='Invite',
             style=discord.ButtonStyle.link,
             url='https://top.gg/bot/848304171814879273/invite'
@@ -21,7 +21,7 @@ class CustomView(discord.ui.View):
         super().__init__()
         self.value = None
         self.timeout = 60
-        self.add_item(INVITE)
+        self.add_item(_invite)
 
     @discord.ui.button(label='Info', style=discord.ButtonStyle.blurple)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
