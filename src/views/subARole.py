@@ -71,7 +71,6 @@ async def sub_view_arole(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
                 description='Please mention a **Role** to set as **Alert Role:**'
-                            '\n **Note:** `@everyone` isn\'t even a proper role'
             ),
             view=None
         )
@@ -81,18 +80,25 @@ async def sub_view_arole(
 
         try:
             response = await bot.wait_for('message', check=check, timeout=20)
-            mentions = response.role_mentions
-            role = mentions[0] if mentions else None
             try:
                 await new.delete()
             except discord.errors.NotFound:
                 pass
+
+            if '@everyone' in response.content:
+                role = ctx.guild.default_role
+                mention_string = role
+            else:
+                mentions = response.role_mentions
+                role = mentions[0] if mentions else None
+                mention_string = role.mention if role else '**None**'
+
             if role:
                 await ctx.send(
                     content=f'{ctx.author.mention}',
                     embed=discord.Embed(
                         description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                    f'new alert role is {role.mention}',
+                                    f'new alert role is {mention_string}'
                     )
                 )
                 await db_push_object(
@@ -109,7 +115,7 @@ async def sub_view_arole(
                     )
                 )
         except asyncio.TimeoutError:
-            await ctx.send('**Bye! you took so long**')
+            await ctx.send('Bye! you took so long')
     elif view.value == 2:
         await interaction.message.delete()
         await ctx.send(

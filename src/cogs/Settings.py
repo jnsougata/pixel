@@ -40,13 +40,13 @@ class BaseMenu(discord.ui.Select):
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
+            discord.SelectOption(label='Alert Role', value='5', emoji=Emo.BELL),
             discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
-            # discord.SelectOption(label='Alert Role (BETA)', value='5', emoji=Emo.BELL),
             # discord.SelectOption(label='Manage Streamer (BETA)', value='6', emoji=Emo.STREAMER)
         ]
 
         super().__init__(
-            placeholder='Select a command',
+            placeholder='select a command',
             min_values=1,
             max_values=1,
             options=options
@@ -118,7 +118,7 @@ class Settings(commands.Cog):
     @commands.command(aliases=['settings', 'setup'])
     async def settings_(self, ctx: commands.Context):
         emd = discord.Embed(
-            description='\nChoose any command form menu to use:',
+            description='\n> use command from the menu below',
             colour=0x005aef
         )
         emd.set_author(
