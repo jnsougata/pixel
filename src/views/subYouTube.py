@@ -15,7 +15,7 @@ class ChannelMenu(discord.ui.Select):
             bot: discord.Client,
     ):
         raw = await db_fetch_object(
-            guildId=ctx.guild.id,
+            guild_id=ctx.guild.id,
             key='youtube'
 
         )
@@ -85,14 +85,14 @@ class ChannelMenu(discord.ui.Select):
                     view=None
                 )
                 db_raw = await db_fetch_object(
-                    guildId=self.ctx.guild.id,
+                    guild_id=self.ctx.guild.id,
                     key='youtube'
                 )
                 new_data = db_raw['item']
                 new_data.pop(self.values[0])
 
                 await db_push_object(
-                    guildId=self.ctx.guild.id,
+                    guild_id=self.ctx.guild.id,
                     item=new_data,
                     key='youtube'
                 )
@@ -160,7 +160,7 @@ async def sub_view_youtube(
         bot: discord.Client
 ):
     raw = await db_fetch_object(
-        guildId=ctx.guild.id,
+        guild_id=ctx.guild.id,
         key='alertchannel'
     )
 
@@ -236,14 +236,14 @@ async def sub_view_youtube(
                     await new_view.wait()
                     if new_view.value is True:
                         old_data = await db_fetch_object(
-                            guildId=ctx.guild.id,
+                            guild_id=ctx.guild.id,
                             key='youtube'
                         )
                         if old_data:
                             raw = old_data['item']
                             raw[data['id']] = {'live': 'empty', 'upload': channel.latest.id}
                             await db_push_object(
-                                guildId=ctx.guild.id,
+                                guild_id=ctx.guild.id,
                                 item=raw,
                                 key='youtube'
                             )
@@ -251,7 +251,7 @@ async def sub_view_youtube(
                             empty = dict()
                             empty[data['id']] = {'live': 'empty', 'upload': channel.latest.id}
                             await db_push_object(
-                                guildId=ctx.guild.id,
+                                guild_id=ctx.guild.id,
                                 item=empty,
                                 key='youtube'
                             )

@@ -60,12 +60,12 @@ async def sub_view_welcomecard(
         bot: discord.Client
 ):
     rcp_raw = await db_fetch_object(
-        guildId=ctx.guild.id,
+        guild_id=ctx.guild.id,
         key='welcome'
     )
     if rcp_raw and rcp_raw['item'] and rcp_raw['item'][0].isdigit():
         raw = await db_fetch_object(
-            guildId=ctx.guild.id,
+            guild_id=ctx.guild.id,
             key='cover'
         )
         emd = discord.Embed(
@@ -107,7 +107,7 @@ async def sub_view_welcomecard(
                         file = await resp.read()
                         Image.open(io.BytesIO(file))
                         await db_push_object(
-                            guildId=ctx.guild.id,
+                            guild_id=ctx.guild.id,
                             item=[reply.content],
                             key='cover'
                         )
@@ -133,7 +133,7 @@ async def sub_view_welcomecard(
                 view=None
             )
             await db_push_object(
-                guildId=ctx.guild.id,
+                guild_id=ctx.guild.id,
                 item=['removed'],
                 key='cover'
             )

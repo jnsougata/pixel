@@ -25,6 +25,7 @@ pixel = PixeL()
 
 cogs = [
     "help",
+    "owner",
     "error",
     "activity",
     "welcomer",

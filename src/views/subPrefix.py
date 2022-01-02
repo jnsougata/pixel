@@ -72,7 +72,7 @@ async def sub_view_prefix(
             response = await bot.wait_for('message', check=check, timeout=20)
             if 0 < len(response.content) <= 3:
                 await db_push_object(
-                    guildId=ctx.guild.id,
+                    guild_id=ctx.guild.id,
                     item=[response.content],
                     key='prefix'
                 )
@@ -101,7 +101,7 @@ async def sub_view_prefix(
             view=None
         )
         await db_push_object(
-            guildId=ctx.guild.id,
+            guild_id=ctx.guild.id,
             item=['.'],
             key='prefix'
         )

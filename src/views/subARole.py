@@ -37,7 +37,7 @@ async def sub_view_arole(
         bot: discord.Client
 ):
     data = await db_fetch_object(
-        guildId=ctx.guild.id,
+        guild_id=ctx.guild.id,
         key='arole'
     )
     if data and data['item'][0].isdigit():
@@ -108,7 +108,7 @@ async def sub_view_arole(
                     )
                 )
                 await db_push_object(
-                    guildId=ctx.guild.id,
+                    guild_id=ctx.guild.id,
                     key='arole',
                     item=[str(role.id)]
                 )
@@ -132,7 +132,7 @@ async def sub_view_arole(
             )
         )
         await db_push_object(
-            guildId=ctx.guild.id,
+            guild_id=ctx.guild.id,
             key='arole',
             item=['REMOVED']
         )

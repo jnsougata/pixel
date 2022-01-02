@@ -61,8 +61,7 @@ class Listeners(commands.Cog):
         await registry.send(
             embed=discord.Embed(
                 title=f'{Emo.MIC} {guild.name}',
-                description=f'[x] This guild has been removed.'
-                            f'\nInspect for black-listing trace.'
+                description=f'Inspect for black-listing trace.'
                             f'\nGuild ID: `{guild.id}`',
                 colour=discord.Colour.red()
             )

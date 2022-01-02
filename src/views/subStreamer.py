@@ -23,7 +23,7 @@ class StreamerList(discord.ui.Select):
             bot: discord.Client,
     ):
         raw = await db_fetch_object(
-            guildId=ctx.guild.id,
+            guild_id=ctx.guild.id,
             key='streamer'
 
         )
@@ -95,7 +95,7 @@ class StreamerList(discord.ui.Select):
                 raw = self.raw
                 raw['item']['channels'].pop(self.values[0])
                 await db_push_object(
-                    guildId=self.ctx.guild.id,
+                    guild_id=self.ctx.guild.id,
                     key='streamer',
                     item=raw['item']
                 )
@@ -142,7 +142,7 @@ async def sub_view_streamer(
         bot: discord.Client
 ):
     data = await db_fetch_object(
-        guildId=ctx.guild.id,
+        guild_id=ctx.guild.id,
         key='streamer'
     )
     if data and data['item']['role'].isdigit():
@@ -160,7 +160,7 @@ async def sub_view_streamer(
                 hoist=True,
             )
             await db_push_object(
-                guildId=ctx.guild.id,
+                guild_id=ctx.guild.id,
                 key='streamer',
                 item={'role': str(role.id), 'channels': {}}
             )
@@ -251,19 +251,19 @@ async def sub_view_streamer(
                         )
                         data['item']['channels'][channel.id] = str(member.id)
                         await db_push_object(
-                            guildId=ctx.guild.id,
+                            guild_id=ctx.guild.id,
                             key='streamer',
                             item=data['item']
                         )
                         old_data = await db_fetch_object(
-                            guildId=ctx.guild.id,
+                            guild_id=ctx.guild.id,
                             key='youtube'
                         )
                         if old_data:
                             raw = old_data['item']
                             raw[channel.id] = {'live': 'empty', 'upload': channel.latest.id}
                             await db_push_object(
-                                guildId=ctx.guild.id,
+                                guild_id=ctx.guild.id,
                                 item=raw,
                                 key='youtube'
                             )
@@ -271,7 +271,7 @@ async def sub_view_streamer(
                             init_dict = dict()
                             init_dict[channel.id] = {'live': 'empty', 'upload': channel.latest.id}
                             await db_push_object(
-                                guildId=ctx.guild.id,
+                                guild_id=ctx.guild.id,
                                 item=empty,
                                 key='youtube'
                             )

@@ -97,7 +97,7 @@ class TextMenu(discord.ui.Select):
 
                 )
                 await db_push_object(
-                    guildId=self.ctx.guild.id,
+                    guild_id=self.ctx.guild.id,
                     item=[self.values[0]],
                     key='alertchannel'
                 )
@@ -111,7 +111,7 @@ async def sub_view_receiver(
         bot: discord.Client
 ):
     raw = await db_fetch_object(
-        guildId=ctx.guild.id,
+        guild_id=ctx.guild.id,
         key='alertchannel'
     )
 
@@ -169,7 +169,7 @@ async def sub_view_receiver(
             view=None
         )
         await db_push_object(
-            guildId=ctx.guild.id,
+            guild_id=ctx.guild.id,
             item=['removed'],
             key='alertchannel'
         )
