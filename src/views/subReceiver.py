@@ -115,7 +115,7 @@ async def sub_view_receiver(
         key='alertchannel'
     )
 
-    def check(json: dict):
+    def _check():
         if raw:
             if raw['item'] and raw['item'][0].isdigit():
                 receiver = ctx.guild.get_channel(int(raw['item'][0]))
@@ -132,7 +132,7 @@ async def sub_view_receiver(
         description=f'To set new receiver tap **` Edit `**'
                     f'\n\n{Emo.WARN} Only accepts text channels where'
                     f'\nit has permission to **embed links** and **urls**'
-                    f'\n\n**{ctx.guild.name}\'s** current receiver is {check(raw)}'
+                    f'\n\n**{ctx.guild.name}\'s** current receiver is {_check()}'
     )
     if ctx.guild.icon:
         emd.set_author(
@@ -174,7 +174,4 @@ async def sub_view_receiver(
             key='alertchannel'
         )
     elif view.value == 0:
-        try:
-            await interaction.delete_original_message()
-        except discord.errors.NotFound:
-            pass
+        await interaction.message.delete()

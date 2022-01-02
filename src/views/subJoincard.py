@@ -35,7 +35,7 @@ class Option(discord.ui.View):
         self.value = None
         self.message = None
 
-    @discord.ui.button(label='Edit', style=discord.ButtonStyle.green)
+    @discord.ui.button(label='New', style=discord.ButtonStyle.green)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             self.value = 1
@@ -69,8 +69,7 @@ async def sub_view_welcomecard(
             key='cover'
         )
         emd = discord.Embed(
-            description=f'Tap **`Edit`** to set new.'
-                        f'\n\nCurrent Image:'
+            description=f'**`current`**'
         )
         if ctx.guild.icon:
             emd.set_author(
@@ -139,15 +138,15 @@ async def sub_view_welcomecard(
                 key='cover'
             )
         elif view.value == 0:
-            await interaction.delete_original_message()
+            await interaction.message.delete()
     else:
-        p = await prefix_fetcher(ctx.guild.id)
+        prefix = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
             description=f'Please set a Text Channel '
                         f'\nfor receiving Welcome Cards'
                         f'\n\n**`Steps`**'
-                        f'\n**{p}setup**  select **reception** from menu'
+                        f'\n**{prefix}setup**  select **reception** from menu'
                         f'\nThen tap **Edit**  select a **text channel** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)

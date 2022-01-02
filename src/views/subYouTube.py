@@ -164,11 +164,11 @@ async def sub_view_youtube(
         key='alertchannel'
     )
 
-    def check(json: dict):
+    def _check():
         if raw['item'] and raw['item'][0].isdigit():
             return ctx.guild.get_channel(int(raw['item'][0]))
 
-    if raw and check(raw):
+    if raw and _check():
         emd = discord.Embed(
             description=f'**{ctx.guild.name}\'s** YouTube channel Settings'
                         f'\n\nTo add new channel tap **` Add `**'
@@ -267,19 +267,13 @@ async def sub_view_youtube(
                             description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'
                         )
                     )
-                    try:
-                        await interaction.delete_original_message()
-                    except discord.errors.NotFound:
-                        pass
+                    await interaction.message.delete()
 
             except asyncio.TimeoutError:
                 await ctx.send('**Bye! you took so long**')
 
         elif view.value == 0:
-            try:
-                await interaction.delete_original_message()
-            except discord.errors.NotFound:
-                pass
+            await interaction.message.delete()
 
     else:
         p = await prefix_fetcher(ctx.guild.id)

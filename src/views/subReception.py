@@ -117,7 +117,7 @@ async def sub_view_reception(
         key='welcome'
     )
 
-    def check(json: dict):
+    def _check():
         if raw:
             if raw['item'] and raw['item'][0].isdigit():
                 reception = ctx.guild.get_channel(int(raw['item'][0]))
@@ -134,7 +134,7 @@ async def sub_view_reception(
         description=f'To set new reception tap **` Edit `**'
                     f'\n\n{Emo.WARN} Only accepts text channels where'
                     f'\nit has permission to **send attachments**'
-                    f'\n\n**{ctx.guild.name}\'s** current reception is {check(raw)}'
+                    f'\n\n**{ctx.guild.name}\'s** current reception is {_check()}'
     )
     if ctx.guild.icon:
         emd.set_author(
@@ -176,7 +176,4 @@ async def sub_view_reception(
             key='welcome'
         )
     elif view.value == 0:
-        try:
-            await interaction.delete_original_message()
-        except discord.errors.NotFound:
-            pass
+        await interaction.message.delete()

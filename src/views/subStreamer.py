@@ -308,7 +308,4 @@ async def sub_view_streamer(
         )
 
     elif view.value == 0:
-        try:
-            await interaction.delete_original_message()
-        except discord.errors.NotFound:
-            pass
+        await interaction.message.delete()
