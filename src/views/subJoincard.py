@@ -55,9 +55,9 @@ class Option(discord.ui.View):
 
 
 async def sub_view_welcomecard(
+        bot: discord.Client,
         ctx: commands.Context,
-        interaction: discord.Interaction,
-        bot: discord.Client
+        interaction: discord.Interaction
 ):
     rcp_raw = await db_fetch_object(
         guild_id=ctx.guild.id,
@@ -81,7 +81,7 @@ async def sub_view_welcomecard(
                 icon_url=ctx.guild.me.avatar.url,
                 name=ctx.guild.me.name
             )
-        if raw and raw['item'][0] != 'removed':
+        if raw and raw['item'][0].startswith('http'):
             emd.set_image(url=raw['item'][0])
         else:
             emd.set_image(url='https://i.imgur.com/CLy9KUO.jpg')
@@ -134,7 +134,7 @@ async def sub_view_welcomecard(
             )
             await db_push_object(
                 guild_id=ctx.guild.id,
-                item=['removed'],
+                item=['REMOVED'],
                 key='cover'
             )
         elif view.value == 0:

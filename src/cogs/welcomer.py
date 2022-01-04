@@ -27,7 +27,7 @@ class Welcomer(commands.Cog):
                 url = urls['item'][0]
             else:
                 url = 'https://i.imgur.com/CLy9KUO.jpg'
-            if url != 'removed':
+            if url.startswith('http'):
                 bg_bytes = await Io.fetch(url)
                 if bg_bytes:
                     avatar = member.display_avatar.with_format('png')
