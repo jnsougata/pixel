@@ -12,7 +12,7 @@ class PixeL(commands.Bot):
         super().__init__(
             intents=intent,
             help_command=None,
-            command_prefix=None,
+            command_prefix='[-_-]',
         )
         self.temp_prefixes = None
 
