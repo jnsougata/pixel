@@ -11,19 +11,17 @@ from src.views.subJoincard import sub_view_welcomecard
 
 
 class BaseView(discord.ui.View):
-    def __init__(
-            self,
-            message: discord.Message = None,
-    ):
-        self.message = message
+
+    def __init__(self):
         super().__init__()
-        self.value = None
         self.timeout = 30
+        self.value = None
+        self.message = None
 
     async def on_timeout(self) -> None:
         try:
             await self.message.delete()
-        except (discord.errors.NotFound, discord.errors.Forbidden):
+        except Exception:
             pass
 
 
@@ -46,10 +44,10 @@ class BaseMenu(discord.ui.Select):
         ]
 
         super().__init__(
-            placeholder='select a command',
             min_values=1,
             max_values=1,
-            options=options
+            options=options,
+            placeholder='select a command'
         )
 
     async def callback(self, interaction: discord.Interaction):
