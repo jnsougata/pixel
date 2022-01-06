@@ -25,27 +25,26 @@ async def db_fetch_object(
     return db.get(key)
 
 
-async def db_push_blacklist(item):
-    db = deta.Base(f'BLACKLIST')
-    db.put({'item': item}, 'list')
-
-
-async def db_fetch_blacklist():
-    db = deta.Base(f'BLACKLIST')
-    return db.get('list')
-
-
 async def prefix_fetcher(id):
     prefix = await db_fetch_object(guild_id=id, key='prefix')
-    return prefix['item'][0] if prefix and len(prefix['item']) > 0 else DEFAULT_PREFIX
+    return prefix['item'][0] if prefix and prefix['item'] else DEFAULT_PREFIX
 
 
-async def custom_prefix(bot, msg):
+async def exec_prefix(bot, msg):
+    all_ = bot.temp_prefixes
     if msg.guild:
-        prefixes = await db_fetch_object(guild_id=msg.guild.id, key='prefix')
-        if prefixes and prefixes['item']:
-            return commands.when_mentioned_or(prefixes['item'][0])(bot, msg)
-        else:
-            return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
+        return commands.when_mentioned_or(all_[msg.guild.id])(bot, msg)
     else:
         return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
+
+
+async def cache_all_prefix(bot):
+    temp = {}
+    for guild in bot.guilds:
+        prefix = await db_fetch_object(guild_id=guild.id, key='prefix')
+        if prefix and prefix['item']:
+            temp[guild.id] = prefix['item'][0]
+        else:
+            temp[guild.id] = DEFAULT_PREFIX
+
+    return temp
