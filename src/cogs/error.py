@@ -38,7 +38,7 @@ class EH(commands.Cog):
                 pass
         elif isinstance(error, commands.NotOwner):
             await ctx.send(
-                f'Only **Zen#8080** can use this command!',
+                f'Only **Zen** can use this command!',
                 delete_after=15
             )
         elif isinstance(error, commands.CheckAnyFailure):

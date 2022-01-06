@@ -25,12 +25,11 @@ pixel = PixeL()
 
 cogs = [
     "help",
-    "owner",
     "error",
-    "activity",
     "welcomer",
     "settings",
     "listener",
+    "statusloop",
 ]
 
 for cog in cogs:

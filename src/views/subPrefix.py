@@ -36,9 +36,9 @@ async def sub_view_prefix(
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-    p = await prefix_fetcher(ctx.guild.id)
+    prefix = await prefix_fetcher(ctx.guild.id)
     emd = discord.Embed(
-        description=f'**{ctx.guild.me.display_name}\'s** current prefix is **` {p} `**'
+        description=f'**{ctx.guild.me.display_name}\'s** current prefix is **` {prefix} `**'
                     f'\n\nTo set new custom prefix tap **` Edit `**'
     )
     if ctx.guild.icon:
