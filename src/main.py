@@ -18,9 +18,10 @@ class PixeL(commands.Bot):
 
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
-        print('------')
         self.temp_prefixes = await cache_all_prefix(self)
         self.command_prefix = exec_prefix
+        print(f'Successfully cached all prefixes!')
+        print('------')
 
 
 pixel = PixeL()
