@@ -1,7 +1,7 @@
 import os
 import discord
 from discord.ext import commands
-from src.extras.func import exec_prefix, cache_all_prefix
+from src.extras.func import exec_prefix
 
 intent = discord.Intents().default()
 intent.members = True
@@ -12,15 +12,11 @@ class PixeL(commands.Bot):
         super().__init__(
             intents=intent,
             help_command=None,
-            command_prefix='[-_-]',
+            command_prefix=exec_prefix,
         )
-        self.temp_prefixes = None
 
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
-        self.temp_prefixes = await cache_all_prefix(self)
-        self.command_prefix = exec_prefix
-        print(f'Successfully cached all prefixes!')
         print('------')
 
 
