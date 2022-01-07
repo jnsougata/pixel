@@ -40,7 +40,7 @@ class Listeners(commands.Cog):
             try:
                 invite = await prompt_channel.create_invite(max_age=0, max_uses=0, unique=False)
                 url = invite.url
-            except (discord.errors.NotFound, discord.errors.HTTPException):
+            except Exception:
                 url = None
 
             await registry.send(
