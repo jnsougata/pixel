@@ -19,8 +19,8 @@ class BaseView(discord.ui.View):
         try:
             self.clear_items()
             await self.message.edit(view=self)
-        except discord.errors.NotFound:
-            return
+        except Exception:
+            pass
 
 
 class Option(discord.ui.View):
@@ -53,9 +53,8 @@ class TextMenu(discord.ui.Select):
 
     def __init__(
             self,
-            context: commands.Context,
             bot: discord.Client,
-
+            context: commands.Context,
     ):
         self.ctx = context
         self.bot = bot
@@ -152,7 +151,7 @@ async def sub_view_receiver(
     if view.value == 1:
         view.clear_items()
         new_view = BaseView()
-        new_view.add_item(TextMenu(ctx, bot))
+        new_view.add_item(TextMenu(context=ctx, bot=bot))
         new_view.message = await interaction.message.edit(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(

@@ -24,8 +24,8 @@ class BaseView(discord.ui.View):
         try:
             self.clear_items()
             await self.message.edit(view=self)
-        except discord.errors.NotFound:
-            return
+        except Exception:
+            pass
 
 
 class Option(discord.ui.View):

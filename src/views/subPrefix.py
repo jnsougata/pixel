@@ -32,9 +32,9 @@ class Option(discord.ui.View):
 
 
 async def sub_view_prefix(
+        bot: discord.Client,
         ctx: commands.Context,
         interaction: discord.Interaction,
-        bot: discord.Client
 ):
     prefix = await prefix_fetcher(ctx.guild.id)
     emd = discord.Embed(

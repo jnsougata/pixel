@@ -32,9 +32,9 @@ class Option(discord.ui.View):
 
 
 async def sub_view_arole(
+        bot: discord.Client,
         ctx: commands.Context,
         interaction: discord.Interaction,
-        bot: discord.Client
 ):
     data = await db_fetch_object(
         guild_id=ctx.guild.id,
