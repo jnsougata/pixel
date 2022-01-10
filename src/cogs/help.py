@@ -32,9 +32,8 @@ class CustomView(discord.ui.View):
     async def on_timeout(self) -> None:
         try:
             await self.message.delete()
-        except Exception as e:
-            print(e)
-            return
+        except Exception:
+            pass
 
 
 class Help(commands.Cog):
@@ -44,11 +43,11 @@ class Help(commands.Cog):
     @commands.command(name='help')
     @commands.cooldown(rate=3, per=60, type=commands.BucketType.member)
     async def help(self, ctx: commands.Context):
-        p = await prefix_fetcher(ctx.guild.id)
+        prefix = await prefix_fetcher(ctx.guild.id)
         emd = discord.Embed(
             description=f''
                         f'\n\n{Emo.SETTINGS} To set me up'
-                        f'\n use command **{p}setup**'
+                        f'\n use command **{prefix}setup**'
                         f'\n\n{Emo.FAQ} To know more'
                         f'\nabout **setup** tap **`Info`**'
                         f'\n\n{Emo.SUP} Join **[PixeL Support]'
@@ -61,7 +60,7 @@ class Help(commands.Cog):
             icon_url=ctx.author.avatar.url
         )
         emd.set_footer(
-            text=f'✅ Thanks | Current Prefix [{p}]',
+            text=f'✅ Thanks | Current Prefix [{prefix}]',
         )
 
         view = CustomView(ctx)
@@ -73,7 +72,7 @@ class Help(commands.Cog):
 
             emd = discord.Embed(
                 description=f'{Emo.INFO} Access all of these'
-                            f'\nfollowing options by only using **{p}setup**'
+                            f'\nfollowing options by only using **{prefix}setup**'
                             f'\n\n{Emo.TAG}**Prefix**'
                             f'\nUsed to add or remove custom prefix '
                             f'\nto your server. you can change it anytime'
@@ -92,9 +91,6 @@ class Help(commands.Cog):
                             f'\n\n{Emo.BELL} **Alert Role**'
                             f'\nUsed to add or remove a custom role'
                             f'\nto be mentioned in the YT Notifications',
-                            #f'\n\n{Emo.STREAMER} **Manage Streamer (BETA)**'
-                            #f'\nUsed to add or remove a Streamer'
-                            #f'\nto be shown during YT Livestreams',
 
                 color=0x005aef,
             )

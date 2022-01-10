@@ -59,15 +59,9 @@ async def sub_view_welcomecard(
         ctx: commands.Context,
         interaction: discord.Interaction
 ):
-    rcp_raw = await db_fetch_object(
-        guild_id=ctx.guild.id,
-        key='welcome'
-    )
-    if rcp_raw and rcp_raw['item'] and rcp_raw['item'][0].isdigit():
-        raw = await db_fetch_object(
-            guild_id=ctx.guild.id,
-            key='cover'
-        )
+    rcp_raw = await db_fetch_object(guild_id=ctx.guild.id, key='welcome')
+    if rcp_raw and rcp_raw[0].isdigit():
+        raw = await db_fetch_object(guild_id=ctx.guild.id, key='cover')
         emd = discord.Embed(
             description=f'**`current`**'
         )
@@ -81,8 +75,8 @@ async def sub_view_welcomecard(
                 icon_url=ctx.guild.me.avatar.url,
                 name=ctx.guild.me.name
             )
-        if raw and raw['item'][0].startswith('http'):
-            emd.set_image(url=raw['item'][0])
+        if raw and raw[0].startswith('http'):
+            emd.set_image(url=raw[0])
         else:
             emd.set_image(url='https://i.imgur.com/CLy9KUO.jpg')
             emd.set_footer(text='Default Card')

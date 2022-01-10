@@ -25,9 +25,9 @@ class Listeners(commands.Cog):
         )
 
         async def get_valid_prompt_channel(_guild: discord.Guild):
-            for txt_ch in _guild.text_channels:
-                if txt_ch.permissions_for(guild.me).send_messages:
-                    return txt_ch
+            for channel in _guild.text_channels:
+                if channel.permissions_for(guild.me).send_messages:
+                    return channel
 
         prompt_channel = await get_valid_prompt_channel(guild)
 

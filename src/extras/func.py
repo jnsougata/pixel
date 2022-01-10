@@ -8,34 +8,26 @@ deta = Deta(os.getenv('DETA_TOKEN'))
 DEFAULT_PREFIX = '.'
 
 
-async def db_push_object(
-    guild_id: int,
-    item: Union[list, dict], 
-    key: str
-):
+async def db_push_object(guild_id: int, item: Union[list, dict, str, int, float], key: str):
     db = deta.Base(f'GUILD{guild_id}')
-    db.put({'item': item}, key)
+    return db.put({'item': item}, key)
 
 
-async def db_fetch_object(
-        guild_id: int,
-        key: str
-):
+async def db_fetch_object(guild_id: int, key: str):
     db = deta.Base(f'GUILD{guild_id}')
-    return db.get(key)
+    data = db.get(key)
+    if data:
+        return data.get('item')
+    return None
 
 
-async def prefix_fetcher(id):
-    prefix = await db_fetch_object(guild_id=id, key='prefix')
-    return prefix['item'][0] if prefix and prefix['item'] else DEFAULT_PREFIX
+async def prefix_fetcher(guild_id):
+    prefix = await db_fetch_object(guild_id=guild_id, key='prefix')
+    return prefix[0] if prefix else DEFAULT_PREFIX
 
 
 async def exec_prefix(bot, msg):
     if msg.guild:
-        data = await db_fetch_object(guild_id=msg.guild.id, key='prefix')
-        if data and data['item']:
-            return commands.when_mentioned_or(data['item'][0])(bot, msg)
-        else:
-            return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
-    else:
-        return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)
+        prefix = await prefix_fetcher(msg.guild.id)
+        return commands.when_mentioned_or(prefix)(bot, msg)
+    return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)

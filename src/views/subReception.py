@@ -111,20 +111,14 @@ async def sub_view_reception(
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-    raw = await db_fetch_object(
-        guild_id=ctx.guild.id,
-        key='welcome'
-    )
+    raw = await db_fetch_object(guild_id=ctx.guild.id, key='welcome')
 
     def _check():
-        if raw:
-            if raw['item'] and raw['item'][0].isdigit():
-                reception = ctx.guild.get_channel(int(raw['item'][0]))
-                try:
-                    return reception.mention
-                except AttributeError:
-                    return '**`None`**'
-            else:
+        if raw and raw[0].isdigit():
+            reception = ctx.guild.get_channel(int(raw[0]))
+            try:
+                return reception.mention
+            except AttributeError:
                 return '**`None`**'
         else:
             return '**`None`**'

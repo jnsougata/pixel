@@ -36,12 +36,9 @@ async def sub_view_arole(
         ctx: commands.Context,
         interaction: discord.Interaction,
 ):
-    data = await db_fetch_object(
-        guild_id=ctx.guild.id,
-        key='arole'
-    )
-    if data and data['item'][0].isdigit():
-        role = ctx.guild.get_role(int(data['item'][0]))
+    data = await db_fetch_object(guild_id=ctx.guild.id, key='arole')
+    if data and data[0].isdigit():
+        role = ctx.guild.get_role(int(data[0]))
     else:
         role = None
 
@@ -107,11 +104,8 @@ async def sub_view_arole(
                                     f'new alert role is {mention_string}'
                     )
                 )
-                await db_push_object(
-                    guild_id=ctx.guild.id,
-                    key='arole',
-                    item=[str(role.id)]
-                )
+                await db_push_object(guild_id=ctx.guild.id, item=[str(role.id)], key='arole')
+
             else:
                 await ctx.send(
                     content=f'{ctx.author.mention}',
@@ -131,11 +125,8 @@ async def sub_view_arole(
                             f'alert role has been removed',
             )
         )
-        await db_push_object(
-            guild_id=ctx.guild.id,
-            key='arole',
-            item=['REMOVED']
-        )
+        await db_push_object(guild_id=ctx.guild.id, item=['REMOVED'], key='arole')
+
     elif view.value == 0:
         try:
             await interaction.message.delete()

@@ -11,17 +11,13 @@ class ChannelMenu(discord.ui.Select):
     @classmethod
     async def create(
             cls,
-            ctx: commands.Context,
             bot: discord.Client,
+            ctx: commands.Context
     ):
-        raw = await db_fetch_object(
-            guild_id=ctx.guild.id,
-            key='youtube'
-
-        )
+        raw = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
         if raw:
-            ids = list(raw['item'])
-            names = [Channel(id).name for id in list(raw['item'])]
+            ids = list(raw)
+            names = [Channel(id).name for id in list(raw)]
             options = [
                 discord.SelectOption(
                     label=names[i],
@@ -84,18 +80,10 @@ class ChannelMenu(discord.ui.Select):
                     embed=emd,
                     view=None
                 )
-                db_raw = await db_fetch_object(
-                    guild_id=self.ctx.guild.id,
-                    key='youtube'
-                )
-                new_data = db_raw['item']
+                db_raw = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
+                new_data = db_raw
                 new_data.pop(self.values[0])
-
-                await db_push_object(
-                    guild_id=self.ctx.guild.id,
-                    item=new_data,
-                    key='youtube'
-                )
+                await db_push_object(guild_id=self.ctx.guild.id, item=new_data, key='youtube')
             else:
                 await interaction.message.delete()
 
@@ -159,14 +147,11 @@ async def sub_view_youtube(
         interaction: discord.Interaction,
         bot: discord.Client
 ):
-    raw = await db_fetch_object(
-        guild_id=ctx.guild.id,
-        key='alertchannel'
-    )
+    raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
     def _check():
-        if raw['item'] and raw['item'][0].isdigit():
-            return ctx.guild.get_channel(int(raw['item'][0]))
+        if raw and raw[0].isdigit():
+            return ctx.guild.get_channel(int(raw[0]))
 
     if raw and _check():
         emd = discord.Embed(
@@ -190,7 +175,7 @@ async def sub_view_youtube(
 
         if view.value == 2:
             view = Temp()
-            view.add_item(await ChannelMenu.create(ctx, bot))
+            view.add_item(await ChannelMenu.create(bot, ctx))
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
                 embed=discord.Embed(
@@ -235,26 +220,15 @@ async def sub_view_youtube(
                     )
                     await new_view.wait()
                     if new_view.value is True:
-                        old_data = await db_fetch_object(
-                            guild_id=ctx.guild.id,
-                            key='youtube'
-                        )
+                        old_data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
                         if old_data:
-                            raw = old_data['item']
+                            raw = old_data
                             raw[data['id']] = {'live': 'empty', 'upload': channel.latest.id}
-                            await db_push_object(
-                                guild_id=ctx.guild.id,
-                                item=raw,
-                                key='youtube'
-                            )
+                            await db_push_object(guild_id=ctx.guild.id, item=raw, key='youtube')
                         else:
                             empty = dict()
                             empty[data['id']] = {'live': 'empty', 'upload': channel.latest.id}
-                            await db_push_object(
-                                guild_id=ctx.guild.id,
-                                item=empty,
-                                key='youtube'
-                            )
+                            await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
                         await nxt.edit(
                             content=f'{Emo.CHECK} {ctx.author.mention} **YouTube Channel added successfully!**',
                             view=None
