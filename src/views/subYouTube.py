@@ -9,49 +9,22 @@ from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
 class ChannelMenu(discord.ui.Select):
 
     @classmethod
-    async def create(
-            cls,
-            bot: discord.Client,
-            ctx: commands.Context
-    ):
+    async def display(cls, bot: discord.Client, ctx: commands.Context):
         raw = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
         if raw:
             ids = list(raw)
             names = [Channel(id).name for id in list(raw)]
-            options = [
-                discord.SelectOption(
-                    label=names[i],
-                    value=ids[i],
-                    emoji=Emo.YT
-                ) for i in range(len(ids))
-            ]
-            options.insert(
-                0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS)
-            )
+            options = [discord.SelectOption(label=names[i], value=ids[i], emoji=Emo.YT) for i in range(len(ids))]
+            options.insert(0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS))
         else:
-            options = [
-                discord.SelectOption(
-                    label='Please add a channel',
-                    emoji=Emo.WARN
-                )
-            ]
-            options.insert(
-                0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS)
-            )
-        return cls(
-            options=options,
-            context=ctx,
-            bot=bot
-        )
+            options = [discord.SelectOption(label='Please add a channel', emoji=Emo.WARN)]
+            options.insert(0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS))
 
-    def __init__(
-            self,
-            context: commands.Context,
-            bot: discord.Client,
-            options: list = None,
-    ):
-        self.ctx = context
+        return cls(bot=bot, context=ctx, options=options)
+
+    def __init__(self, bot: discord.Client, context: commands.Context, options: list):
         self.bot = bot
+        self.ctx = context
 
         super().__init__(
             placeholder='Search results',
@@ -175,12 +148,10 @@ async def sub_view_youtube(
 
         if view.value == 2:
             view = Temp()
-            view.add_item(await ChannelMenu.create(bot, ctx))
+            view.add_item(await ChannelMenu.display(bot, ctx))
             await interaction.message.edit(
                 content=f'{ctx.author.mention}',
-                embed=discord.Embed(
-                    description='Please select YouTube Channel to **remove:**'
-                ),
+                embed=discord.Embed(description='Please select YouTube Channel to **remove:**'),
                 view=view
             )
         elif view.value == 1:
@@ -230,7 +201,7 @@ async def sub_view_youtube(
                             empty[data['id']] = {'live': 'empty', 'upload': channel.latest.id}
                             await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
                         await nxt.edit(
-                            content=f'{Emo.CHECK} {ctx.author.mention} **YouTube Channel added successfully!**',
+                            content=f'{Emo.CHECK} {ctx.author.mention} YouTube Channel added successfully!',
                             view=None
                         )
                     else:
