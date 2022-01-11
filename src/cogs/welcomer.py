@@ -35,10 +35,10 @@ class Welcomer(commands.Cog):
                     canvas.add_round_image(_byte=io.BytesIO(bytes_), resize=(390, 390), position=(735, 120))
                     canvas.add_text(text=f'{member}', auto_align=True, size=90, position=(660, 540))
                     canvas.add_text(
-                        text=f'You are {len(member.guild.members)}th Member',
-                        auto_align=True,
                         size=90,
-                        position=(660, 645)
+                        auto_align=True,
+                        position=(660, 645),
+                        text=f'You are {len(member.guild.members)}th Member',
                     )
                     file = discord.File(canvas.output, 'hq_card.png')
                     emd = discord.Embed(description=f'**Welcome to {member.guild.name}**')
@@ -46,12 +46,8 @@ class Welcomer(commands.Cog):
                     if reception:
                         try:
                             await reception.send(embed=emd, file=file)
-                        except discord.errors.Forbidden:
-                            print(f'[Event:on_member_join | {member.guild.name} | No Permission]')
-                    else:
-                        print(f'[Event:on_member_join | {member.guild.name} | No Reception Found]')
-            else:
-                print(f'[Event:on_member_join | {member.guild.name} | No Welcome Card]')
+                        except Exception:
+                            pass
 
 
 def setup(bot):
