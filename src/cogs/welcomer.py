@@ -33,21 +33,16 @@ class Welcomer(commands.Cog):
                     canvas.set_background(_byte=bg_bytes, _blur=True)
                     canvas.add_round_image(_byte=round_bg, resize=(420, 420), position=(720, 105))
                     canvas.add_round_image(_byte=io.BytesIO(bytes_), resize=(390, 390), position=(735, 120))
-                    canvas.add_text(
-                        text=f'{member}',
-                        auto_align=True,
-                        size=90,
-                        position=(660, 540)
-                    )
+                    canvas.add_text(text=f'{member}', auto_align=True, size=90, position=(660, 540))
                     canvas.add_text(
                         text=f'You are {len(member.guild.members)}th Member',
                         auto_align=True,
                         size=90,
                         position=(660, 645)
                     )
-                    file = discord.File(canvas.output, 'welcome_card.png')
+                    file = discord.File(canvas.output, 'hq_card.png')
                     emd = discord.Embed(description=f'**Welcome to {member.guild.name}**')
-                    emd.set_image(url="attachment://welcome_card.png")
+                    emd.set_image(url="attachment://hq_card.png")
                     if reception:
                         try:
                             await reception.send(embed=emd, file=file)
