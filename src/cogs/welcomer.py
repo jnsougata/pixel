@@ -50,6 +50,14 @@ class Welcomer(commands.Cog):
                             except Exception:
                                 pass
 
+        # this is only fot support server
+            if guild_id == 834662394068336670:
+                role = guild.get_role(838441883721924729)
+                try:
+                    await member.add_roles(role)
+                except Exception:
+                    pass
+
 
 def setup(bot):
     bot.add_cog(Welcomer(bot))
