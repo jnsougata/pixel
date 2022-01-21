@@ -41,7 +41,7 @@ class Welcomer(commands.Cog):
                         text=f'You are {member.guild.member_count}th Member',
                     )
                     file = discord.File(canvas.output, 'hq_card.png')
-                    emd = discord.Embed(description=f'**Welcome to {member.guild.name}**', color=0x32353b)
+                    emd = discord.Embed(description=f'**Welcome to {member.guild.name}**', color=0x303434)
                     emd.set_image(url="attachment://hq_card.png")
                     try:
                         await reception.send(embed=emd, file=file)
