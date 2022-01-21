@@ -33,7 +33,7 @@ class Listeners(commands.Cog):
 
         try:
             await prompt_channel.send(embed=emd)
-        except discord.errors.Forbidden:
+        except (discord.errors.Forbidden, AttributeError):
             pass
         finally:
             registry = self.bot.get_channel(899864601057976330)

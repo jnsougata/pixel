@@ -17,14 +17,14 @@ class BaseView(discord.ui.View):
         self.value = None
         self.message = None
 
-    async def on_timeout(self) -> None:
+    async def on_timeout(self):
         try:
             await self.message.delete()
-        except Exception:
-            pass
+        except discord.errors.NotFound:
+            return
 
 
-class BaseMenu(discord.ui.Select):
+class Menu(discord.ui.Select):
 
     def __init__(self, context: commands.Context, bot: discord.Client):
 
@@ -49,6 +49,7 @@ class BaseMenu(discord.ui.Select):
         )
 
     async def callback(self, interaction: discord.Interaction):
+
         if interaction.user == self.ctx.author:
 
             if int(self.values[0]) == 0:
@@ -102,7 +103,7 @@ class Settings(commands.Cog):
             icon_url=ctx.author.avatar.url
         )
         view = BaseView()
-        view.add_item(BaseMenu(context=ctx, bot=self.bot))
+        view.add_item(Menu(ctx, self.bot))
         view.message = await ctx.send(embed=emd, view=view)
 
 

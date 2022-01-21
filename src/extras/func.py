@@ -1,11 +1,14 @@
 import os
 from deta import Deta
 from typing import Union
+from airdrive import AirDrive
 from discord.ext import commands
 
 
-deta = Deta(os.getenv('DETA_TOKEN'))
 DEFAULT_PREFIX = '.'
+KEY = os.getenv('DETA_TOKEN')
+deta = Deta(KEY)
+drive = AirDrive.login('PixeL', '@11223344', private_key=KEY)
 
 
 async def db_push_object(guild_id: int, item: Union[list, dict, str, int, float], key: str):
