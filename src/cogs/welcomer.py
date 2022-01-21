@@ -26,7 +26,6 @@ class Welcomer(commands.Cog):
                             return io.BytesIO(drive.cache('covers/default_card.png'))
 
                     bg_bytes = await get_background()
-                    print(bg_bytes)
                     avatar = member.display_avatar.with_format('png')
                     bytes_ = await avatar.read()
                     round_bg = Io.draw(size=(1500, 1500), color='#FFFFFF')
