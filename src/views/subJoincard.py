@@ -102,6 +102,10 @@ async def sub_view_welcomecard(bot: discord.Client, ctx: commands.Context, inter
         elif view.value == 2:
             await ctx.send(embed=discord.Embed(description=f'{Emo.DEL} Welcomecard removed'), delete_after=5)
             await db_push_object(guild_id=ctx.guild.id, item=['REMOVED'], key='cover')
+            try:
+                drive.delete(f'covers/{ctx.guild.id}_card.png')
+            except Exception:
+                pass
         elif view.value == 0:
             await msg.delete()
         else:
