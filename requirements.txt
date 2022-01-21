@@ -1,6 +1,7 @@
 deta
 aiohttp
+requests
 pillow==9.0.0
 aiotube==1.4.5
-airdrive==0.2.1
+airdrive==0.2.5
 git+https://github.com/Rapptz/discord.py
