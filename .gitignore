@@ -1,3 +1,4 @@
+.idea
 src.sync.py
 src.cogs._loc.py
 src.cogs._sync.py
