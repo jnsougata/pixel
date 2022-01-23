@@ -51,7 +51,7 @@ class Help(commands.Cog):
                         f'\n\n{Emo.FAQ} To know more'
                         f'\nabout **setup** tap **`Info`**'
                         f'\n\n{Emo.SUP} Join **[PixeL Support]'
-                        f'(https://discord.gg/UzyEYeYZF9)**'
+                        f'(https://discord.gg/VE5qRFfmG2)**'
                         f'\n​‍‍‍',
             color=0x005aef
         )
