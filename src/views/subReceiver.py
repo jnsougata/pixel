@@ -49,7 +49,7 @@ class Option(discord.ui.View):
             self.stop()
 
 
-class TextMenu(discord.ui.Select):
+class TextChannelMenu(discord.ui.Select):
 
     def __init__(
             self,
@@ -90,24 +90,16 @@ class TextMenu(discord.ui.Select):
                     description=f'{Emo.CHECK} The new receiver channel is {channel.mention}'
                                 f'\nThis channel will be used to receive livestream & upload notifications'
                 )
-                await interaction.message.edit(
-                    embed=emd,
-                    view=None
-
-                )
-                await db_push_object(
-                    guild_id=self.ctx.guild.id,
-                    item=[self.values[0]],
-                    key='alertchannel'
-                )
+                await interaction.message.edit(embed=emd, view=None)
+                await db_push_object(guild_id=self.ctx.guild.id, item=[self.values[0]], key='alertchannel')
             else:
                 await interaction.message.delete()
 
 
 async def sub_view_receiver(
+        bot: discord.Client,
         ctx: commands.Context,
-        interaction: discord.Interaction,
-        bot: discord.Client
+        interaction: discord.Interaction
 ):
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
@@ -128,43 +120,23 @@ async def sub_view_receiver(
                     f'\n\n**{ctx.guild.name}\'s** current receiver is {_check()}'
     )
     if ctx.guild.icon:
-        emd.set_author(
-            icon_url=ctx.guild.icon.url,
-            name=ctx.guild.name
-        )
+        emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
     else:
-        emd.set_author(
-            icon_url=ctx.guild.me.avatar.url,
-            name=ctx.guild.me.name
-        )
-
+        emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
     view = Option(ctx)
     await interaction.response.edit_message(embed=emd, view=view)
     await view.wait()
-
     if view.value == 1:
         view.clear_items()
         new_view = BaseView()
-        new_view.add_item(TextMenu(context=ctx, bot=bot))
+        new_view.add_item(TextChannelMenu(context=ctx, bot=bot))
         new_view.message = await interaction.message.edit(
             content=f'{ctx.author.mention}',
-            embed=discord.Embed(
-                description='Please **select** a text channel to use as **receiver:**'
-            ),
-            view=new_view
-        )
+            embed=discord.Embed(description='Please **select** a text channel to use as **receiver:**'), view=new_view)
     elif view.value == 2:
         await interaction.message.edit(
             content=f'{ctx.author.mention}',
-            embed=discord.Embed(
-                description=f'{Emo.DEL} Receiver removed'
-            ),
-            view=None
-        )
-        await db_push_object(
-            guild_id=ctx.guild.id,
-            item=['removed'],
-            key='alertchannel'
-        )
+            embed=discord.Embed(description=f'{Emo.DEL} Receiver removed'), view=None)
+        await db_push_object(guild_id=ctx.guild.id, item=['removed'], key='alertchannel')
     elif view.value == 0:
         await interaction.message.delete()
