@@ -90,7 +90,7 @@ class ChannelMenu(discord.ui.Select):
                 ch = Channel(self.values[0])
                 data = ch.info
                 emd = discord.Embed(
-                    title=f'{Emo.DEL} {data["name"]}',
+                    title=f'❌ {data["name"]}',
                     description=f'**` Subs `  {data["subscribers"]}**'
                                 f'\n\n**` Views `  {data["views"]}**'
                                 f'\n\n**` Id `  {data["id"]}**',
@@ -99,15 +99,10 @@ class ChannelMenu(discord.ui.Select):
                 if data["avatar_url"] and data["banner_url"]:
                     emd.set_thumbnail(url=data["avatar_url"])
                     emd.set_image(url=data["banner_url"])
-                emd.set_footer(text='❌ This channel has been removed.')
-                await interaction.message.edit(
-                    embed=emd,
-                    view=None
-                )
+                await interaction.message.edit(embed=emd, view=None)
                 db_raw = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
-                new_data = db_raw
-                new_data.pop(self.values[0])
-                await db_push_object(guild_id=self.ctx.guild.id, item=new_data, key='youtube')
+                db_raw.pop(self.values[0])
+                await db_push_object(guild_id=self.ctx.guild.id, item=db_raw, key='youtube')
             else:
                 await interaction.message.delete()
 
@@ -173,8 +168,8 @@ async def sub_view_youtube(
 ):
     emd = discord.Embed(
         description=f'**{ctx.guild.name}\'s** YouTube channel Settings'
-                    f'\n\nTo add new channel tap **` Add `**'
-                    f'\n\nTo remove old channel tap **` Remove `**'
+                    f'\n\nTo add new channel tap **`Add`**'
+                    f'\n\nTo remove old channel tap **`Remove`**'
     )
     if ctx.guild.icon:
         emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
@@ -185,15 +180,7 @@ async def sub_view_youtube(
     await interaction.response.edit_message(embed=emd, view=view)
     await view.wait()
 
-    if view.value == 2:
-        view = Temp()
-        view.add_item(await ChannelMenu.display(bot, ctx))
-        await interaction.message.edit(
-            content=f'{ctx.author.mention}',
-            embed=discord.Embed(description='Please select YouTube Channel to **remove:**'),
-            view=view
-        )
-    elif view.value == 1:
+    if view.value == 1:
         view.clear_items()
         new = await interaction.message.edit(
             embed=discord.Embed(description='Please type a youtube channel **ID** or **URL:**'),
@@ -245,6 +232,13 @@ async def sub_view_youtube(
 
         except asyncio.TimeoutError:
             await ctx.send('Bye! you took so long')
+
+    elif view.value == 2:
+        view = Temp()
+        view.add_item(await ChannelMenu.display(bot, ctx))
+        await interaction.message.edit(
+            embed=discord.Embed(description='Please select YouTube Channel to **remove:**'), view=view
+        )
 
     elif view.value == 0:
         await interaction.message.delete()
