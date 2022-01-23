@@ -94,8 +94,8 @@ class ChannelMenu(discord.ui.Select):
                     description=f'**` Subs `  {data["subscribers"]}**'
                                 f'\n\n**` Views `  {data["views"]}**'
                                 f'\n\n**` Id `  {data["id"]}**',
-                    url=data["url"]
-                )
+                    url=data["url"],
+                    color=0xc4302b)
                 if data["avatar_url"] and data["banner_url"]:
                     emd.set_thumbnail(url=data["avatar_url"])
                     emd.set_image(url=data["banner_url"])
@@ -169,7 +169,8 @@ async def sub_view_youtube(
     emd = discord.Embed(
         description=f'**{ctx.guild.name}\'s** YouTube channel Settings'
                     f'\n\nTo add new channel tap **`Add`**'
-                    f'\n\nTo remove old channel tap **`Remove`**'
+                    f'\n\nTo remove old channel tap **`Remove`**',
+        color=0xc4302b
     )
     if ctx.guild.icon:
         emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
@@ -183,7 +184,7 @@ async def sub_view_youtube(
     if view.value == 1:
         view.clear_items()
         new = await interaction.message.edit(
-            embed=discord.Embed(description='Please type a youtube channel **ID** or **URL:**'),
+            embed=discord.Embed(description='Please type a youtube channel **ID** or **URL:**', color=0xc4302b),
             view=view
         )
 
@@ -197,7 +198,8 @@ async def sub_view_youtube(
                 info = channel.info
                 emd = discord.Embed(title=f'{Emo.YT} {info["name"]}',
                                     description=f'**` Subs `  {info["subscribers"]}**'
-                                    f'\n\n**` Views `  {info["views"]}**', url=info["url"])
+                                    f'\n\n**` Views `  {info["views"]}**', url=info["url"],
+                                    color=0xc4302b)
                 if info["avatar_url"] and info["banner_url"]:
                     emd.set_thumbnail(url=info["avatar_url"])
                     emd.set_image(url=info["banner_url"])
@@ -222,7 +224,8 @@ async def sub_view_youtube(
                     receiver_view.add_item(ReceiverMenu(bot=bot, context=ctx, db_data=db_data, youtube_info=info))
                     embed = discord.Embed(
                         title=f'Wait! one more step',
-                        description=f'{Emo.TEXT} Please select a **text channel** to send the notification to:')
+                        description=f'{Emo.TEXT} Please select a **text channel** to send the notification to:',
+                        color=0xc4302b)
                     await nxt.edit(embed=embed, view=receiver_view)
                 else:
                     await nxt.delete()
@@ -237,7 +240,7 @@ async def sub_view_youtube(
         view = Temp()
         view.add_item(await ChannelMenu.display(bot, ctx))
         await interaction.message.edit(
-            embed=discord.Embed(description='Please select YouTube Channel to **remove:**'), view=view
+            embed=discord.Embed(description='Please select YouTube Channel to **remove:**', color=0xc4302b), view=view
         )
 
     elif view.value == 0:
