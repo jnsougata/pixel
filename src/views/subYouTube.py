@@ -235,7 +235,7 @@ async def sub_view_youtube(
                     receiver_view.add_item(ReceiverMenu(bot=bot, context=ctx, db_data=db_data, youtube_info=info))
                     embed = discord.Embed(
                         title=f'Wait! one more step',
-                        description=f'{Emo.TEXT} Please select a **text channel** to send the notification to')
+                        description=f'{Emo.TEXT} Please select a **text channel** to send the notification to:')
                     await nxt.edit(embed=embed, view=receiver_view)
                 else:
                     await nxt.delete()
