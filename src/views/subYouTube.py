@@ -258,8 +258,8 @@ async def sub_view_youtube(
 
                         if text_select_view.value == 0:
                             receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
-                            if receiver and receiver[0].is_digit():
-                                channel = self.bot.get_channel(int(receiver[0]))
+                            if receiver and receiver[0].isdigit():
+                                channel = bot.get_channel(int(receiver[0]))
                                 emd = discord.Embed(
                                     title=f'{Emo.YT} {info["name"]}',
                                     description=f'{Emo.CHECK} The receiver channel is {channel.mention}'
@@ -267,6 +267,7 @@ async def sub_view_youtube(
                                                 f'notifications',
                                     url=info['url'],
                                 )
+                                await nxt.edit(embed=emd, view=None)
                             if receivers:
                                 db_data = receivers
                             else:
@@ -284,10 +285,10 @@ async def sub_view_youtube(
                             receiver_view.add_item(ReceiverMenu(
                                 bot=bot, context=ctx, db_data=db_data, youtube_info=info))
                             await nxt.edit(embed=emd, view=receiver_view)
-
                     else:
                         await nxt.delete()
-                except Exception:
+                except Exception as e:
+                    print(e)
                     await ctx.send(embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'))
 
             except asyncio.TimeoutError:
