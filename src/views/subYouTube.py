@@ -56,8 +56,7 @@ class ReceiverMenu(discord.ui.Select):
                     url=self.info['url'],
                 )
                 await interaction.message.edit(embed=emd, view=None)
-                await db_push_object(guild_id=self.ctx.guild.id, item=[self.values[0]], key='alertchannel')
-                self.db_data[self.info["id"]] = str(self.values[0])
+                self.db_data[self.info['id']] = str(self.values[0])
                 await db_push_object(guild_id=self.ctx.guild.id, item=self.db_data, key='receivers')
             else:
                 await interaction.message.delete()
