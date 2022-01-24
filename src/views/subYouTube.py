@@ -6,6 +6,12 @@ from discord.ext import commands
 from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
 
 
+class Temp(discord.ui.View):
+    def __init__(self):
+        super().__init__()
+        self.message = None
+
+
 class ReceiverMenu(discord.ui.Select):
 
     def __init__(
@@ -60,7 +66,7 @@ class ReceiverMenu(discord.ui.Select):
 class ChannelMenu(discord.ui.Select):
 
     @classmethod
-    async def display(cls, bot: discord.Client, ctx: commands.Context):
+    async def display(cls, bot: discord.Client, ctx: commands.Context, db_data: dict):
         raw = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
         if raw:
             ids = list(raw)
@@ -71,17 +77,18 @@ class ChannelMenu(discord.ui.Select):
             options = [discord.SelectOption(label='Please add a channel', emoji=Emo.WARN)]
             options.insert(0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS))
 
-        return cls(bot=bot, context=ctx, options=options)
+        return cls(bot=bot, ctx=ctx, options=options, db_data=db_data)
 
-    def __init__(self, bot: discord.Client, context: commands.Context, options: list):
+    def __init__(self, bot: discord.Client, ctx: commands.Context, options: list, db_data: dict):
         self.bot = bot
-        self.ctx = context
+        self.ctx = ctx
+        self.db_data = db_data
 
         super().__init__(
-            placeholder='Search results',
             min_values=1,
             max_values=1,
-            options=options
+            options=options,
+            placeholder='Search results'
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -103,11 +110,13 @@ class ChannelMenu(discord.ui.Select):
                 db_raw = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
                 db_raw.pop(self.values[0])
                 await db_push_object(guild_id=self.ctx.guild.id, item=db_raw, key='youtube')
+                self.db_data.pop(self.values[0], None)
+                await db_push_object(guild_id=self.ctx.guild.id, item=self.db_data, key='receivers')
             else:
                 await interaction.message.delete()
 
 
-class Option(discord.ui.View):
+class MainOption(discord.ui.View):
     def __init__(self, ctx: commands.Context, bot: discord.Client):
         self.ctx = ctx
         self.message = None
@@ -137,10 +146,10 @@ class Option(discord.ui.View):
 class Confirmation(discord.ui.View):
     def __init__(self, ctx: commands.Context, bot: discord.Client):
         self.ctx = ctx
-        self.message = None
         self.bot = bot
-        super().__init__()
         self.value = None
+        super().__init__()
+        self.message = None
 
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
     async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -155,10 +164,25 @@ class Confirmation(discord.ui.View):
             self.stop()
 
 
-class Temp(discord.ui.View):
-    def __init__(self):
-        self.message = None
+class TextSelection(discord.ui.View):
+    def __init__(self, ctx: commands.Context, bot: discord.Client):
+        self.ctx = ctx
+        self.bot = bot
+        self.value = None
         super().__init__()
+        self.message = None
+
+    @discord.ui.button(label='Default', style=discord.ButtonStyle.green)
+    async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = 0
+            self.stop()
+
+    @discord.ui.button(label='Select', style=discord.ButtonStyle.blurple)
+    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = 1
+            self.stop()
 
 
 async def sub_view_youtube(
@@ -166,82 +190,132 @@ async def sub_view_youtube(
         ctx: commands.Context,
         interaction: discord.Interaction
 ):
-    emd = discord.Embed(
-        description=f'**{ctx.guild.name}\'s** YouTube channel Settings'
-                    f'\n\nTo add new channel tap **`Add`**'
-                    f'\n\nTo remove old channel tap **`Remove`**',
-        color=0xc4302b
-    )
-    if ctx.guild.icon:
-        emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
-    else:
-        emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
+    raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
-    view = Option(ctx, bot)
-    await interaction.response.edit_message(embed=emd, view=view)
-    await view.wait()
+    def _check():
+        if raw and raw[0].isdigit():
+            return ctx.guild.get_channel(int(raw[0]))
 
-    if view.value == 1:
-        view.clear_items()
-        new = await interaction.message.edit(
-            embed=discord.Embed(description='Please type a youtube channel **ID** or **URL:**', color=0xc4302b),
-            view=view
+    if raw and _check():
+        emd = discord.Embed(
+            description=f'**{ctx.guild.name}\'s** YouTube settings'
+                        f'\n\nTo add new channel tap **`Add`**'
+                        f'\n\nTo remove old channel tap **`Remove`**',
+            color=0xc4302b
         )
+        if ctx.guild.icon:
+            emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
+        else:
+            emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
 
-        def check(m):
-            return m.author == ctx.author
+        view = MainOption(ctx, bot)
+        await interaction.response.edit_message(embed=emd, view=view)
+        await view.wait()
 
-        try:
-            response = await bot.wait_for('message', check=check, timeout=20)
-            channel = Channel(response.content)
+        if view.value == 1:
+            view.clear_items()
+            new = await interaction.message.edit(
+                embed=discord.Embed(description='Please type a youtube channel **ID** or **URL:**', color=0xc4302b),
+                view=view
+            )
+
+            def check(m):
+                return m.author == ctx.author
+
             try:
-                info = channel.info
-                emd = discord.Embed(title=f'{Emo.YT} {info["name"]}',
-                                    description=f'**` Subs `  {info["subscribers"]}**'
-                                    f'\n\n**` Views `  {info["views"]}**', url=info["url"],
-                                    color=0xc4302b)
-                if info["avatar_url"] and info["banner_url"]:
-                    emd.set_thumbnail(url=info["avatar_url"])
-                    emd.set_image(url=info["banner_url"])
-                await new.delete()
-                new_view = Confirmation(ctx, bot)
-                nxt = await ctx.send(embed=emd, view=new_view)
-                await new_view.wait()
-                if new_view.value:
-                    old_data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
-                    if old_data:
-                        old_data[info['id']] = {'live': 'empty', 'upload': channel.latest.id}
-                        await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
-                    else:
-                        empty = {info['id']: {'live': 'empty', 'upload': channel.latest.id}}
-                        await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
-                    receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
-                    if receivers:
-                        db_data = receivers
-                    else:
-                        db_data = {}
-                    receiver_view = Temp()
-                    receiver_view.add_item(ReceiverMenu(bot=bot, context=ctx, db_data=db_data, youtube_info=info))
-                    embed = discord.Embed(
-                        title=f'Wait! one more step',
-                        description=f'{Emo.TEXT} Please select a **text channel** to send the notification to:',
-                        color=0xc4302b)
-                    await nxt.edit(embed=embed, view=receiver_view)
-                else:
-                    await nxt.delete()
-            except Exception:
-                await ctx.send(embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'))
-                await interaction.message.delete()
+                response = await bot.wait_for('message', check=check, timeout=20)
+                channel = Channel(response.content)
+                try:
+                    info = channel.info
+                    emd = discord.Embed(title=f'{Emo.YT} {info["name"]}',
+                                        description=f'**` Subs `  {info["subscribers"]}**'
+                                        f'\n\n**` Views `  {info["views"]}**', url=info["url"],
+                                        color=0xc4302b)
+                    if info["avatar_url"] and info["banner_url"]:
+                        emd.set_thumbnail(url=info["avatar_url"])
+                        emd.set_image(url=info["banner_url"])
+                    await new.delete()
+                    new_view = Confirmation(ctx, bot)
+                    nxt = await ctx.send(embed=emd, view=new_view)
+                    await new_view.wait()
+                    if new_view.value:
+                        old_data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
+                        if old_data:
+                            old_data[info['id']] = {'live': 'empty', 'upload': channel.latest.id}
+                            await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
+                        else:
+                            empty = {info['id']: {'live': 'empty', 'upload': channel.latest.id}}
+                            await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
+                        text_select_view = TextSelection(ctx, bot)
+                        embed = discord.Embed(
+                            title=f'Wait! one more step',
+                            description=f'{Emo.TEXT} To use default receiver tap **`Default`**'
+                                        f'\n\n{Emo.TEXT} To select another receiver tap **`Select`**',
+                            color=0xc4302b)
+                        await nxt.edit(embed=embed, view=text_select_view)
+                        receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
+                        await text_select_view.wait()
 
-        except asyncio.TimeoutError:
-            await ctx.send('Bye! you took so long')
+                        if text_select_view.value == 0:
+                            receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
+                            if receiver and receiver[0].is_digit():
+                                channel = self.bot.get_channel(int(receiver[0]))
+                                emd = discord.Embed(
+                                    title=f'{Emo.YT} {info["name"]}',
+                                    description=f'{Emo.CHECK} The receiver channel is {channel.mention}'
+                                                f'\nThis channel will be used to receive livestream & upload '
+                                                f'notifications',
+                                    url=info['url'],
+                                )
+                            if receivers:
+                                db_data = receivers
+                            else:
+                                db_data = {}
+                            db_data[info['id']] = str(receiver[0])
+                            await db_push_object(guild_id=ctx.guild.id, item=db_data, key='receivers')
 
-    elif view.value == 2:
-        view = Temp()
-        view.add_item(await ChannelMenu.display(bot, ctx))
-        await interaction.message.edit(
-            embed=discord.Embed(description='Please select YouTube Channel to **remove:**', color=0xc4302b), view=view
+                        elif text_select_view.value == 1:
+                            emd = discord.Embed(description=f'{Emo.TEXT} Select a text channel from the menu below:')
+                            if receivers:
+                                db_data = receivers
+                            else:
+                                db_data = {}
+                            receiver_view = Temp()
+                            receiver_view.add_item(ReceiverMenu(
+                                bot=bot, context=ctx, db_data=db_data, youtube_info=info))
+                            await nxt.edit(embed=emd, view=receiver_view)
+
+                    else:
+                        await nxt.delete()
+                except Exception:
+                    await ctx.send(embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'))
+
+            except asyncio.TimeoutError:
+                await ctx.send('Bye! you took so long')
+
+        elif view.value == 2:
+            receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
+            if receivers:
+                db_data = receivers
+            else:
+                db_data = {}
+            view = Temp()
+            view.add_item(await ChannelMenu.display(bot=bot, ctx=ctx, db_data=db_data))
+            await interaction.message.edit(
+                embed=discord.Embed(description='Please select YouTube Channel to **remove:**', color=0xc4302b),
+                view=view
+            )
+
+        elif view.value == 0:
+            await interaction.message.delete()
+    else:
+        p = await prefix_fetcher(ctx.guild.id)
+        emd = discord.Embed(
+            title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
+            description=f'Please set a Text Channel '
+                        f'\nfor receiving Livestream Notifications'
+                        f'\n\n**`Steps`**'
+                        f'\n**{p}setup**  select **receiver** from menu '
+                        f'\nThen tap **Edit**  select **text channel** from menu'
         )
-
-    elif view.value == 0:
-        await interaction.message.delete()
+        await interaction.response.edit_message(embed=emd, view=None)

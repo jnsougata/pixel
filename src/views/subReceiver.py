@@ -75,10 +75,10 @@ class TextChannelMenu(discord.ui.Select):
             0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
         )
         super().__init__(
-            placeholder='Select a text channel',
             min_values=1,
             max_values=1,
-            options=options
+            options=options,
+            placeholder='Select a text channel',
         )
 
     async def callback(self, interaction: discord.Interaction):
@@ -86,7 +86,7 @@ class TextChannelMenu(discord.ui.Select):
             if int(self.values[0]) != 0:
                 channel = self.bot.get_channel(int(self.values[0]))
                 emd = discord.Embed(
-                    title=f'{Emo.YT} Receiver channel edited!',
+                    title=f'{Emo.YT} Default receiver changed',
                     description=f'{Emo.CHECK} The new receiver channel is {channel.mention}'
                                 f'\nThis channel will be used to receive livestream & upload notifications'
                 )
@@ -114,7 +114,7 @@ async def sub_view_receiver(
             return '**`None`**'
 
     emd = discord.Embed(
-        description=f'To set new receiver tap **` Edit `**'
+        description=f'To set default receiver tap **` Edit `**'
                     f'\n\n{Emo.WARN} Only accepts text channels where'
                     f'\nit has permission to **embed links** and **urls**'
                     f'\n\n**{ctx.guild.name}\'s** current receiver is {_check()}'
@@ -131,7 +131,6 @@ async def sub_view_receiver(
         new_view = BaseView()
         new_view.add_item(TextChannelMenu(context=ctx, bot=bot))
         new_view.message = await interaction.message.edit(
-            content=f'{ctx.author.mention}',
             embed=discord.Embed(description='Please **select** a text channel to use as **receiver:**'), view=new_view)
     elif view.value == 2:
         await interaction.message.edit(
