@@ -48,8 +48,9 @@ class Welcomer(commands.Cog):
                     except Exception:
                         pass
 
-        # this is only fot support server
             if guild_id == 834662394068336670:
+                # this is only for support server
+                #  not to be used in others
                 role = member.guild.get_role(838441883721924729)
                 try:
                     await member.add_roles(role)
