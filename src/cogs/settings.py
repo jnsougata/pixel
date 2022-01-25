@@ -20,16 +20,16 @@ class BaseView(discord.ui.View):
     async def on_timeout(self):
         try:
             await self.message.delete()
-        except discord.errors.NotFound:
+        except Exception:
             return
 
 
-class Menu(discord.ui.Select):
+class CommandMenu(discord.ui.Select):
 
-    def __init__(self, context: commands.Context, bot: discord.Client):
+    def __init__(self, ctx: commands.Context, bot: discord.Client):
 
         self.bot = bot
-        self.ctx = context
+        self.ctx = ctx
 
         options = [
             discord.SelectOption(label='​', value='100', emoji=Emo.CROSS),
@@ -103,7 +103,7 @@ class Settings(commands.Cog):
             icon_url=ctx.author.avatar.url
         )
         view = BaseView()
-        view.add_item(Menu(ctx, self.bot))
+        view.add_item(CommandMenu(ctx, self.bot))
         view.message = await ctx.send(embed=emd, view=view)
 
 
