@@ -8,26 +8,18 @@
 </a>
 
 
-**Features:**
+### **Features:**
 
- ✅ Add Unlimited YouTube Channels for Notifications
+ ✅ Add Multiple YouTube Channels for Notifications
 
- ✅ Customizable Welcome Card
- 
- #
+ ✅ Customize with High Resolution Welcome Card
 
-**Single command to set up everything**
 
-   **` .settings `** 
-        or
-   **` .setup `** 
+### **Single command to set up everything**
+
+### **` .setup `** 
    
-#
 
-**About:**
-
-🤖 It uses the latest Discord UI and Interaction to provide easy and simple setup. 
-
-You don't have to remember commands and syntax. 
-
-Just select and set up your server.
+### **About:**
+🤖 It uses the latest Discord UI and Interaction to provide easy and simple setup.
+You don't have to remember commands and syntax. Just select and set up your server.
