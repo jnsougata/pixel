@@ -43,7 +43,7 @@ class Help(commands.Cog):
     @commands.command(name='help')
     @commands.cooldown(rate=3, per=60, type=commands.BucketType.member)
     async def help(self, ctx: commands.Context):
-        prefix = await prefix_fetcher(ctx.guild.id)
+        prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
             description=f''
                         f'\n\n{Emo.SETTINGS} To set me up'

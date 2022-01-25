@@ -2,7 +2,7 @@ import asyncio
 import discord
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import prefix_fetcher, db_push_object
+from src.extras.func import db_fetch_prefix, db_push_object
 
 
 class Option(discord.ui.View):
@@ -36,7 +36,7 @@ async def sub_view_prefix(
         ctx: commands.Context,
         interaction: discord.Interaction,
 ):
-    prefix = await prefix_fetcher(ctx.guild.id)
+    prefix = await db_fetch_prefix(ctx.guild.id)
     emd = discord.Embed(
         description=f'**{ctx.guild.me.display_name}\'s** current prefix is **` {prefix} `**'
                     f'\n\nTo set new custom prefix tap **` Edit `**'

@@ -24,13 +24,13 @@ async def db_fetch_object(guild_id: int, key: str):
     return None
 
 
-async def prefix_fetcher(guild_id):
+async def db_fetch_prefix(guild_id):
     prefix = await db_fetch_object(guild_id=guild_id, key='prefix')
     return prefix[0] if prefix else DEFAULT_PREFIX
 
 
-async def exec_prefix(bot, msg):
+async def exe_prefix(bot, msg):
     if msg.guild:
-        prefix = await prefix_fetcher(msg.guild.id)
+        prefix = await db_fetch_prefix(msg.guild.id)
         return commands.when_mentioned_or(prefix)(bot, msg)
     return commands.when_mentioned_or(DEFAULT_PREFIX)(bot, msg)

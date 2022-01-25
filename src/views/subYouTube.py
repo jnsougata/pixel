@@ -3,7 +3,7 @@ import asyncio
 from aiotube import Channel
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher
+from src.extras.func import db_push_object, db_fetch_object, db_fetch_prefix
 
 
 class Temp(discord.ui.View):
@@ -309,13 +309,13 @@ async def sub_view_youtube(
         elif view.value == 0:
             await interaction.message.delete()
     else:
-        p = await prefix_fetcher(ctx.guild.id)
+        prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
             description=f'Please set a Text Channel '
                         f'\nfor receiving Livestream Notifications'
                         f'\n\n**`Steps`**'
-                        f'\n**{p}setup**  select **receiver** from menu '
+                        f'\n**{prefix}setup**  select **receiver** from menu '
                         f'\nThen tap **Edit**  select **text channel** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)

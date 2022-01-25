@@ -8,7 +8,7 @@ from PIL import Image
 from airdrive import AirDrive
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import db_push_object, db_fetch_object, prefix_fetcher, drive
+from src.extras.func import db_push_object, db_fetch_object, db_fetch_prefix, drive
 
 
 class Option(discord.ui.View):
@@ -111,7 +111,7 @@ async def sub_view_welcomecard(bot: discord.Client, ctx: commands.Context, inter
         else:
             pass
     else:
-        prefix = await prefix_fetcher(ctx.guild.id)
+        prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
             description=f'Please set a Text Channel '

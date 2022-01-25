@@ -1,7 +1,7 @@
 import os
 import discord
 from discord.ext import commands
-from src.extras.func import exec_prefix
+from src.extras.func import exe_prefix
 
 intent = discord.Intents().default()
 intent.members = True
@@ -12,7 +12,7 @@ class PixeL(commands.Bot):
         super().__init__(
             intents=intent,
             help_command=None,
-            command_prefix=exec_prefix,
+            command_prefix=exe_prefix,
         )
 
     async def on_ready(self):
