@@ -30,6 +30,7 @@ cogs = [
     "help",
     "error",
     "welcomer",
+    "settings",
     "listener",
     "statusloop",
 ]
@@ -37,5 +38,5 @@ cogs = [
 for cog in cogs:
     pixel.load_extension("cogs." + cog)
 
-pixel.add_slash(setup_command, setup_func, 877399405056102431)
+pixel.add_slash(setup_command, setup_func)
 pixel.run(os.getenv('DISCORD_TOKEN'))
