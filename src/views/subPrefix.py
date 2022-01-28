@@ -58,7 +58,6 @@ async def sub_view_prefix(
 
     if view.value == 1:
         new = await interaction.message.edit(
-            content=f'{ctx.author.mention}',
             embed=discord.Embed(
                 description='Please **type** a prefix to set as **custom prefix:**'
             ),
@@ -76,9 +75,7 @@ async def sub_view_prefix(
                     item=[response.content],
                     key='prefix'
                 )
-                await new.delete()
-                await ctx.send(
-                    content=f'{ctx.author.mention}',
+                await new.edit(
                     embed=discord.Embed(
                         description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
                                     f'new custom prefix is  ` {response.content} `',

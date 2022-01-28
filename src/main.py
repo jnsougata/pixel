@@ -2,12 +2,15 @@ import os
 import discord
 from discord.ext import commands
 from src.extras.func import exe_prefix
+from slash import SlashInteraction, SlashBot, Slash
+from typing import Any
+from src.icog.cmd import setup_command, setup_func
 
 intent = discord.Intents().default()
 intent.members = True
 
 
-class PixeL(commands.Bot):
+class PixeL(SlashBot):
     def __init__(self):
         super().__init__(
             intents=intent,
@@ -27,7 +30,6 @@ cogs = [
     "help",
     "error",
     "welcomer",
-    "settings",
     "listener",
     "statusloop",
 ]
@@ -35,4 +37,5 @@ cogs = [
 for cog in cogs:
     pixel.load_extension("cogs." + cog)
 
+pixel.add_slash(setup_command, setup_func, 877399405056102431)
 pixel.run(os.getenv('DISCORD_TOKEN'))
