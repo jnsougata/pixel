@@ -68,13 +68,13 @@ class ChannelMenu(discord.ui.Select):
     async def display(cls, bot: discord.Client, ctx: commands.Context, db_data: dict):
         raw = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
         if raw:
-            ids = list(raw)
-            names = [Channel(id).name for id in list(raw)]
+            ids = list(raw)[:24]
+            names = [Channel(id).name for id in ids]
             options = [discord.SelectOption(label=names[i], value=ids[i], emoji=Emo.YT) for i in range(len(ids))]
-            options.insert(0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS))
+            options.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
         else:
             options = [discord.SelectOption(label='Please add a channel', emoji=Emo.WARN)]
-            options.insert(0, discord.SelectOption(label='​', value='0', emoji=Emo.CROSS))
+            options.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
 
         return cls(bot=bot, ctx=ctx, options=options, db_data=db_data)
 
