@@ -92,7 +92,7 @@ setup_command = Slash(name="setup", description='setup the bot')
 
 async def setup_func(interaction: SlashInteraction):
     if interaction.author.guild_permissions.administrator:
-        emd = discord.Embed(description='\n> use command from the menu below', colour=0x005aef)
+        emd = discord.Embed(title=f'Welcome to {interaction.client.user.name} Setup', colour=0x005aef)
         emd.set_author(name=interaction.author.display_name, icon_url=interaction.author.avatar.url)
         view = BaseView()
         view.add_item(CommandMenu(interaction, interaction.client))
