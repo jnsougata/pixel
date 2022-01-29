@@ -1,4 +1,3 @@
-from src.slash import Slash, SlashInteraction
 import discord
 from typing import Any
 from src.extras.emojis import *
@@ -33,7 +32,7 @@ class CommandMenu(discord.ui.Select):
         self.ctx = ctx
 
         options = [
-            discord.SelectOption(label='​', value='100', emoji=Emo.CROSS),
+            discord.SelectOption(label='\u200b', value='100', emoji=Emo.CROSS),
             discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
@@ -85,21 +84,3 @@ class CommandMenu(discord.ui.Select):
             await interaction.response.send_message(
                 'You are not allowed to control this message!', ephemeral=True
             )
-
-
-setup_command = Slash(name="setup", description='setup the bot')
-
-
-async def setup_func(interaction: SlashInteraction):
-    if interaction.author.guild_permissions.administrator:
-        emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
-        emd.set_footer(text=f'⮞⮞ menu disappears in thirty seconds')
-        view = BaseView()
-        view.add_item(CommandMenu(interaction, interaction.client))
-        await interaction.respond(embed=emd)
-        view.message = await interaction.send(content='\u200b', view=view)
-    else:
-        await interaction.respond(
-            embed=discord.Embed(title=f'{Emo.WARN} You are not an **ADMIN** {Emo.WARN}'),
-            ephemeral=True
-        )
