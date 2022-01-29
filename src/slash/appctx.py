@@ -1,12 +1,13 @@
 import json
 import discord
-from .core import BaseInteraction, BaseInteractionData, BaseSlashOption
+from discord.webhook.async_ import Webhook
+from .base import BaseInteraction, BaseInteractionData, BaseSlashOption
 from discord.http import Route
 from discord.utils import _to_json
 from typing import Callable, Optional, Any, Union, List, Sequence, Iterable
 
 
-class SlashInteraction:
+class ApplicationContext:
     def __init__(self, interaction: BaseInteraction, client: discord.Client):
         self._interaction = interaction
         self._client = client
@@ -140,6 +141,19 @@ class SlashInteraction:
                     }
                 )
         await self._client.http.request(route, form=form, files=files)
+
+    async def defer(self):
+        route = Route('POST', f'/interactions/{self._interaction.id}/{self._interaction.token}/callback')
+        return await self._client.http.request(route, json={'type': '5'})
+
+    @property
+    def followup(self):
+        payload = {
+            'id': self.application_id,
+            'type': 3,
+            'token': self._interaction.token,
+        }
+        return Webhook.from_state(data=payload, state=self._client._connection)
 
     @property
     def typing(self):

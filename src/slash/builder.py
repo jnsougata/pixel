@@ -1,41 +1,136 @@
 from typing import Any
-from dataclasses import dataclass
 
 
-class Slash:
+class _Option:
+    data: Any
 
-    def __init__(self, name: str, description: str):
+
+class Choice:
+    def __init__(self, name: str, value: Any):
+        self.data = {
+            "name": name,
+            "value": value
+        }
+
+
+class StrOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 3,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class IntOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 4,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class BoolOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 5,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class UserOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 6,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class ChannelOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 7,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class RoleOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 8,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class MentionableOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 9,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class NumberOption(_Option):
+    def __init__(self, name: str, description: str, required: bool = False, choices: list[Choice] = None):
+        self.data = {
+            "name": name,
+            "description": description,
+            "type": 10,
+            "required": required,
+            "choices": [choice.data for choice in choices] if choices else []
+        }
+
+
+class SlashCommand:
+
+    def __init__(self, name: str, description: str, options: list[_Option] = None):
         self.name = name
         self.description = description
         self._payload = {
             "name": name,
             "description": description,
             "type": 1,
-            "options": [],
+            "options": [option.data for option in options] if options else []
         }
 
-    def add_options(self, options: list):
-        self._payload["options"] = options
+    @staticmethod
+    def subcommand(name: str, description: str, options: list):
+        return {
+            "name": name,
+            "description": description,
+            "type": 1,
+            "options": options
+        }
 
-    def subcommand(self, name: str, description: str, options: list):
-        self._payload["options"].append(
-            {
-                "name": name,
-                "description": description,
-                "type": 1,
-                "options": options
-            }
-        )
+    @staticmethod
+    def subcommand_group(name: str, description: str, options: list):
 
-    def subcommand_group(self, name: str, description: str, options: list):
-        self._payload["options"].append(
-            {
-                "name": name,
-                "description": description,
-                "type": 2,
-                "options": options
-            }
-        )
+        return {
+            "name": name,
+            "description": description,
+            "type": 2,
+            "options": options
+        }
 
     @staticmethod
     def create_subcommand(name: str, description: str):
@@ -46,89 +141,9 @@ class Slash:
         }
 
     @staticmethod
-    def set_str_option(name: str, description: str, required: bool = False, choices: list = None):
-        return {
-            "name": name,
-            "description": description,
-            "type": 3,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
-    def set_int_option(name: str, description: str, required: bool = False, choices: list = None):
-        return {
-            "name": name,
-            "description": description,
-            "type": 4,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
-    def set_bool_option(name: str, description: str, required: bool = False, choices: list = None):
-        return {
-            "name": name,
-            "description": description,
-            "type": 5,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
-    def set_user_option(name: str, description: str, required: bool = False, choices: list = None):
-        return {
-            "name": name,
-            "description": description,
-            "type": 6,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
-    def set_channel_option(name: str, description: str, choices: list = None, required: bool = False):
-        return {
-            "name": name,
-            "description": description,
-            "type": 7,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
-    def set_role_option(name: str, description: str, choices: list = None, required: bool = False):
-        return {
-            "name": name,
-            "description": description,
-            "type": 8,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
-    def set_mentionable_option(name: str, description: str, required: bool = False, choices: list = None):
-        return {
-            "name": name,
-            "description": description,
-            "type": 9,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
-    def set_number_option(name: str, description: str, choices: list = None, required: bool = False):
-        return {
-            "name": name,
-            "description": description,
-            "type": 9,
-            "required": required,
-            "choices": choices if choices else []
-        }
-
-    @staticmethod
     def set_choice(name: str, value):
         return {"name": name, "value": value}
 
     @property
-    def object(self):
+    def to_dict(self):
         return self._payload

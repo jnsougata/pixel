@@ -39,3 +39,19 @@ class BaseSlashOption:
     value: Union[str, int, float, bool]
     options: Optional[list] = None
     focused: Optional[bool] = None
+
+
+@dataclass(frozen=True)
+class BaseAppCommand:
+    id: int
+    name: str
+    description: str
+    type: int
+    application_id: Optional[Union[int, str]]
+    guild_id: Optional[Union[int, str]] = None
+    options: Optional[list] = None
+    default_permission: Optional[bool] = None
+    version: Optional[Union[int, str]] = None
+    default_member_permissions: Optional[list] = None
+    dm_permission: Optional[bool] = None
+
