@@ -81,9 +81,7 @@ class CommandMenu(discord.ui.Select):
             else:
                 pass
         else:
-            await interaction.response.send_message(
-                'You are not allowed to control this message!', ephemeral=True
-            )
+            await interaction.response.send_message('You are not allowed to control this message!', ephemeral=True)
 
 
 class Settings(commands.Cog):
@@ -94,14 +92,8 @@ class Settings(commands.Cog):
     @commands.has_permissions(administrator=True)
     @commands.command(aliases=['settings', 'setup'])
     async def settings_(self, ctx: commands.Context):
-        emd = discord.Embed(
-            description='\n> use command from the menu below',
-            colour=0x005aef
-        )
-        emd.set_author(
-            name=ctx.author.display_name,
-            icon_url=ctx.author.avatar.url
-        )
+        emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
+        emd.set_footer(text=f'⮞⮞ menu disappears in thirty seconds')
         view = BaseView()
         view.add_item(CommandMenu(ctx, self.bot))
         view.message = await ctx.send(embed=emd, view=view)

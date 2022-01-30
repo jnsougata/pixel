@@ -319,13 +319,15 @@ async def sub_view_youtube(
         elif view.value == 0:
             await interaction.message.delete()
     else:
-        prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
-            description=f'Please set a Text Channel '
+            description=f'Please set a default Text Channel '
                         f'\nfor receiving Livestream Notifications'
-                        f'\n\n**`Steps`**'
-                        f'\n**{prefix}setup**  select **receiver** from menu '
-                        f'\nThen tap **Edit**  select **text channel** from menu'
+                        f'\n\n Don\'t worry! you can always assign specific'
+                        f'\nText Channels for specific YouTube Channels'
+                        f'\nonce you have a default Text Channel assigned'
+                        f'\n\n**` Steps: `**'
+                        f'\n\n**`/setup`**  select **`receiver`** from menu.'
+                        f'\nTap **`Edit`**  select **`text channel`** from menu'
         )
         await interaction.response.edit_message(embed=emd, view=None)
