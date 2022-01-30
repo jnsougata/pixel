@@ -14,42 +14,35 @@ class Listeners(commands.Cog):
         invite = 'https://top.gg/bot/848304171814879273/invite'
         support = 'https://discord.gg/G9fk5HHkZ5'
         emd = discord.Embed(
-            description=f'{Emo.MIC} Sup folks! I\'m **PixeL**'
+            description=f'{Emo.MIC} Sup folks! I\'m **{guild.me.display_name}**'
                         f'\n\nTo get started, send `.help` | `@{guild.me.display_name} help` '
                         f'\n\nUse any one commands for everything:'
-                        f'\n`.settings` | `.setup`'
+                        f'\n`/setup` | `.setup`'
                         f'\n\n**Important Links**'
                         f'\n[Invite]({invite}) - Add the bot to another server'
                         f'\n[Support Server]({support}) - Get some bot support here!',
             color=0xf2163b,
         )
 
-        async def get_valid_prompt_channel(_guild: discord.Guild):
+        async def valid_intro_channel(_guild: discord.Guild):
             for channel in _guild.text_channels:
                 if channel.permissions_for(guild.me).send_messages:
                     return channel
 
-        prompt_channel = await get_valid_prompt_channel(guild)
+        intro = await valid_intro_channel(guild)
 
         try:
-            await prompt_channel.send(embed=emd)
+            await intro.send(embed=emd)
         except (discord.errors.Forbidden, AttributeError):
             pass
         finally:
-            registry = self.bot.get_channel(899864601057976330)
-            try:
-                invite = await prompt_channel.create_invite(max_age=0, max_uses=0, unique=False)
-                url = invite.url
-            except Exception:
-                url = None
-
-            await registry.send(
+            logger = self.bot.get_channel(899864601057976330)
+            await logger.send(
                 embed=discord.Embed(
                     title=f'{Emo.MIC} {guild.name}',
                     description=f'**`Owner`** {guild.owner}'
                                 f'\n\n**`Members`** {guild.member_count}'
-                                f'\n\n**`ID`** **`{guild.id}`**'
-                                f'\n\n**`Invite URL`** {url}',
+                                f'\n\n**`ID`** **`{guild.id}`**',
                     colour=discord.Colour.blurple()
                 )
             )
@@ -61,7 +54,7 @@ class Listeners(commands.Cog):
         await registry.send(
             embed=discord.Embed(
                 title=f'{Emo.MIC} {guild.name}',
-                description=f'Inspect for black-listing trace.'
+                description=f'Inspect for suspicious activity'
                             f'\nGuild ID: `{guild.id}`',
                 colour=discord.Colour.red()
             )
