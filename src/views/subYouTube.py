@@ -3,7 +3,7 @@ import asyncio
 from aiotube import Channel
 from src.extras.emojis import *
 from discord.ext import commands
-from src.extras.func import db_push_object, db_fetch_object, db_fetch_prefix
+from src.extras.func import db_push_object, db_fetch_object
 
 
 class Temp(discord.ui.View):
