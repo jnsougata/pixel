@@ -8,6 +8,8 @@ from src.views.subYouTube import sub_view_youtube
 from src.views.subReceiver import sub_view_receiver
 from src.views.subReception import sub_view_reception
 from src.views.subJoincard import sub_view_welcomecard
+from extslash import *
+from extslash.commands import SlashCog, ApplicationContext, Client
 
 
 class BaseView(discord.ui.View):
@@ -84,3 +86,27 @@ class CommandMenu(discord.ui.Select):
             await interaction.response.send_message(
                 'You are not allowed to control this message!', ephemeral=True
             )
+
+
+class Setup(SlashCog):
+    def __init__(self, bot: Client):
+        self.bot = bot
+
+    def register(self):
+        return SlashCommand(name='setup', description='Setup PixeL for your Server')
+
+    async def command(self, appctx: ApplicationContext):
+        if appctx.author.guild_permissions.administrator:
+            emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
+            emd.set_footer(text=f'⮞⮞ menu disappears in thirty seconds')
+            view = BaseView()
+            view.add_item(CommandMenu(appctx, self.bot))
+            await appctx.respond(embed=emd)
+            view.message = await appctx.send(content='\u200b', view=view)
+        else:
+            await appctx.respond(
+                embed=discord.Embed(title=f'{Emo.WARN} You are not an **ADMIN** {Emo.WARN}'), ephemeral=True)
+
+
+def setup(bot: Client):
+    return Setup(bot)

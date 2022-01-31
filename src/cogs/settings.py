@@ -32,7 +32,7 @@ class CommandMenu(discord.ui.Select):
         self.ctx = ctx
 
         options = [
-            discord.SelectOption(label='​', value='100', emoji=Emo.CROSS),
+            discord.SelectOption(label='\u200b', value='100', emoji=Emo.CROSS),
             discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
