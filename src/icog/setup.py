@@ -109,4 +109,4 @@ class Setup(SlashCog):
 
 
 def setup(bot: Client):
-    return Setup(bot)
+    bot.add_slash_cog(Setup(bot))
