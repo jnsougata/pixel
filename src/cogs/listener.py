@@ -31,21 +31,22 @@ class Listeners(commands.Cog):
 
         intro = await valid_intro_channel(guild)
 
-        try:
-            await intro.send(embed=emd)
-        except (discord.errors.Forbidden, AttributeError):
-            pass
-        finally:
-            logger = self.bot.get_channel(899864601057976330)
-            await logger.send(
-                embed=discord.Embed(
-                    title=f'{Emo.MIC} {guild.name}',
-                    description=f'**`Owner`** {guild.owner}'
-                                f'\n\n**`Members`** {guild.member_count}'
-                                f'\n\n**`ID`** **`{guild.id}`**',
-                    colour=discord.Colour.blurple()
-                )
+        if intro:
+            try:
+                await intro.send(embed=emd)
+            except discord.errors.Forbidden:
+                pass
+
+        logger = self.bot.get_channel(899864601057976330)
+        await logger.send(
+            embed=discord.Embed(
+                title=f'{Emo.MIC} {guild.name}',
+                description=f'```\nOwner: {guild.owner}'
+                            f'\n\nMembers: {guild.member_count}'
+                            f'\n\nID: {guild.id}\n```',
+                colour=discord.Colour.blurple()
             )
+        )
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -54,8 +55,7 @@ class Listeners(commands.Cog):
         await registry.send(
             embed=discord.Embed(
                 title=f'{Emo.MIC} {guild.name}',
-                description=f'Inspect for suspicious activity'
-                            f'\nGuild ID: `{guild.id}`',
+                description=f'```\nInspect for suspicious activity\nGuild ID: {guild.id}\n```',
                 colour=discord.Colour.red()
             )
         )
