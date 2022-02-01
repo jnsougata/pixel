@@ -15,7 +15,7 @@ from extslash.commands import SlashCog, ApplicationContext, Client
 class BaseView(discord.ui.View):
     def __init__(self):
         super().__init__()
-        self.timeout = 30
+        self.timeout = 180
         self.value = None
         self.message = None
 
@@ -98,7 +98,7 @@ class Setup(SlashCog):
     async def command(self, appctx: ApplicationContext):
         if appctx.author.guild_permissions.administrator:
             emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
-            emd.set_footer(text=f'⮞⮞ menu disappears in thirty seconds')
+            emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
             view = BaseView()
             view.add_item(CommandMenu(appctx, self.bot))
             await appctx.respond(embed=emd)

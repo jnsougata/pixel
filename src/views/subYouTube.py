@@ -102,9 +102,12 @@ class ChannelMenu(discord.ui.Select):
                                 f'\n\n**` Id `  {data["id"]}**',
                     url=data["url"],
                     color=0xc4302b)
-                if data["avatar_url"] and data["banner_url"]:
-                    emd.set_thumbnail(url=data["avatar_url"])
-                    emd.set_image(url=data["banner_url"])
+                banner_url = data.get('banner_url')
+                avatar_url = data.get('avatar_url')
+                if banner_url and banner_url.startswith('http'):
+                    emd.set_image(url=banner_url)
+                if avatar_url and avatar_url.startswith('http'):
+                    emd.set_thumbnail(url=avatar_url)
                 await interaction.message.edit(embed=emd, view=None)
                 db_raw = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
                 db_raw.pop(self.values[0])
@@ -236,9 +239,13 @@ async def sub_view_youtube(
                                             description=f'**` Subs `  {info["subscribers"]}**'
                                             f'\n\n**` Views `  {info["views"]}**', url=info["url"],
                                             color=0xc4302b)
-                        if info["avatar_url"] and info["banner_url"]:
+
+                        banner_url = info.get('banner_url')
+                        avatar_url = info.get('avatar_url')
+                        if banner_url and banner_url.startswith('http'):
+                            emd.set_image(url=banner_url)
+                        if avatar_url and avatar_url.startswith('http'):
                             emd.set_thumbnail(url=info["avatar_url"])
-                            emd.set_image(url=info["banner_url"])
                         await new.delete()
                         new_view = Confirmation(ctx, bot)
                         nxt = await ctx.send(embed=emd, view=new_view)
@@ -328,6 +335,5 @@ async def sub_view_youtube(
                         f'\nonce you have a default Text Channel assigned'
                         f'\n\n**` Steps: `**'
                         f'\n\n**`/setup`**  select **`receiver`** from menu.'
-                        f'\nTap **`Edit`**  select **`text channel`** from menu'
-        )
+                        f'\nTap **`Edit`**  select **`text channel`** from menu')
         await interaction.response.edit_message(embed=emd, view=None)

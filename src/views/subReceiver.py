@@ -13,7 +13,7 @@ class BaseView(discord.ui.View):
         self.message = message
         super().__init__()
         self.value = None
-        self.timeout = 30
+        self.timeout = 180
 
     async def on_timeout(self) -> None:
         try:

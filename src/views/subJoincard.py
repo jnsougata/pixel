@@ -61,10 +61,10 @@ async def sub_view_welcomecard(bot: discord.Client, ctx: commands.Context, inter
 
             await msg.delete()
             new = await ctx.send(
-                embed=discord.Embed(description='Send the Image or URL you want to use as a cover *(min: 700x300)*')
+                embed=discord.Embed(description='Send the IMAGE or URL you want to use as a cover *(min: 700x300)*')
             )
             try:
-                reply = await bot.wait_for('message', timeout=20, check=check)
+                reply = await bot.wait_for('message', timeout=120, check=check)
                 try:
                     path = f'covers/{ctx.guild.id}_card.png'
                     if reply.attachments:

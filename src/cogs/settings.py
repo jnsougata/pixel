@@ -13,7 +13,7 @@ class BaseView(discord.ui.View):
 
     def __init__(self):
         super().__init__()
-        self.timeout = 30
+        self.timeout = 180
         self.value = None
         self.message = None
 
@@ -93,7 +93,7 @@ class Settings(commands.Cog):
     @commands.command(aliases=['settings', 'setup'])
     async def settings_(self, ctx: commands.Context):
         emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
-        emd.set_footer(text=f'⮞⮞ menu disappears in thirty seconds')
+        emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
         view = BaseView()
         view.add_item(CommandMenu(ctx, self.bot))
         view.message = await ctx.send(embed=emd, view=view)

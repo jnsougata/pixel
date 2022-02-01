@@ -82,7 +82,7 @@ async def sub_view_arole(
             return m.author == ctx.author
 
         try:
-            response = await bot.wait_for('message', check=check, timeout=20)
+            response = await bot.wait_for('message', check=check, timeout=120)
             try:
                 await new.delete()
             except discord.errors.NotFound:
@@ -121,9 +121,7 @@ async def sub_view_arole(
         await ctx.send(
             content=f'{ctx.author.mention}',
             embed=discord.Embed(
-                description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                            f'alert role has been removed',
-            )
+                description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** alert role has been removed')
         )
         await db_push_object(guild_id=ctx.guild.id, item=['REMOVED'], key='arole')
 

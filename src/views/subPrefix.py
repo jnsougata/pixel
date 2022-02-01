@@ -58,9 +58,7 @@ async def sub_view_prefix(
 
     if view.value == 1:
         new = await interaction.message.edit(
-            embed=discord.Embed(
-                description='Please **type** a prefix to set as **custom prefix:**'
-            ),
+            embed=discord.Embed(description='Please **type** a prefix to set as **custom prefix:**'),
             view=None
         )
 
@@ -68,13 +66,9 @@ async def sub_view_prefix(
             return m.author == ctx.author
 
         try:
-            response = await bot.wait_for('message', check=check, timeout=20)
+            response = await bot.wait_for('message', check=check, timeout=120)
             if 0 < len(response.content) <= 3:
-                await db_push_object(
-                    guild_id=ctx.guild.id,
-                    item=[response.content],
-                    key='prefix'
-                )
+                await db_push_object(guild_id=ctx.guild.id, item=[response.content], key='prefix')
                 await new.edit(
                     embed=discord.Embed(
                         description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
@@ -88,19 +82,13 @@ async def sub_view_prefix(
                     )
                 )
         except asyncio.TimeoutError:
-            await ctx.send('**Bye! you took so long**')
+            await ctx.send('Bye! you took so long...')
     elif view.value == 2:
         await interaction.message.edit(
             content=f'{ctx.author.mention}',
-            embed=discord.Embed(
-                description=f'{Emo.DEL} Custom prefix removed'
-            ),
+            embed=discord.Embed(description=f'{Emo.DEL} Custom prefix removed'),
             view=None
         )
-        await db_push_object(
-            guild_id=ctx.guild.id,
-            item=['.'],
-            key='prefix'
-        )
+        await db_push_object(guild_id=ctx.guild.id, item=['.'], key='prefix')
     elif view.value == 0:
         await interaction.message.delete()
