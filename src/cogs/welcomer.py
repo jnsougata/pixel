@@ -1,5 +1,6 @@
 import io
 import discord
+import airdrive.errors
 from discord.ext import commands
 from src.extras.card import Io, Canvas
 from src.extras.func import db_fetch_object, drive
@@ -22,7 +23,7 @@ class Welcomer(commands.Cog):
                         try:
                             path = f'covers/{guild_id}_card.png'
                             return io.BytesIO(drive.cache(path))
-                        except FileNotFoundError:
+                        except airdrive.errors.FileNotFound:
                             return io.BytesIO(drive.cache('covers/default_card.png'))
 
                     bg_bytes = await get_background()
