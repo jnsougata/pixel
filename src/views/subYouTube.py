@@ -234,7 +234,7 @@ async def sub_view_youtube(
 
                 try:
                     response = await bot.wait_for('message', check=check, timeout=20)
-                    channel = Channel(response.content)
+                    channel = Channel(response.content.replace(' ', ''))
                     try:
                         info = channel.info
                         emd = discord.Embed(title=f'{Emo.YT} {info["name"]}',
@@ -271,10 +271,10 @@ async def sub_view_youtube(
                             if text_select_view.value == 0:
                                 receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
                                 if receiver and receiver[0].isdigit():
-                                    channel = bot.get_channel(int(receiver[0]))
+                                    txt_channel = bot.get_channel(int(receiver[0]))
                                     emd = discord.Embed(
                                         title=f'{Emo.YT} {info["name"]}',
-                                        description=f'{Emo.CHECK} The receiver channel is {channel.mention}'
+                                        description=f'{Emo.CHECK} The receiver channel is {txt_channel.mention}'
                                                     f'\nThis channel will be used to receive livestream & upload '
                                                     f'notifications',
                                         url=info['url'],
@@ -300,9 +300,9 @@ async def sub_view_youtube(
                                 await nxt.edit(embed=emd, view=receiver_view)
                         else:
                             await nxt.delete()
-                    except Exception as e:
-                        print(e)
-                        await ctx.send(embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel Id or URL'))
+                    except Exception:
+                        await ctx.send(
+                            embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
 
                 except asyncio.TimeoutError:
                     await ctx.send('Bye! you took so long')
