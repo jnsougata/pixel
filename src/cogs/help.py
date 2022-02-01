@@ -63,39 +63,44 @@ class Help(commands.Cog):
             text=f'✅ Thanks | Current Prefix [{prefix}]',
         )
 
-        view = CustomView(ctx)
-        view.message = await ctx.send(embed=emd, view=view)
+        try:
+            view = CustomView(ctx)
+            view.message = await ctx.send(embed=emd, view=view)
 
-        await view.wait()
+            await view.wait()
+            if view.value:
 
-        if view.value:
+                emd = discord.Embed(
+                    description=f'{Emo.INFO} Access all of these'
+                                f'\nfollowing options by only using **{prefix}setup**'
+                                f'\n\n{Emo.TAG}**Prefix**'
+                                f'\nUsed to add or remove custom prefix '
+                                f'\nto your server. you can change it anytime'
+                                f'\n\n{Emo.PING} **Receiver**'
+                                f'\nUsed to add or remove a text channel'
+                                f'\nto receive youtube alerts for your server'
+                                f'\n\n{Emo.YT} **YouTube**'
+                                f'\nUsed to add or remove youtube'
+                                f'\nchannel to your server for live alerts'
+                                f'\n\n{Emo.DEAL} **Reception**'
+                                f'\nUsed to add or remove a text'
+                                f'\nchannel for receiving welcome cards'
+                                f'\n\n{Emo.IMG} **Welcome Card**'
+                                f'\nUsed to add or remove a welcome card'
+                                f'\nfor your server to welcome new members'
+                                f'\n\n{Emo.BELL} **Alert Role**'
+                                f'\nUsed to add or remove a custom role'
+                                f'\nto be mentioned in the YT Notifications',
 
-            emd = discord.Embed(
-                description=f'{Emo.INFO} Access all of these'
-                            f'\nfollowing options by only using **{prefix}setup**'
-                            f'\n\n{Emo.TAG}**Prefix**'
-                            f'\nUsed to add or remove custom prefix '
-                            f'\nto your server. you can change it anytime'
-                            f'\n\n{Emo.PING} **Receiver**'
-                            f'\nUsed to add or remove a text channel'
-                            f'\nto receive youtube alerts for your server'
-                            f'\n\n{Emo.YT} **YouTube**'
-                            f'\nUsed to add or remove youtube'
-                            f'\nchannel to your server for live alerts'
-                            f'\n\n{Emo.DEAL} **Reception**'
-                            f'\nUsed to add or remove a text'
-                            f'\nchannel for receiving welcome cards'
-                            f'\n\n{Emo.IMG} **Welcome Card**'
-                            f'\nUsed to add or remove a welcome card'
-                            f'\nfor your server to welcome new members'
-                            f'\n\n{Emo.BELL} **Alert Role**'
-                            f'\nUsed to add or remove a custom role'
-                            f'\nto be mentioned in the YT Notifications',
-
-                color=0x005aef,
-            )
-            emd.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-            await view.message.edit(embed=emd, view=None)
+                    color=0x005aef,
+                )
+                emd.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
+                await view.message.edit(embed=emd, view=None)
+        except discord.errors.Forbidden:
+            await ctx.send(
+                f'> {ctx.author.mention} This channel is too powerful...'
+                f'\n> I don\'t think I have enough permission to send '
+                f'embeds/views/buttons/emojis here')
 
 
 def setup(bot):
