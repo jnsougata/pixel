@@ -44,13 +44,16 @@ class EH(commands.Cog):
                 delete_after=15
             )
         elif isinstance(error, commands.CommandError):
-            await ctx.reply(content='Something weird happened. Devs will fix it soon!')
-
-            # sending tb to developer
-            stack = traceback.format_exception(type(error), error, error.__traceback__)
-            tb = ''.join(stack)
-            debug_channel = self.bot.get_channel(938059433794240523)
-            await debug_channel.send(f'```py\n{tb}\n```')
+            try:
+                await ctx.reply(content='Something weird happened. Devs will fix it soon!')
+            except discord.errors.Forbidden:
+                pass
+            finally:
+                # sending tb to dev server
+                stack = traceback.format_exception(type(error), error, error.__traceback__)
+                tb = ''.join(stack)
+                debug_channel = self.bot.get_channel(938059433794240523)
+                await debug_channel.send(f'```py\n{tb}\n```')
 
 
 def setup(bot):
