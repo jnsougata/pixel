@@ -101,8 +101,8 @@ class Setup(SlashCog):
             emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
             view = BaseView()
             view.add_item(CommandMenu(appctx, self.bot))
-            await appctx.respond(embed=emd)
-            view.message = await appctx.send(content='\u200b', view=view)
+            await appctx.defer()
+            view.message = await appctx.followup.send(embed=emd, view=view)
         else:
             await appctx.respond(
                 embed=discord.Embed(title=f'{Emo.WARN} You are not an **ADMIN** {Emo.WARN}'), ephemeral=True)

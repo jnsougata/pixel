@@ -36,6 +36,8 @@ async def sub_view_arole(
         ctx: commands.Context,
         interaction: discord.Interaction,
 ):
+    await interaction.response.defer()
+    await interaction.message.delete()
     data = await db_fetch_object(guild_id=ctx.guild.id, key='arole')
     if data and data[0].isdigit():
         role = ctx.guild.get_role(int(data[0]))
@@ -54,23 +56,16 @@ async def sub_view_arole(
                     f'\n\nTo set new **alert role** tap **` Edit `**'
     )
     if ctx.guild.icon:
-        emd.set_author(
-            icon_url=ctx.guild.icon.url,
-            name=ctx.guild.name
-        )
+        emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
     else:
-        emd.set_author(
-            icon_url=ctx.guild.me.avatar.url,
-            name=ctx.guild.me.name
-        )
+        emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
 
     view = Option(ctx)
-    await interaction.response.edit_message(embed=emd, view=view)
+    msg = await ctx.send(embed=emd, view=view)
     await view.wait()
 
     if view.value == 1:
-        new = await interaction.message.edit(
-            content=f'{ctx.author.mention}',
+        new = await msg.edit(
             embed=discord.Embed(
                 description=f'{Emo.CHECK} You can now set `@everyone` as alert role'
                             f'\n\n{Emo.BELL} Please mention a **role** to set as **alert role:**'
@@ -101,25 +96,16 @@ async def sub_view_arole(
                     content=f'{ctx.author.mention}',
                     embed=discord.Embed(
                         description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                    f'new alert role is {mention_string}'
-                    )
+                                    f'new alert role is {mention_string}')
                 )
                 await db_push_object(guild_id=ctx.guild.id, item=[str(role.id)], key='arole')
 
             else:
-                await ctx.send(
-                    content=f'{ctx.author.mention}',
-                    embed=discord.Embed(
-                        description=f'{Emo.WARN}'
-                                    f' you did not mention a role',
-                    )
-                )
+                await ctx.send(embed=discord.Embed(description=f'{Emo.WARN} you did not mention a role'))
         except asyncio.TimeoutError:
             await ctx.send('Bye! you took so long')
     elif view.value == 2:
-        await interaction.message.delete()
-        await ctx.send(
-            content=f'{ctx.author.mention}',
+        await msg.edit(
             embed=discord.Embed(
                 description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** alert role has been removed')
         )
@@ -127,6 +113,6 @@ async def sub_view_arole(
 
     elif view.value == 0:
         try:
-            await interaction.message.delete()
+            await msg.delete()
         except discord.errors.NotFound:
             pass

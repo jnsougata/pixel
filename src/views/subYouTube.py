@@ -211,7 +211,9 @@ async def sub_view_youtube(
             emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
 
         view = MainOption(ctx, bot)
-        await interaction.response.edit_message(embed=emd, view=view)
+        await interaction.response.defer()
+        await interaction.message.delete()
+        msg = await ctx.send(embed=emd, view=view)
         await view.wait()
 
         if view.value == 1:
@@ -222,7 +224,7 @@ async def sub_view_youtube(
                 total_channels = []
             if len(total_channels) < 24:
                 view.clear_items()
-                new = await interaction.message.edit(
+                new = await msg.edit(
                     embed=discord.Embed(description='Please type a youtube channel **ID** or **URL:**', color=0xc4302b),
                     view=view
                 )
@@ -246,9 +248,8 @@ async def sub_view_youtube(
                             emd.set_image(url=banner_url)
                         if avatar_url and avatar_url.startswith('http'):
                             emd.set_thumbnail(url=info["avatar_url"])
-                        await new.delete()
                         new_view = Confirmation(ctx, bot)
-                        nxt = await ctx.send(embed=emd, view=new_view)
+                        nxt = await new.edit(embed=emd, view=new_view)
                         await new_view.wait()
                         if new_view.value:
                             if old_data:
@@ -318,14 +319,16 @@ async def sub_view_youtube(
                 db_data = {}
             view = Temp()
             view.add_item(await ChannelMenu.display(bot=bot, ctx=ctx, db_data=db_data))
-            await interaction.message.edit(
+            await msg.edit(
                 embed=discord.Embed(description='Please select YouTube Channel to **remove:**', color=0xc4302b),
                 view=view
             )
 
         elif view.value == 0:
-            await interaction.message.delete()
+            await msg.delete()
     else:
+        await interaction.response.defer()
+        await interaction.message.delete()
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
             description=f'Please set a default Text Channel '
@@ -336,4 +339,4 @@ async def sub_view_youtube(
                         f'\n\n**` Steps: `**'
                         f'\n\n**`/setup`**  select **`receiver`** from menu.'
                         f'\nTap **`Edit`**  select **`text channel`** from menu')
-        await interaction.response.edit_message(embed=emd, view=None)
+        await ctx.send(embed=emd)

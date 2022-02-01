@@ -124,18 +124,17 @@ async def sub_view_receiver(
     else:
         emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
     view = Option(ctx)
-    await interaction.response.edit_message(embed=emd, view=view)
+    await interaction.response.defer()
+    await interaction.message.delete()
+    msg = await ctx.send(embed=emd, view=view)
     await view.wait()
     if view.value == 1:
-        view.clear_items()
         new_view = BaseView()
         new_view.add_item(TextChannelMenu(context=ctx, bot=bot))
-        new_view.message = await interaction.message.edit(
+        new_view.message = await msg.edit(
             embed=discord.Embed(description='Please **select** a text channel to use as **receiver:**'), view=new_view)
     elif view.value == 2:
-        await interaction.message.edit(
-            content=f'{ctx.author.mention}',
-            embed=discord.Embed(description=f'{Emo.DEL} Receiver removed'), view=None)
+        await msg.edit(embed=discord.Embed(description=f'{Emo.DEL} Receiver removed'), view=None)
         await db_push_object(guild_id=ctx.guild.id, item=['removed'], key='alertchannel')
     elif view.value == 0:
-        await interaction.message.delete()
+        await msg.delete()
