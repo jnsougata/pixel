@@ -25,9 +25,8 @@ pixel = PixeL()
 
 
 cogs = [
+    "eh",
     "help",
-    "error",
-    "welcomer",
     "settings",
     "listener",
     "statusloop",

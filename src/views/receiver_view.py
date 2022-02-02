@@ -126,15 +126,22 @@ async def sub_view_receiver(
     view = Option(ctx)
     await interaction.response.defer()
     await interaction.message.delete()
-    msg = await ctx.send(embed=emd, view=view)
-    await view.wait()
-    if view.value == 1:
-        new_view = BaseView()
-        new_view.add_item(TextChannelMenu(context=ctx, bot=bot))
-        new_view.message = await msg.edit(
-            embed=discord.Embed(description='Please **select** a text channel to use as **receiver:**'), view=new_view)
-    elif view.value == 2:
-        await msg.edit(embed=discord.Embed(description=f'{Emo.DEL} Receiver removed'), view=None)
-        await db_push_object(guild_id=ctx.guild.id, item=['removed'], key='alertchannel')
-    elif view.value == 0:
-        await msg.delete()
+    try:
+        msg = await ctx.send(embed=emd, view=view)
+        await view.wait()
+        if view.value == 1:
+            new_view = BaseView()
+            new_view.add_item(TextChannelMenu(context=ctx, bot=bot))
+            new_view.message = await msg.edit(
+                embed=discord.Embed(description='Please **select** a text channel to use as **receiver:**'),
+                view=new_view)
+        elif view.value == 2:
+            await msg.edit(embed=discord.Embed(description=f'{Emo.DEL} Receiver removed'), view=None)
+            await db_push_object(guild_id=ctx.guild.id, item=['removed'], key='alertchannel')
+        elif view.value == 0:
+            await msg.delete()
+
+    except discord.errors.Forbidden:
+        await ctx.send(
+            f'\n{ctx.author.mention} I don\'t have enough permission to send `embeds` `views` `buttons` `emojis`',
+            delete_after=15)

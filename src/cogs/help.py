@@ -13,15 +13,22 @@ class CustomView(discord.ui.View):
         self.ctx = ctx
         self.message = message
 
-        _invite = discord.ui.Button(
+        invite = discord.ui.Button(
             label='Invite',
             style=discord.ButtonStyle.link,
             url='https://top.gg/bot/848304171814879273/invite'
         )
+        upvote = discord.ui.Button(
+            label='Upvote',
+            style=discord.ButtonStyle.link,
+            url='https://top.gg/bot/848304171814879273/vote'
+        )
+
         super().__init__()
         self.value = None
-        self.timeout = 60
-        self.add_item(_invite)
+        self.timeout = 120
+        self.add_item(invite)
+        self.add_item(upvote)
 
     @discord.ui.button(label='Info', style=discord.ButtonStyle.blurple)
     async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
@@ -37,7 +44,7 @@ class CustomView(discord.ui.View):
 
 
 class Help(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: discord.Client):
         self.bot = bot
 
     @commands.command(name='help')
@@ -45,62 +52,42 @@ class Help(commands.Cog):
     async def help(self, ctx: commands.Context):
         prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
-            description=f''
-                        f'\n\n{Emo.SETTINGS} To set me up'
-                        f'\n use command **{prefix}setup**'
-                        f'\n\n{Emo.FAQ} To know more'
-                        f'\nabout **setup** tap **`Info`**'
-                        f'\n\n{Emo.SUP} Join **[PixeL Support]'
-                        f'(https://discord.gg/VE5qRFfmG2)**'
-                        f'\n​‍‍‍',
-            color=0x005aef
-        )
-        emd.set_author(
-            name=ctx.author,
-            icon_url=ctx.author.avatar.url
-        )
-        emd.set_footer(
-            text=f'✅ Thanks | Current Prefix [{prefix}]',
-        )
+            description=f'\n\n{Emo.SETUP} Start setup using **`{prefix}setup`** or **`/setup`**'
+                        f'\n\n{Emo.FAQ} To know more about **setup** tap **`Info`**'
+                        f'\n\n{Emo.SUP} Having issues? Join **[Dev & Support](https://discord.gg/VE5qRFfmG2)**',
+            color=0x005aef)
 
-        try:
-            view = CustomView(ctx)
-            view.message = await ctx.send(embed=emd, view=view)
+        view = CustomView(ctx)
+        view.message = await ctx.send(embed=emd, view=view)
 
-            await view.wait()
-            if view.value:
+        await view.wait()
+        if view.value:
 
-                emd = discord.Embed(
-                    description=f'{Emo.INFO} Access all of these'
-                                f'\nfollowing options by only using **{prefix}setup**'
-                                f'\n\n{Emo.TAG}**Prefix**'
-                                f'\nUsed to add or remove custom prefix '
-                                f'\nto your server. you can change it anytime'
-                                f'\n\n{Emo.PING} **Receiver**'
-                                f'\nUsed to add or remove a text channel'
-                                f'\nto receive youtube alerts for your server'
-                                f'\n\n{Emo.YT} **YouTube**'
-                                f'\nUsed to add or remove youtube'
-                                f'\nchannel to your server for live alerts'
-                                f'\n\n{Emo.DEAL} **Reception**'
-                                f'\nUsed to add or remove a text'
-                                f'\nchannel for receiving welcome cards'
-                                f'\n\n{Emo.IMG} **Welcome Card**'
-                                f'\nUsed to add or remove a welcome card'
-                                f'\nfor your server to welcome new members'
-                                f'\n\n{Emo.BELL} **Alert Role**'
-                                f'\nUsed to add or remove a custom role'
-                                f'\nto be mentioned in the YT Notifications',
+            emd = discord.Embed(
+                description=f'{Emo.INFO} Access all of these'
+                            f'\nfollowing options by only using **{prefix}setup**'
+                            f'\n\n{Emo.TAG}**Prefix**'
+                            f'\nUsed to add or remove custom prefix '
+                            f'\nto your server. you can change it anytime'
+                            f'\n\n{Emo.PING} **Receiver**'
+                            f'\nUsed to add or remove a text channel'
+                            f'\nto receive youtube alerts for your server'
+                            f'\n\n{Emo.YT} **YouTube**'
+                            f'\nUsed to add or remove youtube'
+                            f'\nchannel to your server for live alerts'
+                            f'\n\n{Emo.DEAL} **Reception**'
+                            f'\nUsed to add or remove a text'
+                            f'\nchannel for receiving welcome cards'
+                            f'\n\n{Emo.IMG} **Welcome Card**'
+                            f'\nUsed to add or remove a welcome card'
+                            f'\nfor your server to welcome new members'
+                            f'\n\n{Emo.BELL} **Role Ping**'
+                            f'\nUsed to add or remove a custom role'
+                            f'\nto be mentioned with the YT Notifications',
 
-                    color=0x005aef,
-                )
-                emd.set_author(name=ctx.author, icon_url=ctx.author.avatar.url)
-                await view.message.edit(embed=emd, view=None)
-        except discord.errors.Forbidden:
-            await ctx.send(
-                f'> {ctx.author.mention} This channel is too powerful...'
-                f'\n> I don\'t think I have enough permission to send '
-                f'embeds/views/buttons/emojis here')
+                color=0x005aef,
+            )
+            await view.message.edit(embed=emd, view=None)
 
 
 def setup(bot):

@@ -31,7 +31,7 @@ class Option(discord.ui.View):
             self.stop()
 
 
-async def sub_view_arole(
+async def sub_view_rping(
         bot: discord.Client,
         ctx: commands.Context,
         interaction: discord.Interaction,

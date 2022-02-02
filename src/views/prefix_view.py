@@ -50,6 +50,7 @@ async def sub_view_prefix(
     await interaction.response.defer()
     await interaction.message.delete()
     msg = await ctx.send(embed=emd, view=view)
+
     await view.wait()
 
     if view.value == 1:
