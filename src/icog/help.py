@@ -15,16 +15,10 @@ class CustomView(discord.ui.View):
         self.ctx = ctx
         self.message = message
 
-        invite = discord.ui.Button(
-            label='Invite',
-            style=discord.ButtonStyle.link,
-            url='https://top.gg/bot/848304171814879273/invite'
-        )
-        upvote = discord.ui.Button(
-            label='Upvote',
-            style=discord.ButtonStyle.link,
-            url='https://top.gg/bot/848304171814879273/vote'
-        )
+        invite = discord.ui.Button(label='Invite', style=discord.ButtonStyle.link,
+                                   url='https://top.gg/bot/848304171814879273/invite')
+        upvote = discord.ui.Button(label='Upvote', style=discord.ButtonStyle.link,
+                                   url='https://top.gg/bot/848304171814879273/vote')
 
         super().__init__()
         self.value = None
