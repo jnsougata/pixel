@@ -32,3 +32,4 @@ class Emo:
     STREAMER = '<:streamer:920699855607840808>'
     CROSS = '<:red_cross:924171443409932338>'
     SETUP = '<:setup:936619226259652760>'
+    LIVE = '<:Livenow:863077635848536124>'

@@ -3,6 +3,7 @@ from typing import Union
 from src.extras.emojis import *
 from discord.ext import commands
 from extslash.commands import ApplicationContext
+from src.views.msg_view import sub_view_msg
 from src.views.prefix_view import sub_view_prefix
 from src.views.roleping_view import sub_view_rping
 from src.views.youtube_view import sub_view_youtube
@@ -39,8 +40,9 @@ class CommandMenu(discord.ui.Select):
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
-            discord.SelectOption(label='Ping role', value='5', emoji=Emo.BELL),
-            discord.SelectOption(label='Welcome card', value='4', emoji=Emo.IMG),
+            discord.SelectOption(label='Ping Role', value='5', emoji=Emo.BELL),
+            discord.SelectOption(label='Welcome Card', value='4', emoji=Emo.IMG),
+            discord.SelectOption(label='Customize Message', value='6', emoji=Emo.CUSTOM),
         ]
 
         super().__init__(
@@ -75,7 +77,7 @@ class CommandMenu(discord.ui.Select):
                     await sub_view_rping(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
                 elif int(self.values[0]) == 6:
-                    await sub_view_streamer(ctx=self.ctx, interaction=interaction, bot=self.bot)
+                    await sub_view_msg(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
                 elif int(self.values[0]) == 100:
                     try:

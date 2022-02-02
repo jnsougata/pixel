@@ -35,5 +35,6 @@ cogs = [
 for cog in cogs:
     pixel.load_extension("cogs." + cog)
 
-pixel.load_slash_extension('src.icog.setup')
+pixel.load_slash_extension('icog.setup')
+pixel.load_slash_extension('icog.help')
 pixel.run(os.getenv('DISCORD_TOKEN'))

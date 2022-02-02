@@ -1,7 +1,7 @@
 import discord
-from src.extras.func import *
 from discord.ext import commands
 from src.extras.emojis import Emo
+from src.extras.func import db_fetch_prefix
 
 
 class CustomView(discord.ui.View):
@@ -65,7 +65,7 @@ class Help(commands.Cog):
 
             emd = discord.Embed(
                 description=f'{Emo.INFO} Access all of these'
-                            f'\nfollowing options by only using **{prefix}setup**'
+                            f'\nfollowing options by only using **/setup**'
                             f'\n\n{Emo.TAG}**Prefix**'
                             f'\nUsed to add or remove custom prefix '
                             f'\nto your server. you can change it anytime'
@@ -78,12 +78,15 @@ class Help(commands.Cog):
                             f'\n\n{Emo.DEAL} **Reception**'
                             f'\nUsed to add or remove a text'
                             f'\nchannel for receiving welcome cards'
+                            f'\n\n{Emo.BELL} **Role Ping**'
+                            f'\nUsed to add or remove a custom role'
+                            f'\nto be mentioned with the YT Notifications'
                             f'\n\n{Emo.IMG} **Welcome Card**'
                             f'\nUsed to add or remove a welcome card'
                             f'\nfor your server to welcome new members'
-                            f'\n\n{Emo.BELL} **Role Ping**'
-                            f'\nUsed to add or remove a custom role'
-                            f'\nto be mentioned with the YT Notifications',
+                            f'\n\n{Emo.CUSTOM} **Customize Message**'
+                            f'\nUsed to add or remove a custom message'
+                            f'\nto be sent with Youtube Alert or Welcome Card',
 
                 color=0x005aef,
             )
