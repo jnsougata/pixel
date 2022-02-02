@@ -1,3 +1,4 @@
+import io
 import discord
 import discord.errors
 from discord.ext import commands
