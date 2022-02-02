@@ -3,7 +3,6 @@ from typing import Union
 from src.extras.emojis import *
 from discord.ext import commands
 from extslash.commands import ApplicationContext
-from src.views.prefix_view import sub_view_prefix
 from src.views.roleping_view import sub_view_rping
 from src.views.youtube_view import sub_view_youtube
 from src.views.receiver_view import sub_view_receiver
@@ -35,7 +34,6 @@ class CommandMenu(discord.ui.Select):
 
         options = [
             discord.SelectOption(label='\u200b', value='100', emoji=Emo.CROSS),
-            discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
             discord.SelectOption(label='Reception', value='3', emoji=Emo.DEAL),
@@ -55,11 +53,8 @@ class CommandMenu(discord.ui.Select):
         if interaction.user == self.ctx.author:
 
             try:
-
-                if int(self.values[0]) == 0:
-                    await sub_view_prefix(ctx=self.ctx, interaction=interaction, bot=self.bot)
-
-                elif int(self.values[0]) == 1:
+                
+                if int(self.values[0]) == 1:
                     await sub_view_receiver(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
                 elif int(self.values[0]) == 2:
