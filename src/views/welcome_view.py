@@ -6,6 +6,7 @@ import asyncio
 import traceback
 from PIL import Image
 from airdrive import AirDrive
+from airdrive.errors import FileNotFound
 from src.extras.emojis import *
 from discord.ext import commands
 from src.extras.func import db_push_object, db_fetch_object, db_fetch_prefix, drive
@@ -42,7 +43,7 @@ async def sub_view_welcomecard(bot: discord.Client, ctx: commands.Context, inter
         view = Option(ctx)
         try:
             _bytes = drive.cache(f'covers/{ctx.guild.id}_card.png')
-        except FileNotFoundError:
+        except FileNotFound:
             _bytes = drive.cache('covers/default_card.png')
         emd = discord.Embed(description=f'**`current`**')
         emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
