@@ -21,7 +21,7 @@ async def secondary_callback(
             db_data[event] = resp.content
             await db_push_object(ctx.guild.id, db_data, 'text')
         except asyncio.TimeoutError:
-            await ini.channel.send('Bye! you took too long to respond!')
+            await ctx.send('Bye! you took too long to respond!')
     elif value == 2:
         db_data[event] = ''
         await db_push_object(ctx.guild.id, db_data, 'text')
