@@ -23,18 +23,13 @@ class PixeL(Client):
 
 pixel = PixeL()
 
-
-cogs = [
-    "eh",
-    "help",
-    "settings",
-    "listener",
-    "statusloop",
-]
+cogs = ["eh", "help", "settings", "listener", "statusloop"]
+icogs = ['setup', 'help']
 
 for cog in cogs:
     pixel.load_extension("cogs." + cog)
 
-pixel.load_slash_extension('icog.setup')
-pixel.load_slash_extension('icog.help')
+for icog in icogs:
+    pixel.load_extension("icogs." + icog)
+
 pixel.run(os.getenv('DISCORD_TOKEN'))

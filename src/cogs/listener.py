@@ -95,10 +95,32 @@ class Listeners(commands.Cog):
                         text=f'You are {member.guild.member_count}th Member',
                     )
                     file = discord.File(canvas.output, 'hq_card.png')
-                    emd = discord.Embed(description=f'**Welcome to {member.guild.name}**', color=0x303434)
+                    scopes = {
+                        '[ping.member]': '',
+                        '[member.name]': str(member),
+                        '[guild.name]': member.guild.name,
+                        '[member.mention]': member.mention,
+                    }
+
+                    def converted(text: str):
+                        for key, value in scopes.items():
+                            text = text.replace(key, value)
+                        return text
+
+                    text_dict = await db_fetch_object(member.guild.id, 'text')
+                    if text_dict and text_dict.get('welcome'):
+                        raw_text = text_dict.get('welcome')
+                        message = converted(text_dict.get('welcome'))
+                    else:
+                        raw_text = ' '
+                        message = f'Welcome to **{member.guild.name}**'
+                    emd = discord.Embed(description=message, color=0x303434)
                     emd.set_image(url="attachment://hq_card.png")
                     try:
-                        await reception.send(embed=emd, file=file)
+                        if '[ping.member]' in raw_text:
+                            await reception.send(content=member.mention, embed=emd, file=file)
+                        else:
+                            await reception.send(embed=emd, file=file)
                     except Exception:
                         pass
 

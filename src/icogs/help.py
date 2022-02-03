@@ -95,4 +95,4 @@ class Setup(SlashCog):
 
 
 def setup(bot: Client):
-    bot.add_slash_cog(Setup(bot), 877399405056102431)
+    bot.add_slash_cog(Setup(bot))

@@ -17,13 +17,17 @@ async def secondary_callback(
         await ctx.send(embed=discord.Embed(description='Type your custom message below:'))
         try:
             resp = await bot.wait_for('message', check=check, timeout=300)
-            await ctx.send(embed=discord.Embed(title=f'{Emo.CHECK} DONE!', description=f'> {resp.content}'))
+            await ctx.send(embed=discord.Embed(title=f'{Emo.CHECK} Done!', description=f'> {resp.content}'))
             db_data[event] = resp.content
             await db_push_object(ctx.guild.id, db_data, 'text')
         except asyncio.TimeoutError:
             await ini.channel.send('Bye! you took too long to respond!')
     elif value == 2:
-        pass
+        db_data[event] = ''
+        await db_push_object(ctx.guild.id, db_data, 'text')
+        await ctx.send(embed=discord.Embed(
+            title=f'{Emo.WARN} Done!',
+            description=f'> Removed custom **{event}** message'))
     elif value == 3:
         await message.delete()
 
@@ -113,6 +117,7 @@ async def sub_view_msg(bot: discord.Client, ctx: commands.Context, interaction: 
             title=f'{Emo.IMG} Welcome Message',
             description=f'**Formatting Scopes**'
                         f'\n> `[guild.name]` will be replaced with the server name'
+                        f'\n> `[ping.member]` this will ping the member with the card'
                         f'\n> `[member.name]` will be replaced with the member name'
                         f'\n> `[member.mention]` will be replaced with the member mention'
                         f'\n\nTap **`Edit`** to create a custom welcome message')
