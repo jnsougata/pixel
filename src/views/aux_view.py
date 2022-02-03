@@ -35,7 +35,7 @@ class CommandMenu(discord.ui.Select):
         self.ctx = ctx
 
         options = [
-            discord.SelectOption(label='\u200b', value='100', emoji=Emo.CROSS),
+            discord.SelectOption(label='\u200b', value='-1', emoji=Emo.CROSS),
             discord.SelectOption(label='Prefix', value='0', emoji=Emo.TAG),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='1', emoji=Emo.PING),
@@ -79,18 +79,19 @@ class CommandMenu(discord.ui.Select):
                 elif int(self.values[0]) == 6:
                     await sub_view_msg(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                elif int(self.values[0]) == 100:
+                elif int(self.values[0]) == -1:
                     try:
                         await interaction.message.delete()
                     except discord.errors.NotFound:
-                        pass
+                        return
                 else:
-                    pass
-
+                    return
             except discord.errors.Forbidden:
                 await self.ctx.send(
                     f'\n{self.ctx.author.mention} '
                     f'I don\'t have enough permission to send `embeds` `views` `buttons` `emojis` `attachments`',
                     delete_after=30)
+            except discord.errors.NotFound:
+                return
         else:
             await interaction.response.send_message('You are not allowed to control this message!', ephemeral=True)
