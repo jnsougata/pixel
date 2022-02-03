@@ -3,7 +3,7 @@ from typing import Any
 from src.extras.emojis import Emo
 from extslash import *
 from src.extras.func import db_fetch_prefix
-from extslash.commands import SlashCog, ApplicationContext, Client
+from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
 class CustomView(discord.ui.View):
@@ -40,7 +40,7 @@ class CustomView(discord.ui.View):
 
 
 class Setup(SlashCog):
-    def __init__(self, bot: Client):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     def register(self):
@@ -76,7 +76,7 @@ class Setup(SlashCog):
                                 f'\n\n{Emo.DEAL} **Reception**'
                                 f'\nUsed to add or remove a text'
                                 f'\nchannel for receiving welcome cards'
-                                f'\n\n{Emo.BELL} **Role Ping**'
+                                f'\n\n{Emo.BELL} **Ping Role**'
                                 f'\nUsed to add or remove a custom role'
                                 f'\nto be mentioned with the YT Notifications'
                                 f'\n\n{Emo.IMG} **Welcome Card**'
@@ -94,5 +94,5 @@ class Setup(SlashCog):
                               ephemeral=True)
 
 
-def setup(bot: Client):
+def setup(bot: Bot):
     bot.add_slash_cog(Setup(bot))

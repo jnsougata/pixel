@@ -2,13 +2,13 @@ import os
 import discord
 from src.extras.func import exe_prefix
 from src.extras.emojis import Emo
-from extslash.commands import Client
+from extslash.commands import Bot
 
 intent = discord.Intents().default()
 intent.members = True
 
 
-class PixeL(Client):
+class PixeL(Bot):
     def __init__(self):
         super().__init__(
             intents=intent,

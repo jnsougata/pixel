@@ -78,7 +78,7 @@ class Help(commands.Cog):
                             f'\n\n{Emo.DEAL} **Reception**'
                             f'\nUsed to add or remove a text'
                             f'\nchannel for receiving welcome cards'
-                            f'\n\n{Emo.BELL} **Role Ping**'
+                            f'\n\n{Emo.BELL} **Ping Role**'
                             f'\nUsed to add or remove a custom role'
                             f'\nto be mentioned with the YT Notifications'
                             f'\n\n{Emo.IMG} **Welcome Card**'

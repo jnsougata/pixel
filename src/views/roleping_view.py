@@ -52,8 +52,8 @@ async def sub_view_rping(
         string = '**None**'
 
     emd = discord.Embed(
-        description=f'**{ctx.guild.name}\'s** current **alert role** is {string}'
-                    f'\n\nTo set new **alert role** tap **` Edit `**'
+        description=f'**{ctx.guild.name}\'s** current **ping role** is {string}'
+                    f'\n\nTo set new **ping role** tap **` Edit `**'
     )
     if ctx.guild.icon:
         emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
@@ -67,8 +67,8 @@ async def sub_view_rping(
     if view.value == 1:
         new = await msg.edit(
             embed=discord.Embed(
-                description=f'{Emo.CHECK} You can now set `@everyone` as alert role'
-                            f'\n\n{Emo.BELL} Please mention a **role** to set as **alert role:**'
+                description=f'{Emo.CHECK} You can now set `@everyone` as ping role'
+                            f'\n\n{Emo.BELL} Please mention a **role** to set as **ping role:**'
             ),
             view=None
         )
@@ -96,7 +96,7 @@ async def sub_view_rping(
                     content=f'{ctx.author.mention}',
                     embed=discord.Embed(
                         description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** '
-                                    f'new alert role is {mention_string}')
+                                    f'new ping role is {mention_string}')
                 )
                 await db_push_object(guild_id=ctx.guild.id, item=[str(role.id)], key='arole')
 
@@ -107,7 +107,7 @@ async def sub_view_rping(
     elif view.value == 2:
         await msg.edit(
             embed=discord.Embed(
-                description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** alert role has been removed')
+                description=f'{Emo.CHECK} **{ctx.guild.me.display_name}\'s** ping role has been removed')
         )
         await db_push_object(guild_id=ctx.guild.id, item=['REMOVED'], key='arole')
 

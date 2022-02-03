@@ -3,11 +3,11 @@ from typing import Any
 from src.extras.emojis import Emo
 from src.views.aux_view import BaseView, CommandMenu
 from extslash import *
-from extslash.commands import SlashCog, ApplicationContext, Client
+from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
 class Setup(SlashCog):
-    def __init__(self, bot: Client):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     def register(self):
@@ -30,5 +30,5 @@ class Setup(SlashCog):
                 embed=discord.Embed(title=f'{Emo.WARN} You are not an **ADMIN** {Emo.WARN}'), ephemeral=True)
 
 
-def setup(bot: Client):
+def setup(bot: Bot):
     bot.add_slash_cog(Setup(bot))
