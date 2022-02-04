@@ -47,8 +47,19 @@ class Setup(SlashCog):
         return SlashCommand(name='help', description='PixeL\'s help menu')
 
     async def command(self, ctx: ApplicationContext):
+        await ctx.defer()
+
         if ctx.channel.permissions_for(ctx.guild.me).use_slash_commands:
-            await ctx.defer()
+
+            def has_perms(ctx_: ApplicationContext):
+                perms = ctx_.channel.permissions_for(ctx_.guild.me)
+                return perms.embed_links and perms.attach_files and perms.external_emojis
+
+            if not has_perms(ctx):
+                await ctx.followup.send(
+                    'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`')
+                return
+
             prefix = await db_fetch_prefix(ctx.guild.id)
             emd = discord.Embed(
                 description=f'\n\n{Emo.SETUP} Start setup using **`{prefix}setup`** or **`/setup`**'
@@ -90,8 +101,7 @@ class Setup(SlashCog):
                 )
                 await message.edit(embed=emd, view=None)
         else:
-            await ctx.respond('I need permission to use slash commands here to use this command',
-                              ephemeral=True)
+            await ctx.followup.send('Please make sure I have permission here to use `Slash Commands`')
 
 
 def setup(bot: Bot):

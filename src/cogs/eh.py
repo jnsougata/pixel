@@ -44,13 +44,14 @@ class EH(commands.Cog):
             if isinstance(error.original, discord.errors.Forbidden):
                 try:
                     await ctx.reply(
-                        f'\nI don\'t have enough permission to send `embeds` `views` `buttons` `emojis` `attachments`',
-                        delete_after=15)
+                        'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`')
                 except discord.errors.Forbidden:
-                    pass
+                    return
+            elif isinstance(error.original, discord.errors.NotFound):
+                return
             else:
                 try:
-                    await ctx.reply(content='Something weird happened. Devs will fix it soon!', delete_after=15)
+                    await ctx.reply(content='Something weird happened. Devs will fix it soon!')
                 except discord.errors.Forbidden:
                     pass
                 finally:

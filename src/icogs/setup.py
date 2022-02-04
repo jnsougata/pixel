@@ -14,20 +14,30 @@ class Setup(SlashCog):
         return SlashCommand(name='setup', description='Setup PixeL for your Server')
 
     async def command(self, ctx: ApplicationContext):
+        await ctx.defer()
+
+        def has_perms(ctx_: ApplicationContext):
+            perms = ctx_.channel.permissions_for(ctx_.guild.me)
+            return perms.embed_links and perms.attach_files and perms.external_emojis
+
         if ctx.author.guild_permissions.administrator:
+
             if ctx.channel.permissions_for(ctx.guild.me).use_slash_commands:
+
+                if not has_perms(ctx):
+                    await ctx.followup.send(
+                        'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`')
+                    return
+
                 emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
                 emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
                 view = BaseView()
                 view.add_item(CommandMenu(ctx, self.bot))
-                await ctx.defer()
                 view.message = await ctx.followup.send(embed=emd, view=view)
             else:
-                await ctx.respond('I need permission to use slash commands here to use this command',
-                                  ephemeral=True)
+                await ctx.followup.send('Please make sure I have permission here to use `Slash Commands`')
         else:
-            await ctx.respond(
-                embed=discord.Embed(title=f'{Emo.WARN} You are not an **ADMIN** {Emo.WARN}'), ephemeral=True)
+            await ctx.followup.send(f'You are not an **Admin** or **Equivalent**')
 
 
 def setup(bot: Bot):

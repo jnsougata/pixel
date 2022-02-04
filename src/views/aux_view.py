@@ -56,42 +56,31 @@ class CommandMenu(discord.ui.Select):
 
         if interaction.user == self.ctx.author:
 
-            try:
+            if int(self.values[0]) == 0:
+                await sub_view_prefix(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                if int(self.values[0]) == 0:
-                    await sub_view_prefix(ctx=self.ctx, interaction=interaction, bot=self.bot)
+            elif int(self.values[0]) == 1:
+                await sub_view_receiver(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                elif int(self.values[0]) == 1:
-                    await sub_view_receiver(ctx=self.ctx, interaction=interaction, bot=self.bot)
+            elif int(self.values[0]) == 2:
+                await sub_view_youtube(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                elif int(self.values[0]) == 2:
-                    await sub_view_youtube(ctx=self.ctx, interaction=interaction, bot=self.bot)
+            elif int(self.values[0]) == 3:
+                await sub_view_reception(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                elif int(self.values[0]) == 3:
-                    await sub_view_reception(ctx=self.ctx, interaction=interaction, bot=self.bot)
+            elif int(self.values[0]) == 4:
+                await sub_view_welcomecard(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                elif int(self.values[0]) == 4:
-                    await sub_view_welcomecard(ctx=self.ctx, interaction=interaction, bot=self.bot)
+            elif int(self.values[0]) == 5:
+                await sub_view_rping(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                elif int(self.values[0]) == 5:
-                    await sub_view_rping(ctx=self.ctx, interaction=interaction, bot=self.bot)
+            elif int(self.values[0]) == 6:
+                await sub_view_msg(ctx=self.ctx, interaction=interaction, bot=self.bot)
 
-                elif int(self.values[0]) == 6:
-                    await sub_view_msg(ctx=self.ctx, interaction=interaction, bot=self.bot)
-
-                elif int(self.values[0]) == -1:
-                    try:
-                        await interaction.message.delete()
-                    except discord.errors.NotFound:
-                        return
-                else:
+            elif int(self.values[0]) == -1:
+                try:
+                    await interaction.message.delete()
+                except discord.errors.NotFound:
                     return
-            except discord.errors.Forbidden:
-                await self.ctx.send(
-                    f'\n{self.ctx.author.mention} '
-                    f'I don\'t have enough permission to send `embeds` `views` `buttons` `emojis` `attachments`',
-                    delete_after=30)
-            except discord.errors.NotFound:
-                return
         else:
             await interaction.response.send_message('You are not allowed to control this message!', ephemeral=True)

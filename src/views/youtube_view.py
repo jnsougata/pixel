@@ -200,16 +200,10 @@ async def sub_view_youtube(
 
     if raw and _check():
         emd = discord.Embed(
-            description=f'**{ctx.guild.name}\'s** YouTube settings'
-                        f'\n\nTo add new channel tap **`Add`**'
-                        f'\n\nTo remove old channel tap **`Remove`**',
-            color=0xc4302b
-        )
-        if ctx.guild.icon:
-            emd.set_author(icon_url=ctx.guild.icon.url, name=ctx.guild.name)
-        else:
-            emd.set_author(icon_url=ctx.guild.me.avatar.url, name=ctx.guild.me.name)
-
+            title=f'{Emo.YT} YouTube Settings',
+            description=f'To add new channel tap **`Add`** and follow along'
+                        f'\n\nTo remove old channel tap **`Remove`** and follow along',
+            color=0xc4302b)
         view = MainOption(ctx, bot)
         await interaction.response.defer()
         await interaction.message.delete()
