@@ -21,7 +21,7 @@ class EH(commands.Cog):
             pass
 
         elif isinstance(error, commands.MissingPermissions):
-            await ctx.reply(content=f"You are not an **`ADMIN`**", delete_after=10)
+            await ctx.reply(content=f"You are not an **Admin** or **Equivalent**")
 
         elif isinstance(error, commands.CommandOnCooldown):
             seconds = ctx.command.get_cooldown_retry_after(ctx)
@@ -33,12 +33,12 @@ class EH(commands.Cog):
 
         elif isinstance(error, commands.BotMissingPermissions):
             try:
-                await ctx.reply(f'**I don\'t have enough permission to do it here!**', delete_after=15)
+                await ctx.reply(f'**I don\'t have enough permission to do it here!**')
             except discord.errors.Forbidden:
                 pass
 
         elif isinstance(error, commands.NotOwner):
-            await ctx.send(f'Only **Owner** can use this command!', delete_after=15)
+            await ctx.send(f'Only **Owner** can use this command!')
 
         elif isinstance(error, commands.CommandInvokeError):
             if isinstance(error.original, discord.errors.Forbidden):

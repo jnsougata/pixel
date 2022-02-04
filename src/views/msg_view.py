@@ -11,10 +11,12 @@ async def secondary_callback(
 
     if value == 1:
 
+        await message.edit(view=None)
+
         def check(m):
             return m.author == ctx.author and m.channel == ctx.channel
 
-        await ctx.send(embed=discord.Embed(description='Type your custom message below:'))
+        await ctx.send(embed=discord.Embed(description='> Type your custom message using above formatting scopes:'))
         try:
             resp = await bot.wait_for('message', check=check, timeout=300)
             await ctx.send(embed=discord.Embed(title=f'{Emo.CHECK} Done!', description=f'> {resp.content}'))
