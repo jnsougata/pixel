@@ -6,3 +6,5 @@ aiotube==1.4.6
 airdrive==0.2.8
 extslash==0.1.1
 git+https://github.com/Rapptz/discord.py
+
+# --------
