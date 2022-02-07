@@ -1,8 +1,7 @@
 import discord
-from typing import Any
+from extslash import *
 from src.extras.emojis import Emo
 from src.iviews.aux_view import BaseView, CommandMenu
-from extslash import *
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
