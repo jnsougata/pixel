@@ -1,7 +1,7 @@
 import discord
 from typing import Any
-from src.extras.emojis import Emo
 from extslash import *
+from src.extras.emojis import Emo
 from src.extras.func import db_fetch_prefix
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
@@ -39,7 +39,7 @@ class CustomView(discord.ui.View):
             pass
 
 
-class Setup(SlashCog):
+class Help(SlashCog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
@@ -47,7 +47,6 @@ class Setup(SlashCog):
         return SlashCommand(name='help', description='PixeL\'s help menu')
 
     async def command(self, ctx: ApplicationContext):
-        await ctx.defer()
 
         if ctx.channel.permissions_for(ctx.guild.me).use_slash_commands:
 
@@ -56,7 +55,7 @@ class Setup(SlashCog):
                 return perms.embed_links and perms.attach_files and perms.external_emojis
 
             if not has_perms(ctx):
-                await ctx.followup.send(
+                await ctx.send_response(
                     'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`')
                 return
 
@@ -68,7 +67,7 @@ class Setup(SlashCog):
                 color=0x005aef)
 
             view = CustomView(ctx)
-            message = await ctx.followup.send(embed=emd, view=view)
+            message = await ctx.send_response(embed=emd, view=view)
 
             await view.wait()
             if view.value:
@@ -101,8 +100,8 @@ class Setup(SlashCog):
                 )
                 await message.edit(embed=emd, view=None)
         else:
-            await ctx.followup.send('Please make sure I have permission here to use `Slash Commands`')
+            await ctx.send_response('Please make sure I have permission here to use `Slash Commands`')
 
 
 def setup(bot: Bot):
-    bot.add_slash_cog(Setup(bot))
+    bot.add_slash_cog(Help(bot))

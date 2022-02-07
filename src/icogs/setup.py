@@ -1,7 +1,7 @@
 import discord
 from typing import Any
 from src.extras.emojis import Emo
-from src.views.aux_view import BaseView, CommandMenu
+from src.iviews.aux_view import BaseView, CommandMenu
 from extslash import *
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
@@ -14,7 +14,6 @@ class Setup(SlashCog):
         return SlashCommand(name='setup', description='Setup PixeL for your Server')
 
     async def command(self, ctx: ApplicationContext):
-        await ctx.defer()
 
         def has_perms(ctx_: ApplicationContext):
             perms = ctx_.channel.permissions_for(ctx_.guild.me)
@@ -33,11 +32,12 @@ class Setup(SlashCog):
                 emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
                 view = BaseView()
                 view.add_item(CommandMenu(ctx, self.bot))
-                view.message = await ctx.followup.send(embed=emd, view=view)
+                await ctx.send_response(embed=emd, view=view)
             else:
-                await ctx.followup.send('Please make sure I have permission here to use `Slash Commands`')
+                await ctx.send_response('Please make sure I have permission here to use `Slash Commands`',
+                                        ephemeral=True)
         else:
-            await ctx.followup.send(f'You are not an **Admin** or **Equivalent**')
+            await ctx.send_response(f'You are not an **Admin** or **Equivalent**', ephemeral=True)
 
 
 def setup(bot: Bot):

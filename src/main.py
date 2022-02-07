@@ -24,7 +24,7 @@ class PixeL(Bot):
 pixel = PixeL()
 
 cogs = ["eh", "help", "settings", "listener", "statusloop"]
-icogs = ['setup', 'help']
+icogs = ['help', 'setup']
 
 for cog in cogs:
     pixel.load_extension("cogs." + cog)
