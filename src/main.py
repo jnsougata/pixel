@@ -17,19 +17,16 @@ class PixeL(Bot):
         )
 
     async def on_ready(self):
+        print('------')
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
 
 
-pixel = PixeL()
-
-cogs = ["eh", "help", "settings", "listener", "statusloop"]
-icogs = ['help', 'setup']
-
-for cog in cogs:
-    pixel.load_extension("cogs." + cog)
-
-for icog in icogs:
-    pixel.load_extension("icogs." + icog)
-
-pixel.run(os.getenv('DISCORD_TOKEN'))
+if __name__ == '__main__':
+    pixel = PixeL()
+    bucket = []
+    bucket.extend([f'cogs.{file[:-3]}' for file in os.listdir('cogs') if file.endswith('.py')])
+    bucket.extend([f'icogs.{file[:-3]}' for file in os.listdir('icogs') if file.endswith('.py')])
+    for ext in bucket:
+        pixel.load_extension(ext)
+    pixel.run(os.getenv('DISCORD_TOKEN'))
