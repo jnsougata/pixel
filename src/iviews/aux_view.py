@@ -1,4 +1,5 @@
 import discord
+import traceback
 from src.extras.emojis import *
 from discord.ext import commands
 from extslash.commands import ApplicationContext, Bot
@@ -51,7 +52,6 @@ class CommandMenu(discord.ui.Select):
         if interaction.user == self.ctx.author:
             try:
                 await interaction.response.defer()
-
                 if int(self.values[0]) == 0:
                     await self.ctx.delete_response()
                 elif int(self.values[0]) == 1:
@@ -68,7 +68,12 @@ class CommandMenu(discord.ui.Select):
                     await sub_view_welcomecard(self.ctx, self.bot)
                 elif int(self.values[0]) == 7:
                     await sub_view_msg(self.ctx, self.bot)
-            except discord.errors.NotFound:
-                pass
+            except Exception as e:
+                if isinstance(e, discord.errors.NotFound):
+                    pass
+                else:
+                    logger = self.bot.get_channel(938059433794240523)
+                    tb = traceback.format_exception(type(e), e, e.__traceback__)
+                    await logger.send(f'```py\n{tb}\n```')
         else:
             await interaction.response.send_message('You are not allowed to control this message!', ephemeral=True)
