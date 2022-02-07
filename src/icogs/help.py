@@ -98,7 +98,7 @@ class Help(SlashCog):
 
                     color=0x005aef,
                 )
-                await message.edit(embed=emd, view=None)
+                await ctx.edit_response(embed=emd, view=None)
         else:
             await ctx.send_response('Please make sure I have permission here to use `Slash Commands`')
 
