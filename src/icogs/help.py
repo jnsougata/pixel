@@ -55,7 +55,8 @@ class Help(SlashCog):
 
         if not self.check(ctx):
             await ctx.send_response(
-                'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`')
+                'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`',
+                ephemeral=True)
             return
 
         prefix = await db_fetch_prefix(ctx.guild.id)

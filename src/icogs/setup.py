@@ -9,18 +9,19 @@ class Setup(SlashCog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
+    @staticmethod
+    def check(ctx: ApplicationContext):
+        perms = ctx.channel.permissions_for(ctx.me)
+        return perms.embed_links and perms.attach_files and perms.external_emojis
+
     def register(self):
         return SlashCommand(name='setup', description='Setup PixeL for your Server')
 
     async def command(self, ctx: ApplicationContext):
 
-        def has_perms(ctx_: ApplicationContext):
-            perms = ctx_.channel.permissions_for(ctx_.guild.me)
-            return perms.embed_links and perms.attach_files and perms.external_emojis
-
         if ctx.author.guild_permissions.administrator:
 
-            if not has_perms(ctx):
+            if not self.check(ctx):
                 await ctx.send_response(
                     'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`',
                     ephemeral=True)
