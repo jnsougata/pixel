@@ -73,7 +73,8 @@ class CommandMenu(discord.ui.Select):
                     pass
                 else:
                     logger = self.bot.get_channel(938059433794240523)
-                    tb = traceback.format_exception(type(e), e, e.__traceback__)
+                    stack = traceback.format_exception(type(e), e, e.__traceback__)
+                    tb = ''.join(stack)
                     await logger.send(f'```py\n{tb}\n```')
         else:
             await interaction.response.send_message('You are not allowed to control this message!', ephemeral=True)

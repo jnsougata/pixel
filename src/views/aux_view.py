@@ -5,7 +5,7 @@ from discord.ext import commands
 from extslash.commands import ApplicationContext
 from src.views.msg_view import sub_view_msg
 from src.views.prefix_view import sub_view_prefix
-from src.views.roleping_view import sub_view_rping
+from src.views.pingrole_view import sub_view_rping
 from src.views.youtube_view import sub_view_youtube
 from src.views.receiver_view import sub_view_receiver
 from src.views.reception_view import sub_view_reception

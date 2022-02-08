@@ -20,21 +20,17 @@ class Setup(SlashCog):
 
         if ctx.author.guild_permissions.administrator:
 
-            if ctx.channel.permissions_for(ctx.guild.me).use_slash_commands:
+            if not has_perms(ctx):
+                await ctx.send_response(
+                    'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`',
+                    ephemeral=True)
+                return
 
-                if not has_perms(ctx):
-                    await ctx.followup.send(
-                        'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`')
-                    return
-
-                emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
-                emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
-                view = BaseView()
-                view.add_item(CommandMenu(ctx, self.bot))
-                await ctx.send_response(embed=emd, view=view)
-            else:
-                await ctx.send_response('Please make sure I have permission here to use `Slash Commands`',
-                                        ephemeral=True)
+            emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
+            emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
+            view = BaseView()
+            view.add_item(CommandMenu(ctx, self.bot))
+            await ctx.send_response(embed=emd, view=view)
         else:
             await ctx.send_response(f'You are not an **Admin** or **Equivalent**', ephemeral=True)
 
