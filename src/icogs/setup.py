@@ -1,4 +1,5 @@
 import discord
+import traceback
 from extslash import *
 from src.extras.emojis import Emo
 from src.iviews.aux_view import BaseView, CommandMenu
@@ -34,6 +35,18 @@ class Setup(SlashCog):
             await ctx.send_response(embed=emd, view=view)
         else:
             await ctx.send_response(f'You are not an **Admin** or **Equivalent**', ephemeral=True)
+
+    async def on_error(self, ctx: ApplicationContext, error: Exception):
+        phrase = 'Something went wrong, please try again... 😔'
+        if ctx.responded:
+            await ctx.send_followup(phrase, ephemeral=True)
+        else:
+            await ctx.send_response(phrase, ephemeral=True)
+
+        logger = self.bot.get_channel(938059433794240523)
+        stack = traceback.format_exception(type(error), error, error.__traceback__)
+        tb = ''.join(stack)
+        await logger.send(f'```py\n{tb}\n```')
 
 
 def setup(bot: Bot):

@@ -1,4 +1,5 @@
 import discord
+import traceback
 from typing import Any
 from extslash import *
 from src.extras.emojis import Emo
@@ -7,13 +8,8 @@ from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
 class CustomView(discord.ui.View):
-    def __init__(
-            self,
-            ctx: ApplicationContext,
-            message: discord.Message = None
-    ):
+    def __init__(self, ctx: ApplicationContext):
         self.ctx = ctx
-        self.message = message
 
         invite = discord.ui.Button(label='Invite', style=discord.ButtonStyle.link,
                                    url='https://top.gg/bot/848304171814879273/invite')
@@ -22,7 +18,6 @@ class CustomView(discord.ui.View):
 
         super().__init__()
         self.value = None
-        self.timeout = 120
         self.add_item(invite)
         self.add_item(upvote)
 
@@ -33,10 +28,7 @@ class CustomView(discord.ui.View):
             self.stop()
 
     async def on_timeout(self) -> None:
-        try:
-            await self.message.delete()
-        except Exception:
-            pass
+        pass
 
 
 class Help(SlashCog):
@@ -99,6 +91,18 @@ class Help(SlashCog):
                 color=0x005aef,
             )
             await ctx.edit_response(embed=emd, view=None)
+
+    async def on_error(self, ctx: ApplicationContext, error: Exception):
+        phrase = 'Something went wrong, please try again... 😔'
+        if ctx.responded:
+            await ctx.send_followup(phrase, ephemeral=True)
+        else:
+            await ctx.send_response(phrase, ephemeral=True)
+
+        logger = self.bot.get_channel(938059433794240523)
+        stack = traceback.format_exception(type(error), error, error.__traceback__)
+        tb = ''.join(stack)
+        await logger.send(f'```py\n{tb}\n```')
 
 
 def setup(bot: Bot):

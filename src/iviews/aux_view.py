@@ -50,31 +50,22 @@ class CommandMenu(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
 
         if interaction.user == self.ctx.author:
-            try:
-                await interaction.response.defer()
-                if int(self.values[0]) == 0:
-                    await self.ctx.delete_response()
-                elif int(self.values[0]) == 1:
-                    await sub_view_prefix(self.ctx, self.bot)
-                elif int(self.values[0]) == 2:
-                    await sub_view_youtube(self.ctx, self.bot)
-                elif int(self.values[0]) == 3:
-                    await sub_view_receiver(self.ctx, self.bot)
-                elif int(self.values[0]) == 4:
-                    await sub_view_reception(self.ctx, self.bot)
-                elif int(self.values[0]) == 5:
-                    await sub_view_pingrole(self.ctx, self.bot)
-                elif int(self.values[0]) == 6:
-                    await sub_view_welcomecard(self.ctx, self.bot)
-                elif int(self.values[0]) == 7:
-                    await sub_view_msg(self.ctx, self.bot)
-            except Exception as e:
-                if isinstance(e, discord.errors.NotFound):
-                    pass
-                else:
-                    logger = self.bot.get_channel(938059433794240523)
-                    stack = traceback.format_exception(type(e), e, e.__traceback__)
-                    tb = ''.join(stack)
-                    await logger.send(f'```py\n{tb}\n```')
+            await interaction.response.defer()
+            if int(self.values[0]) == 0:
+                await self.ctx.delete_response()
+            elif int(self.values[0]) == 1:
+                await sub_view_prefix(self.ctx, self.bot)
+            elif int(self.values[0]) == 2:
+                await sub_view_youtube(self.ctx, self.bot)
+            elif int(self.values[0]) == 3:
+                await sub_view_receiver(self.ctx, self.bot)
+            elif int(self.values[0]) == 4:
+                await sub_view_reception(self.ctx, self.bot)
+            elif int(self.values[0]) == 5:
+                await sub_view_pingrole(self.ctx, self.bot)
+            elif int(self.values[0]) == 6:
+                await sub_view_welcomecard(self.ctx, self.bot)
+            elif int(self.values[0]) == 7:
+                await sub_view_msg(self.ctx, self.bot)
         else:
             await interaction.response.send_message('You are not allowed to control this message!', ephemeral=True)
