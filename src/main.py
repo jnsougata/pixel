@@ -22,11 +22,10 @@ class PixeL(Bot):
         print('------')
 
 
-if __name__ == '__main__':
-    pixel = PixeL()
-    bucket = []
-    bucket.extend([f'cogs.{file[:-3]}' for file in os.listdir('src/cogs') if file.endswith('.py')])
-    bucket.extend([f'icogs.{file[:-3]}' for file in os.listdir('src/icogs') if file.endswith('.py')])
-    for ext in bucket:
-        pixel.load_extension(ext)
-    pixel.run(os.getenv('DISCORD_TOKEN'))
+pixel = PixeL()
+bucket = []
+bucket.extend([f'cogs.{file[:-3]}' for file in os.listdir('src/cogs') if file.endswith('.py')])
+bucket.extend([f'icogs.{file[:-3]}' for file in os.listdir('src/icogs') if file.endswith('.py')])
+for ext in bucket:
+    pixel.load_extension(ext)
+pixel.run(os.getenv('DISCORD_TOKEN'))
