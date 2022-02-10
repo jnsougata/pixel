@@ -87,11 +87,10 @@ class ChannelMenu(discord.ui.Select):
                 ch = Channel(self.values[0])
                 data = ch.info
                 emd = discord.Embed(
-                    title=f'❌ {data["name"]}',
-                    description=f'**` Subs `  {data["subscribers"]}**'
-                                f'\n\n**` Views `  {data["views"]}**'
-                                f'\n\n**` Id `  {data["id"]}**',
-                    url=data["url"],
+                    description=f'❌ [{data["name"]}]({data["url"]})'
+                                f'**Subs:** {data["subscribers"]}'
+                                f'\n\n**Views:** {data["views"]}'
+                                f'\n\n**Id:** {data["id"]}',
                     color=0xc4302b)
                 banner_url = data.get('banner_url')
                 avatar_url = data.get('avatar_url')
@@ -212,11 +211,12 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot):
                     channel = Channel(response.content.replace(' ', ''))
                     try:
                         info = channel.info
-                        emd = discord.Embed(title=f'{Emo.YT} {info["name"]}',
-                                            description=f'**` Subs `  {info["subscribers"]}**'
-                                            f'\n\n**` Views `  {info["views"]}**', url=info["url"],
-                                            color=0xc4302b)
-
+                        emd = discord.Embed(
+                            title=f'{Emo.YT} {info["name"]}',
+                            description=f'\n> **Subs:** {info["subscribers"]}'
+                                        f'\n> **Views:** {info["views"]}',
+                            url=info["url"],
+                            color=0xc4302b)
                         banner_url = info.get('banner_url')
                         avatar_url = info.get('avatar_url')
                         if banner_url and banner_url.startswith('http'):
@@ -247,12 +247,10 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot):
                                 if receiver and receiver[0].isdigit():
                                     txt_channel = bot.get_channel(int(receiver[0]))
                                     emd = discord.Embed(
-                                        title=f'{Emo.YT} {info["name"]}',
-                                        description=f'{Emo.CHECK} The receiver channel is {txt_channel.mention}'
-                                                    f'\nThis channel will be used to receive livestream & upload '
-                                                    f'notifications',
-                                        url=info['url'],
-                                    )
+                                        description=f'{Emo.YT} **[{info["name"]}]({info["url"]})**'
+                                                    f'\n\n> {Emo.CHECK} YouTube channel added successfully'
+                                                    f'\n> Bound to {txt_channel.mention} for receiving notifications',
+                                        url=info['url'])
                                     await ctx.edit_response(embed=emd, view=None)
                                 if receivers:
                                     db_data = receivers
@@ -311,4 +309,4 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot):
                         f'\n\n**` Steps: `**'
                         f'\n\n**`/setup`**  select **`receiver`** from menu.'
                         f'\nTap **`Edit`**  select **`text channel`** from menu')
-        await ctx.edit_response(embed=emd)
+        await ctx.edit_response(embed=emd, view=None)

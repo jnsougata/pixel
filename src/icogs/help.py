@@ -45,6 +45,9 @@ class Help(SlashCog):
 
     async def command(self, ctx: ApplicationContext):
 
+        if not ctx.guild:
+            return await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
+
         if not self.check(ctx):
             await ctx.send_response(
                 'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`',

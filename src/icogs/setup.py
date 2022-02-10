@@ -1,6 +1,6 @@
 import discord
 import traceback
-from extslash import *
+import extslash as ext
 from src.extras.emojis import Emo
 from src.iviews.aux_view import BaseView, CommandMenu
 from extslash.commands import SlashCog, ApplicationContext, Bot
@@ -16,9 +16,13 @@ class Setup(SlashCog):
         return perms.embed_links and perms.attach_files and perms.external_emojis
 
     def register(self):
-        return SlashCommand(name='setup', description='Setup PixeL for your Server')
+        return ext.SlashCommand(name='setup', description='Setup PixeL for your Server')
 
     async def command(self, ctx: ApplicationContext):
+
+        if not isinstance(ctx.author, discord.Member):
+            await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
+            return
 
         if ctx.author.guild_permissions.administrator:
 
