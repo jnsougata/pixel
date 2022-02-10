@@ -205,8 +205,6 @@ async def sub_view_youtube(
                         f'\n\nTo remove old channel tap **`Remove`** and follow along',
             color=0xc4302b)
         view = MainOption(ctx, bot)
-        await interaction.response.defer()
-        await interaction.message.delete()
         msg = await ctx.send(embed=emd, view=view)
         await view.wait()
 
