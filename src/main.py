@@ -1,8 +1,6 @@
 import os
 import discord
-from src.extras.emojis import Emo
 from extslash.commands import Bot
-from src.extras.func import exe_prefix
 
 intent = discord.Intents().default()
 intent.members = True
@@ -13,7 +11,7 @@ class PixeL(Bot):
         super().__init__(
             intents=intent,
             help_command=None,
-            command_prefix=exe_prefix,
+            command_prefix='🞽',
         )
 
     async def on_ready(self):

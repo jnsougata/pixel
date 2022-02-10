@@ -106,6 +106,6 @@ async def sub_view_welcomecard(ctx: ApplicationContext, bot: Bot):
             description=f'Please set a Text Channel'
                         f'\nfor receiving Welcome Cards'
                         f'\n\n**`Steps`**'
-                        f'\n> **{prefix}setup**  select **Reception** from menu'
+                        f'\n> **/setup**  select **Reception** from menu'
                         f'\n> Then tap **Edit**  select a **text channel** from menu')
         await ctx.edit_response(embed=emd)

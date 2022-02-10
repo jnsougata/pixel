@@ -3,7 +3,6 @@ import traceback
 from src.extras.emojis import *
 from discord.ext import commands
 from extslash.commands import ApplicationContext, Bot
-from src.iviews.prefix_view import sub_view_prefix
 from src.iviews.msg_view import sub_view_msg
 from src.iviews.receiver_view import sub_view_receiver
 from src.iviews.reception_view import sub_view_reception
@@ -31,7 +30,6 @@ class CommandMenu(discord.ui.Select):
 
         options = [
             discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS),
-            discord.SelectOption(label='Prefix', value='1', emoji=Emo.TAG),
             discord.SelectOption(label='YouTube', value='2', emoji=Emo.YT),
             discord.SelectOption(label='Receiver', value='3', emoji=Emo.PING),
             discord.SelectOption(label='Reception', value='4', emoji=Emo.DEAL),
@@ -54,7 +52,7 @@ class CommandMenu(discord.ui.Select):
             if int(self.values[0]) == 0:
                 await self.ctx.delete_response()
             elif int(self.values[0]) == 1:
-                await sub_view_prefix(self.ctx, self.bot)
+                pass
             elif int(self.values[0]) == 2:
                 await sub_view_youtube(self.ctx, self.bot)
             elif int(self.values[0]) == 3:

@@ -56,7 +56,7 @@ class Help(SlashCog):
 
         prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
-            description=f'\n\n{Emo.SETUP} Start setup using **`{prefix}setup`** or **`/setup`**'
+            description=f'\n\n{Emo.SETUP} Start setup using **`/setup`**'
                         f'\n\n{Emo.FAQ} To know more about **setup** tap **`Info`**'
                         f'\n\n{Emo.SUP} Having issues? Join **[Dev & Support](https://discord.gg/VE5qRFfmG2)**',
             color=0x005aef)
