@@ -1,14 +1,14 @@
 import discord
 import traceback
-from src.extras.emojis import *
+from bot.extras.emojis import *
 from discord.ext import commands
 from extslash.commands import ApplicationContext, Bot
-from src.iviews.msg_view import sub_view_msg
-from src.iviews.receiver_view import sub_view_receiver
-from src.iviews.reception_view import sub_view_reception
-from src.iviews.pingrole_view import sub_view_pingrole
-from src.iviews.welcome_view import sub_view_welcomecard
-from src.iviews.youtube_view import sub_view_youtube
+from bot.views.msg_view import sub_view_msg
+from bot.views.receiver_view import sub_view_receiver
+from bot.views.reception_view import sub_view_reception
+from bot.views.pingrole_view import sub_view_pingrole
+from bot.views.welcome_view import sub_view_welcomecard
+from bot.views.youtube_view import sub_view_youtube
 
 
 class BaseView(discord.ui.View):

@@ -1,8 +1,8 @@
 import discord
 import traceback
 import extslash as ext
-from src.extras.emojis import Emo
-from src.iviews.aux_view import BaseView, CommandMenu
+from bot.extras.emojis import Emo
+from bot.views.aux_view import BaseView, CommandMenu
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
@@ -50,6 +50,7 @@ class Setup(SlashCog):
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
+
         await logger.send(f'```py\n{tb}\n```')
 
 

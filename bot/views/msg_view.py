@@ -1,8 +1,8 @@
 import asyncio
 import discord
-from src.extras.emojis import *
+from bot.extras.emojis import *
 from extslash.commands import ApplicationContext, Bot
-from src.extras.func import db_push_object, db_fetch_object
+from bot.extras.func import db_push_object, db_fetch_object
 
 
 async def secondary_callback(ctx: ApplicationContext, bot: Bot, event: str, value: int, db_data: dict):

@@ -2,8 +2,8 @@ import discord
 import traceback
 from typing import Any
 from extslash import *
-from src.extras.emojis import Emo
-from src.extras.func import db_fetch_prefix
+from bot.extras.emojis import Emo
+from bot.extras.func import db_fetch_prefix
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
 

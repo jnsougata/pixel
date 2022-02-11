@@ -5,10 +5,10 @@ import discord
 import asyncio
 import traceback
 from PIL import Image
-from src.extras.emojis import *
+from bot.extras.emojis import *
 from airdrive.errors import FileNotFound
 from extslash.commands import ApplicationContext, Bot
-from src.extras.func import db_push_object, db_fetch_object, db_fetch_prefix, drive
+from bot.extras.func import db_push_object, db_fetch_object, db_fetch_prefix, drive
 
 
 class Option(discord.ui.View):

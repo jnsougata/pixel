@@ -2,10 +2,10 @@ import io
 import discord
 import discord.errors
 from discord.ext import commands
-from src.extras.emojis import Emo
+from bot.extras.emojis import Emo
 import airdrive.errors
-from src.extras.card import Io, Canvas
-from src.extras.func import db_fetch_object, drive
+from bot.extras.card import Io, Canvas
+from bot.extras.func import db_fetch_object, drive
 
 
 class Listeners(commands.Cog):

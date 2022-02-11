@@ -1,8 +1,8 @@
 import asyncio
 import discord
-from src.extras.emojis import *
+from bot.extras.emojis import *
 from extslash.commands import ApplicationContext, Bot
-from src.extras.func import db_fetch_object, db_push_object
+from bot.extras.func import db_fetch_object, db_push_object
 
 
 class Option(discord.ui.View):
