@@ -1,4 +1,5 @@
 import io
+import asyncio
 import discord
 import discord.errors
 from discord.ext import commands
@@ -72,14 +73,16 @@ class Listeners(commands.Cog):
             if raw and raw[0].isdigit():
                 reception = member.guild.get_channel(int(raw[0]))
                 if reception:
-                    async def get_background():
+
+                    def get_background():
                         try:
                             path = f'covers/{guild_id}_card.png'
                             return io.BytesIO(drive.cache(path))
                         except airdrive.errors.FileNotFound:
                             return io.BytesIO(drive.cache('covers/default_card.png'))
 
-                    bg_bytes = await get_background()
+                    loop = asyncio.get_event_loop()
+                    bg_bytes = loop.run_in_executor(None, get_background)
                     avatar = member.display_avatar.with_format('png')
                     bytes_ = await avatar.read()
                     round_bg = Io.draw(size=(1500, 1500), color='#FFFFFF')
