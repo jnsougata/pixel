@@ -88,9 +88,9 @@ class ChannelMenu(discord.ui.Select):
                 data = ch.info
                 emd = discord.Embed(
                     description=f'❌ [{data["name"]}]({data["url"]})'
-                                f'**Subs:** {data["subscribers"]}'
-                                f'\n\n**Views:** {data["views"]}'
-                                f'\n\n**Id:** {data["id"]}',
+                                f'\n**Subs:** {data["subscribers"]}'
+                                f'\n**Views:** {data["views"]}'
+                                f'\n**Id:** {data["id"]}',
                     color=0xc4302b)
                 banner_url = data.get('banner_url')
                 avatar_url = data.get('avatar_url')
@@ -106,31 +106,6 @@ class ChannelMenu(discord.ui.Select):
                 await db_push_object(guild_id=self.ctx.guild.id, item=self.db_data, key='receivers')
             else:
                 await self.ctx.delete_response()
-
-
-class MainOption(discord.ui.View):
-    def __init__(self, ctx: ApplicationContext):
-        self.ctx = ctx
-        super().__init__()
-        self.value = None
-
-    @discord.ui.button(label='Add', style=discord.ButtonStyle.green)
-    async def add(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = 1
-            self.stop()
-
-    @discord.ui.button(label='Remove', style=discord.ButtonStyle.blurple)
-    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = 2
-            self.stop()
-
-    @discord.ui.button(label='Cancel', style=discord.ButtonStyle.red)
-    async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = 0
-            self.stop()
 
 
 class Confirmation(discord.ui.View):
@@ -171,7 +146,7 @@ class TextSelection(discord.ui.View):
             self.stop()
 
 
-async def sub_view_youtube(ctx: ApplicationContext, bot: Bot):
+async def sub_view_youtube(ctx: ApplicationContext, bot: Bot, url: str):
 
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
@@ -180,124 +155,90 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot):
             return ctx.guild.get_channel(int(raw[0]))
 
     if raw and _check():
-        emd = discord.Embed(
-            title=f'{Emo.YT} YouTube Settings',
-            description=f'To add new channel tap **`Add`** and follow along'
-                        f'\n\nTo remove old channel tap **`Remove`** and follow along',
-            color=0xc4302b)
-        view = MainOption(ctx)
 
-        await ctx.edit_response(embed=emd, view=view)
-        await view.wait()
+        old_data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
+        if old_data:
+            total_channels = list(old_data)
+        else:
+            total_channels = []
+        if len(total_channels) < 24:
 
-        if view.value == 1:
-            old_data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
-            if old_data:
-                total_channels = list(old_data)
-            else:
-                total_channels = []
-            if len(total_channels) < 24:
-                view.clear_items()
-                new = await ctx.edit_response(
-                    embed=discord.Embed(description='Please type a youtube channel **ID** or **URL:**', color=0xc4302b),
-                    view=view
-                )
-
-                def check(m):
-                    return m.author == ctx.author
-
-                try:
-                    response = await bot.wait_for('message', check=check, timeout=20)
-                    channel = Channel(response.content.replace(' ', ''))
-                    try:
-                        info = channel.info
-                        emd = discord.Embed(
-                            title=f'{Emo.YT} {info["name"]}',
-                            description=f'\n> **Subs:** {info["subscribers"]}'
-                                        f'\n> **Views:** {info["views"]}',
-                            url=info["url"],
-                            color=0xc4302b)
-                        banner_url = info.get('banner_url')
-                        avatar_url = info.get('avatar_url')
-                        if banner_url and banner_url.startswith('http'):
-                            emd.set_image(url=banner_url)
-                        if avatar_url and avatar_url.startswith('http'):
-                            emd.set_thumbnail(url=info["avatar_url"])
-                        new_view = Confirmation(ctx)
-                        await ctx.edit_response(embed=emd, view=new_view)
-                        await new_view.wait()
-                        if new_view.value:
-                            if old_data:
-                                old_data[info['id']] = {'live': 'empty', 'upload': channel.latest.id}
-                                await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
-                            else:
-                                empty = {info['id']: {'live': 'empty', 'upload': channel.latest.id}}
-                                await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
-                            text_select_view = TextSelection(ctx)
-                            embed = discord.Embed(
-                                title=f'Wait! one more step',
-                                description=f'{Emo.TEXT} To use default receiver tap **`Default`**'
-                                            f'\n\n{Emo.TEXT} To select another receiver tap **`Select`**',
-                                color=0xc4302b)
-                            await ctx.edit_response(embed=embed, view=text_select_view)
-                            receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
-                            await text_select_view.wait()
-                            if text_select_view.value == 0:
-                                receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
-                                if receiver and receiver[0].isdigit():
-                                    txt_channel = bot.get_channel(int(receiver[0]))
-                                    emd = discord.Embed(
-                                        description=f'{Emo.YT} **[{info["name"]}]({info["url"]})**'
-                                                    f'\n\n> {Emo.CHECK} YouTube channel added successfully'
-                                                    f'\n> Bound to {txt_channel.mention} for receiving notifications',
-                                        url=info['url'])
-                                    await ctx.edit_response(embed=emd, view=None)
-                                if receivers:
-                                    db_data = receivers
-                                else:
-                                    db_data = {}
-                                db_data[info['id']] = str(receiver[0])
-                                await db_push_object(guild_id=ctx.guild.id, item=db_data, key='receivers')
-
-                            elif text_select_view.value == 1:
-                                emd = discord.Embed(
-                                    description=f'{Emo.TEXT} Select a text channel from the menu below:')
-                                if receivers:
-                                    db_data = receivers
-                                else:
-                                    db_data = {}
-                                receiver_view = Temp()
-                                receiver_view.add_item(ReceiverMenu(
-                                    bot=bot, ctx=ctx, db_data=db_data, youtube_info=info))
-                                await ctx.edit_response(embed=emd, view=receiver_view)
+            try:
+                channel = Channel(url.replace(' ', ''))
+                info = channel.info
+                emd = discord.Embed(
+                    title=f'{Emo.YT} {info["name"]}',
+                    description=f'\n> **Subs:** {info["subscribers"]}'
+                                f'\n> **Views:** {info["views"]}',
+                    url=info["url"],
+                    color=0xc4302b)
+                banner_url = info.get('banner_url')
+                avatar_url = info.get('avatar_url')
+                if banner_url and banner_url.startswith('http'):
+                    emd.set_image(url=banner_url)
+                if avatar_url and avatar_url.startswith('http'):
+                    emd.set_thumbnail(url=info["avatar_url"])
+                new_view = Confirmation(ctx)
+                await ctx.edit_response(embed=emd, view=new_view)
+                await new_view.wait()
+                if new_view.value:
+                    if old_data:
+                        old_data[info['id']] = {'live': 'empty', 'upload': channel.latest.id}
+                        await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
+                    else:
+                        empty = {info['id']: {'live': 'empty', 'upload': channel.latest.id}}
+                        await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
+                    text_select_view = TextSelection(ctx)
+                    embed = discord.Embed(
+                        title=f'Wait! one more step',
+                        description=f'{Emo.TEXT} To use default receiver tap **`Default`**'
+                                    f'\n\n{Emo.TEXT} To select another receiver tap **`Select`**',
+                        color=0xc4302b)
+                    await ctx.edit_response(embed=embed, view=text_select_view)
+                    receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
+                    await text_select_view.wait()
+                    if text_select_view.value == 0:
+                        receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
+                        if receiver and receiver[0].isdigit():
+                            txt_channel = bot.get_channel(int(receiver[0]))
+                            emd = discord.Embed(
+                                description=f'{Emo.YT} **[{info["name"]}]({info["url"]})**'
+                                            f'\n\n> {Emo.CHECK} YouTube channel added successfully'
+                                            f'\n> Bound to {txt_channel.mention} for receiving notifications',
+                                url=info['url'])
+                            await ctx.edit_response(embed=emd, view=None)
+                        if receivers:
+                            db_data = receivers
                         else:
-                            await ctx.delete_response()
-                    except Exception:
-                        await ctx.edit_response(
-                            embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
+                            db_data = {}
+                        db_data[info['id']] = str(receiver[0])
+                        await db_push_object(guild_id=ctx.guild.id, item=db_data, key='receivers')
 
-                except asyncio.TimeoutError:
-                    await ctx.send_message('Bye! you took so long')
-            else:
-                await ctx.send_message(
-                    embed=discord.Embed(
-                        description=f'{Emo.WARN} You have exceeded the maximum number of channels {Emo.WARN}'))
-
-        elif view.value == 2:
-            receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
-            if receivers:
-                db_data = receivers
-            else:
-                db_data = {}
-            view = Temp()
-            view.add_item(await ChannelMenu.display(bot=bot, ctx=ctx, db_data=db_data))
+                    elif text_select_view.value == 1:
+                        emd = discord.Embed(
+                            description=f'{Emo.TEXT} Select a text channel from the menu below:')
+                        if receivers:
+                            db_data = receivers
+                        else:
+                            db_data = {}
+                        receiver_view = Temp()
+                        receiver_view.add_item(ReceiverMenu(
+                            bot=bot, ctx=ctx, db_data=db_data, youtube_info=info))
+                        await ctx.edit_response(embed=emd, view=receiver_view)
+                else:
+                    await ctx.delete_response()
+            except Exception as e:
+                if isinstance(e, asyncio.TimeoutError):
+                    await ctx.edit_response('Bye! you took so long')
+                else:
+                    print(e)
+                    await ctx.edit_response(
+                        embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
+        else:
             await ctx.edit_response(
-                embed=discord.Embed(description=f'> Please select YouTube Channel to **Remove:**', color=0xc4302b),
-                view=view
-            )
+                embed=discord.Embed(
+                    description=f'{Emo.WARN} You have exceeded the maximum allowed channels {Emo.WARN}'))
 
-        elif view.value == 0:
-            await ctx.delete_response()
     else:
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',

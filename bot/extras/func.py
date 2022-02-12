@@ -5,7 +5,6 @@ from airdrive import AirDrive
 from discord.ext import commands
 
 
-DEFAULT_PREFIX = '.'
 KEY = os.getenv('DETA_TOKEN')
 deta = Deta(KEY)
 drive = AirDrive.login('PixeL', '@11223344', private_key=KEY, silent=True)
@@ -23,8 +22,4 @@ async def db_fetch_object(guild_id: int, key: str):
         return data.get('item')
     return None
 
-
-async def db_fetch_prefix(guild_id):
-    prefix = await db_fetch_object(guild_id=guild_id, key='prefix')
-    return prefix[0] if prefix else DEFAULT_PREFIX
 

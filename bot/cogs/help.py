@@ -3,7 +3,6 @@ import traceback
 from typing import Any
 from extslash import *
 from bot.extras.emojis import Emo
-from bot.extras.func import db_fetch_prefix
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
@@ -38,23 +37,24 @@ class Help(SlashCog):
     @staticmethod
     def check(ctx: ApplicationContext):
         perms = ctx.channel.permissions_for(ctx.me)
-        return perms.embed_links and perms.attach_files and perms.external_emojis
+        return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
 
     def register(self):
         return SlashCommand(name='help', description='PixeL\'s help menu')
 
     async def command(self, ctx: ApplicationContext):
 
+        await ctx.defer()
+
         if not ctx.guild:
-            return await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
+            return await ctx.send_followup('🚫 This command can only be used inside a **SERVER**')
 
         if not self.check(ctx):
-            await ctx.send_response(
-                'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`',
-                ephemeral=True)
+            await ctx.send_followup(
+                f'{Emo.WARN} Please make sure I have permissions to send '
+                f'`messages` `embeds` `custom emojis` `images` (**here**)')
             return
 
-        prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
             description=f'\n\n{Emo.SETUP} Start setup using **`/setup`**'
                         f'\n\n{Emo.FAQ} To know more about **setup** tap **`Info`**'
@@ -62,16 +62,13 @@ class Help(SlashCog):
             color=0x005aef)
 
         view = CustomView(ctx)
-        await ctx.send_response(embed=emd, view=view)
+        await ctx.send_followup(embed=emd, view=view)
 
         await view.wait()
         if view.value:
             emd = discord.Embed(
                 description=f'{Emo.INFO} Access all of these'
                             f'\nfollowing options by only using **/setup**'
-                            f'\n\n{Emo.TAG}**Prefix**'
-                            f'\nUsed to add or remove custom prefix '
-                            f'\nto your server. you can change it anytime'
                             f'\n\n{Emo.PING} **Receiver**'
                             f'\nUsed to add or remove a text channel'
                             f'\nto receive youtube alerts for your server'
@@ -87,7 +84,7 @@ class Help(SlashCog):
                             f'\n\n{Emo.IMG} **Welcome Card**'
                             f'\nUsed to add or remove a welcome card'
                             f'\nfor your server to welcome new members'
-                            f'\n\n{Emo.CUSTOM} **Customize Message**'
+                            f'\n\n{Emo.CUSTOM} **Custom Message**'
                             f'\nUsed to add or remove a custom message'
                             f'\nto be sent with Youtube Alert or Welcome Card',
 
@@ -97,11 +94,7 @@ class Help(SlashCog):
 
     async def on_error(self, ctx: ApplicationContext, error: Exception):
         phrase = 'Something went wrong, please try again... 😔'
-        if ctx.responded:
-            await ctx.send_followup(phrase, ephemeral=True)
-        else:
-            await ctx.send_response(phrase, ephemeral=True)
-
+        await ctx.send_response(phrase, ephemeral=True)
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)

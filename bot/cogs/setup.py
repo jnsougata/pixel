@@ -2,7 +2,13 @@ import discord
 import traceback
 import extslash as ext
 from bot.extras.emojis import Emo
-from bot.views.aux_view import BaseView, CommandMenu
+from bot.views.over_view import handle_overview
+from bot.views.youtube_view import sub_view_youtube
+from bot.views.receiver_view import sub_view_receiver
+from bot.views.reception_view import sub_view_reception
+from bot.views.pingrole_view import sub_view_pingrole
+from bot.views.welcome_view import sub_view_welcomecard
+from bot.views.msg_view import sub_view_msg
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
@@ -16,41 +22,98 @@ class Setup(SlashCog):
         return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
 
     def register(self):
-        return ext.SlashCommand(name='setup', description='Setup PixeL for your Server')
+        return ext.SlashCommand(
+            name='setup',
+            description='Setup PixeL for your Server',
+            options=[
+                ext.IntOption(
+                    name='overview',
+                    description='overview if all setup',
+                    choices=[
+                        ext.Choice(name='youtube', value=0),
+                        ext.Choice(name='receiver', value=1),
+                        ext.Choice(name='reception', value=2),
+                        ext.Choice(name='ping_role', value=3),
+                        ext.Choice(name='welcome_card', value=4),
+                        ext.Choice(name='custom_message', value=5)
+                    ],
+                    required=False),
+                ext.StrOption(name='youtube', description='youtube channel url', required=False),
+                ext.ChannelOption(
+                    name='receiver',
+                    description='text channel to receive youtube videos',
+                    channel_types=[ext.ChannelType.GUILD_TEXT, ext.ChannelType.GUILD_NEWS],
+                    required=False),
+                ext.ChannelOption(
+                    name='reception',
+                    description='text channel to receive welcome cards',
+                    channel_types=[ext.ChannelType.GUILD_TEXT, ext.ChannelType.GUILD_NEWS],
+                    required=False),
+                ext.RoleOption(name='ping_role', description='role to ping with youtube notification', required=False),
+                ext.AttachmentOption(
+                    name='welcome_card',
+                    description='welcome card to send when new member joins',
+                    required=False),
+                ext.IntOption(
+                    name='custom_message',
+                    description='customize welcome card and youtube notification text',
+                    choices=[
+                        ext.Choice(name='upload_message', value=1),
+                        ext.Choice(name='welcome_message', value=0),
+                        ext.Choice(name='livestream_message', value=2),
+                    ],
+                    required=False),
+            ]
+        )
 
     async def command(self, ctx: ApplicationContext):
 
+        await ctx.defer()
+
         if not isinstance(ctx.author, discord.Member):
-            await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
+            await ctx.send_followup('🚫 This command can only be used inside a **SERVER**')
             return
 
         if ctx.author.guild_permissions.administrator:
 
             if not self.check(ctx):
-                await ctx.send_response(
-                    'Please make sure here I have permissions to send `embeds` `buttons` `emojis` `attachments`',
-                    ephemeral=True)
+                await ctx.send_followup(
+                    f'> 😓  Please make sure I have permissions to send '
+                    f'`messages` `embeds` `custom emojis` `images` (**here**)')
                 return
 
-            emd = discord.Embed(title=f'{Emo.SETUP} use menu below to setup', colour=0x005aef)
-            emd.set_footer(text=f'⏱️ this menu will disappear after 3 minutes')
-            view = BaseView()
-            view.add_item(CommandMenu(ctx, self.bot))
-            await ctx.send_response(embed=emd, view=view)
+            if not ctx.options:
+                await ctx.send_followup('> 👀  you must select at least one option'),
+                return
+
+            if ctx.options[0].name == 'overview':
+                await handle_overview(ctx.options[0].value, ctx)
+            elif ctx.options[0].name == 'youtube':
+                url = ctx.options[0].value
+                await sub_view_youtube(ctx, self.bot, url)
+            elif ctx.options[0].name == 'receiver':
+                channel = ctx.options[0].value
+                await sub_view_receiver(ctx, self.bot, channel)
+            elif ctx.options[0].name == 'reception':
+                channel = ctx.options[0].value
+                await sub_view_reception(ctx, self.bot, channel)
+            elif ctx.options[0].name == 'ping_role':
+                role = ctx.options[0].value
+                await sub_view_pingrole(ctx, self.bot, role)
+            elif ctx.options[0].name == 'welcome_card':
+                cdn_url = ctx.options[0].value.url
+                await sub_view_welcomecard(ctx, self.bot, cdn_url)
+            elif ctx.options[0].name == 'custom_message':
+                value = ctx.options[0].value
+                await sub_view_msg(ctx, self.bot, value)
         else:
-            await ctx.send_response(f'You are not an **Admin** or **Equivalent**', ephemeral=True)
+            await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
 
     async def on_error(self, ctx: ApplicationContext, error: Exception):
-        phrase = 'Something went wrong, please try again... 😔'
-        if ctx.responded:
-            await ctx.send_followup(phrase, ephemeral=True)
-        else:
-            await ctx.send_response(phrase, ephemeral=True)
-
+        await ctx.send_followup('Something went wrong, please try again... 😔')
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
-
         await logger.send(f'```py\n{tb}\n```')
 
 
