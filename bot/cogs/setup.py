@@ -2,13 +2,13 @@ import discord
 import traceback
 import extslash as ext
 from bot.extras.emojis import Emo
-from bot.views.over_view import handle_overview
+from bot.views.msg_view import sub_view_msg
+from bot.views.over_view import handle_configs
 from bot.views.youtube_view import sub_view_youtube
 from bot.views.receiver_view import sub_view_receiver
 from bot.views.reception_view import sub_view_reception
 from bot.views.pingrole_view import sub_view_pingrole
 from bot.views.welcome_view import sub_view_welcomecard
-from bot.views.msg_view import sub_view_msg
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
@@ -26,18 +26,6 @@ class Setup(SlashCog):
             name='setup',
             description='Setup PixeL for your Server',
             options=[
-                ext.IntOption(
-                    name='overview',
-                    description='overview if all setup',
-                    choices=[
-                        ext.Choice(name='youtube', value=0),
-                        ext.Choice(name='receiver', value=1),
-                        ext.Choice(name='reception', value=2),
-                        ext.Choice(name='ping_role', value=3),
-                        ext.Choice(name='welcome_card', value=4),
-                        ext.Choice(name='custom_message', value=5)
-                    ],
-                    required=False),
                 ext.StrOption(name='youtube', description='youtube channel url', required=False),
                 ext.ChannelOption(
                     name='receiver',
@@ -63,6 +51,18 @@ class Setup(SlashCog):
                         ext.Choice(name='livestream_message', value=2),
                     ],
                     required=False),
+                ext.IntOption(
+                    name='all_configurations',
+                    description='overview if all setup',
+                    choices=[
+                        ext.Choice(name='youtube', value=0),
+                        ext.Choice(name='receiver', value=1),
+                        ext.Choice(name='reception', value=2),
+                        ext.Choice(name='ping_role', value=3),
+                        ext.Choice(name='welcome_card', value=4),
+                        ext.Choice(name='custom_message', value=5)
+                    ],
+                    required=False),
             ]
         )
 
@@ -86,9 +86,7 @@ class Setup(SlashCog):
                 await ctx.send_followup('> 👀  you must select at least one option'),
                 return
 
-            if ctx.options[0].name == 'overview':
-                await handle_overview(ctx.options[0].value, ctx)
-            elif ctx.options[0].name == 'youtube':
+            if ctx.options[0].name == 'youtube':
                 url = ctx.options[0].value
                 await sub_view_youtube(ctx, self.bot, url)
             elif ctx.options[0].name == 'receiver':
@@ -106,6 +104,8 @@ class Setup(SlashCog):
             elif ctx.options[0].name == 'custom_message':
                 value = ctx.options[0].value
                 await sub_view_msg(ctx, self.bot, value)
+            if ctx.options[0].name == 'all_configurations':
+                await handle_configs(ctx.options[0].value, ctx)
         else:
             await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
 

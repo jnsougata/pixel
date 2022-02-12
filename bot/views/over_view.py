@@ -7,7 +7,7 @@ from bot.extras.emojis import Emo
 from extslash.commands import ApplicationContext
 
 
-async def handle_overview(value: int, ctx: ApplicationContext):
+async def handle_configs(value: int, ctx: ApplicationContext):
 
     if value == 0:
         data = await db_fetch_object(ctx.guild.id, 'receivers')
@@ -16,8 +16,8 @@ async def handle_overview(value: int, ctx: ApplicationContext):
                 info = []
                 for key, value in data.items():
                     yt_channel = aiotube.Channel(key)
-                    disc_channel = ctx.guild.get_channel(int(value))
-                    info.append(f'[{yt_channel.name}]({yt_channel.url})\n↳ {disc_channel.mention}')
+                    txt = ctx.guild.get_channel(int(value))
+                    info.append(f'{txt.mention if txt else "<#1>"} ([{yt_channel.name}]({yt_channel.url}))')
                 return info
             loop = asyncio.get_event_loop()
             all_info = loop.run_in_executor(None, main)
@@ -45,7 +45,7 @@ async def handle_overview(value: int, ctx: ApplicationContext):
             channel = ctx.guild.get_channel(int(data[0]))
             emd = discord.Embed(
                 title=f'{Emo.CHECK} Reception Channel',
-                description=f'The current set reception channel is {channel.mention if channel else "`invalid`"}'
+                description=f'The current set reception channel is {channel.mention if channel else "<#1>"}'
                             f'\nThis channel will be used to send welcome cards')
             await ctx.send_followup(embed=emd)
         else:
@@ -58,7 +58,7 @@ async def handle_overview(value: int, ctx: ApplicationContext):
             if role == ctx.guild.default_role:
                 mention = '@everyone'
             else:
-                mention = role.mention if role else '`invalid`'
+                mention = role.mention if role else '<@&1>'
             emd = discord.Embed(
                 title=f'{Emo.CHECK} Ping Role',
                 description=f'Ping role is set to {mention}'
