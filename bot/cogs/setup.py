@@ -13,7 +13,7 @@ class Setup(SlashCog):
     @staticmethod
     def check(ctx: ApplicationContext):
         perms = ctx.channel.permissions_for(ctx.me)
-        return perm.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
+        return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
 
     def register(self):
         return ext.SlashCommand(name='setup', description='Setup PixeL for your Server')
