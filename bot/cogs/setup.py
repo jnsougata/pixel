@@ -9,6 +9,7 @@ from bot.views.receiver_view import sub_view_receiver
 from bot.views.reception_view import sub_view_reception
 from bot.views.pingrole_view import sub_view_pingrole
 from bot.views.welcome_view import sub_view_welcomecard
+from bot.views.remove_config import sub_view_remove
 from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
@@ -26,56 +27,68 @@ class Setup(SlashCog):
             name='setup',
             description='Setup PixeL for your Server',
             options=[
-                ext.StrOption(name='youtube', description='youtube channel url', required=False),
+                ext.IntOption(
+                    name='remove',
+                    description='remove any old configuration',
+                    choices=[
+                        ext.Choice(name='youtube', value=0),
+                        ext.Choice(name='receiver', value=1),
+                        ext.Choice(name='reception', value=2),
+                        ext.Choice(name='ping_role', value=3),
+                        ext.Choice(name='welcome_card', value=4),
+                        ext.Choice(name='custom_message', value=5)
+                    ],
+                    required=False),
+                ext.IntOption(
+                    name='overview',
+                    description='overview of old configuration',
+                    choices=[
+                        ext.Choice(name='youtube', value=0),
+                        ext.Choice(name='receiver', value=1),
+                        ext.Choice(name='reception', value=2),
+                        ext.Choice(name='ping_role', value=3),
+                        ext.Choice(name='welcome_card', value=4),
+                        ext.Choice(name='custom_message', value=5)
+                    ],
+                    required=False),
+
+                ext.StrOption(
+                    name='youtube',
+                    description='add any youtube channel by URL / ID',
+                    required=False),
+
                 ext.ChannelOption(
                     name='receiver',
                     description='text channel to receive youtube videos',
                     channel_types=[ext.ChannelType.GUILD_TEXT, ext.ChannelType.GUILD_NEWS],
                     required=False),
+
                 ext.ChannelOption(
                     name='reception',
                     description='text channel to receive welcome cards',
                     channel_types=[ext.ChannelType.GUILD_TEXT, ext.ChannelType.GUILD_NEWS],
                     required=False),
-                ext.RoleOption(name='ping_role', description='role to ping with youtube notification', required=False),
+
+                ext.RoleOption(
+                    name='ping_role',
+                    description='role to ping with youtube notification',
+                    required=False),
+
                 ext.AttachmentOption(
                     name='welcome_card',
-                    description='welcome card to send when new member joins',
+                    description='image file to send when new member joins',
                     required=False),
+
                 ext.IntOption(
                     name='custom_message',
-                    description='customize welcome and youtube notification message',
+                    description='custom welcome and notification message',
                     choices=[
                         ext.Choice(name='upload_message', value=1),
                         ext.Choice(name='welcome_message', value=0),
                         ext.Choice(name='livestream_message', value=2),
                     ],
                     required=False),
-                ext.IntOption(
-                    name='overview',
-                    description='get overview of any past setup',
-                    choices=[
-                        ext.Choice(name='youtube', value=0),
-                        ext.Choice(name='receiver', value=1),
-                        ext.Choice(name='reception', value=2),
-                        ext.Choice(name='ping_role', value=3),
-                        ext.Choice(name='welcome_card', value=4),
-                        ext.Choice(name='custom_message', value=5)
-                    ],
-                    required=False),
-                ext.IntOption(
-                    name='remove',
-                    description='remove any past setup',
-                    choices=[
-                        ext.Choice(name='youtube', value=0),
-                        ext.Choice(name='receiver', value=1),
-                        ext.Choice(name='reception', value=2),
-                        ext.Choice(name='ping_role', value=3),
-                        ext.Choice(name='welcome_card', value=4),
-                        ext.Choice(name='custom_message', value=5)
-                    ],
-                    required=False),
-            ]
+            ],
         )
 
     async def command(self, ctx: ApplicationContext):
@@ -116,8 +129,10 @@ class Setup(SlashCog):
             elif ctx.options[0].name == 'custom_message':
                 value = ctx.options[0].value
                 await sub_view_msg(ctx, self.bot, value)
-            if ctx.options[0].name == 'overview':
+            elif ctx.options[0].name == 'overview':
                 await sub_view_config(ctx.options[0].value, ctx)
+            elif ctx.options[0].name == 'remove':
+                await sub_view_remove(ctx, ctx.options[0].value)
         else:
             await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
 

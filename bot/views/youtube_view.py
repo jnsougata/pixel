@@ -39,70 +39,13 @@ class ReceiverMenu(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         if interaction.user == self.ctx.author:
             if int(self.values[0]) != 0:
-                channel = self.bot.get_channel(int(self.values[0]))
                 emd = discord.Embed(
-                    title=f'{Emo.YT} {self.info["name"]}',
-                    description=f'{Emo.CHECK} The receiver channel is {channel.mention}'
-                                f'\nThis channel will be used to receive livestream & upload notifications',
-                    url=self.info['url'],
-                )
+                    description=f'{Emo.YT} **[{self.info["name"]}]({self.info["url"]})**'
+                                f'\n\n> {Emo.CHECK} YouTube channel added successfully'
+                                f'\n> Bound to <#{self.values[0]}> for receiving notifications',
+                    url=self.info['url'])
                 await self.ctx.edit_response(embed=emd, view=None)
                 self.db_data[self.info['id']] = str(self.values[0])
-                await db_push_object(guild_id=self.ctx.guild.id, item=self.db_data, key='receivers')
-            else:
-                await self.ctx.delete_response()
-
-
-class ChannelMenu(discord.ui.Select):
-
-    @classmethod
-    async def display(cls, bot: Bot, ctx: ApplicationContext, db_data: dict):
-        raw = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
-        if raw:
-            ids = list(raw)[:24]
-            names = [Channel(id).name for id in ids]
-            options = [discord.SelectOption(label=names[i], value=ids[i], emoji=Emo.YT) for i in range(len(ids))]
-            options.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
-        else:
-            options = [discord.SelectOption(label='Please add a channel', emoji=Emo.WARN)]
-            options.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
-
-        return cls(bot=bot, ctx=ctx, options=options, db_data=db_data)
-
-    def __init__(self, bot: Bot, ctx: ApplicationContext, options: list, db_data: dict):
-        self.bot = bot
-        self.ctx = ctx
-        self.db_data = db_data
-
-        super().__init__(
-            min_values=1,
-            max_values=1,
-            options=options,
-            placeholder='Search results'
-        )
-
-    async def callback(self, interaction: discord.Interaction):
-        if interaction.user == self.ctx.author:
-            if self.values[0] != '0':
-                ch = Channel(self.values[0])
-                data = ch.info
-                emd = discord.Embed(
-                    description=f'❌ [{data["name"]}]({data["url"]})'
-                                f'\n**Subs:** {data["subscribers"]}'
-                                f'\n**Views:** {data["views"]}'
-                                f'\n**Id:** {data["id"]}',
-                    color=0xc4302b)
-                banner_url = data.get('banner_url')
-                avatar_url = data.get('avatar_url')
-                if banner_url and banner_url.startswith('http'):
-                    emd.set_image(url=banner_url)
-                if avatar_url and avatar_url.startswith('http'):
-                    emd.set_thumbnail(url=avatar_url)
-                await self.ctx.edit_response(embed=emd, view=None)
-                db_raw = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
-                db_raw.pop(self.values[0])
-                await db_push_object(guild_id=self.ctx.guild.id, item=db_raw, key='youtube')
-                self.db_data.pop(self.values[0], None)
                 await db_push_object(guild_id=self.ctx.guild.id, item=self.db_data, key='receivers')
             else:
                 await self.ctx.delete_response()
@@ -200,11 +143,10 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot, url: str):
                     if text_select_view.value == 0:
                         receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
                         if receiver and receiver[0].isdigit():
-                            txt_channel = bot.get_channel(int(receiver[0]))
                             emd = discord.Embed(
                                 description=f'{Emo.YT} **[{info["name"]}]({info["url"]})**'
                                             f'\n\n> {Emo.CHECK} YouTube channel added successfully'
-                                            f'\n> Bound to {txt_channel.mention} for receiving notifications',
+                                            f'\n> Bound to <#{receiver[0]}> for receiving notifications',
                                 url=info['url'])
                             await ctx.edit_response(embed=emd, view=None)
                         if receivers:
