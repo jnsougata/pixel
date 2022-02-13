@@ -25,10 +25,13 @@ class ChannelMenu(discord.ui.Select):
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user == self.ctx.author:
+            if self.values[0] == '0':
+                await self.ctx.delete_response()
+                return
             ch = aiotube.Channel(self.values[0])
             info = ch.info
             emd = discord.Embed(
-                description=f'❌ [{info["name"]}]({info["url"]})'
+                description=f'{Emo.CROSS} [{info["name"]}]({info["url"]})'
                             f'\n**Subs:** {info["subscribers"]}'
                             f'\n**Views:** {info["views"]}'
                             f'\n**Id:** {info["id"]}',
@@ -55,6 +58,7 @@ async def sub_view_remove(ctx: ApplicationContext, value: int):
         if data:
             loop = asyncio.get_event_loop()
             menu = await create_menu(data, loop)
+            menu.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
             view = discord.ui.View()
             view.add_item(ChannelMenu(ctx, menu))
             await ctx.send_followup(
