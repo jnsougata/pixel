@@ -98,7 +98,7 @@ async def sub_view_msg(ctx: ApplicationContext, bot: Bot, value: int):
         await upload_actions.wait()
         await secondary_callback(ctx, bot, 'upload', emd, upload_actions.value)
 
-    elif value == 3:
+    elif value == 2:
         live_actions = ActionView(ctx)
         emd = discord.Embed(
             title=f'{Emo.LIVE} YT Live Message',
