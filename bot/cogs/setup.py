@@ -3,7 +3,7 @@ import traceback
 import extslash as ext
 from bot.extras.emojis import Emo
 from bot.views.msg_view import sub_view_msg
-from bot.views.over_view import handle_configs
+from bot.views.view_config import sub_view_config
 from bot.views.youtube_view import sub_view_youtube
 from bot.views.receiver_view import sub_view_receiver
 from bot.views.reception_view import sub_view_reception
@@ -44,7 +44,7 @@ class Setup(SlashCog):
                     required=False),
                 ext.IntOption(
                     name='custom_message',
-                    description='customize welcome card and youtube notification text',
+                    description='customize welcome and youtube notification message',
                     choices=[
                         ext.Choice(name='upload_message', value=1),
                         ext.Choice(name='welcome_message', value=0),
@@ -52,8 +52,20 @@ class Setup(SlashCog):
                     ],
                     required=False),
                 ext.IntOption(
-                    name='all_configurations',
-                    description='overview if all setup',
+                    name='overview',
+                    description='get overview of any past setup',
+                    choices=[
+                        ext.Choice(name='youtube', value=0),
+                        ext.Choice(name='receiver', value=1),
+                        ext.Choice(name='reception', value=2),
+                        ext.Choice(name='ping_role', value=3),
+                        ext.Choice(name='welcome_card', value=4),
+                        ext.Choice(name='custom_message', value=5)
+                    ],
+                    required=False),
+                ext.IntOption(
+                    name='remove',
+                    description='remove any past setup',
                     choices=[
                         ext.Choice(name='youtube', value=0),
                         ext.Choice(name='receiver', value=1),
@@ -104,8 +116,8 @@ class Setup(SlashCog):
             elif ctx.options[0].name == 'custom_message':
                 value = ctx.options[0].value
                 await sub_view_msg(ctx, self.bot, value)
-            if ctx.options[0].name == 'all_configurations':
-                await handle_configs(ctx.options[0].value, ctx)
+            if ctx.options[0].name == 'overview':
+                await sub_view_config(ctx.options[0].value, ctx)
         else:
             await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
 

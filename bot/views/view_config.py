@@ -2,26 +2,25 @@ import io
 import aiotube
 import discord
 import asyncio
-from bot.extras.func import db_fetch_object, drive
 from bot.extras.emojis import Emo
 from extslash.commands import ApplicationContext
+from bot.extras.func import db_fetch_object, drive
 
 
-async def handle_configs(value: int, ctx: ApplicationContext):
+async def sub_view_config(value: int, ctx: ApplicationContext):
 
     if value == 0:
         data = await db_fetch_object(ctx.guild.id, 'receivers')
         if data:
-            def main():
+            def get_values():
                 info = []
                 for key, value in data.items():
                     yt_channel = aiotube.Channel(key)
-                    txt = ctx.guild.get_channel(int(value))
-                    info.append(f'{txt.mention if txt else "<#1>"} ([{yt_channel.name}]({yt_channel.url}))')
+                    info.append(f'[{yt_channel.name}]({yt_channel.url})\n\u200b■ <#{value}>')
                 return info
             loop = asyncio.get_event_loop()
-            all_info = loop.run_in_executor(None, main)
-            emd = discord.Embed(title=f'{Emo.YT} Subscriptions', description='\n\n'.join(await all_info))
+            values = await loop.run_in_executor(None, get_values)
+            emd = discord.Embed(title=f'{Emo.YT} Subscriptions', description='\n\n'.join(values))
             await ctx.send_followup(embed=emd)
         else:
             await ctx.send_followup('> 👀 you haven\'t subscribed to any channels yet!')
@@ -68,14 +67,14 @@ async def handle_configs(value: int, ctx: ApplicationContext):
             await ctx.send_followup('> 👀 you haven\'t set any ping role yet!')
 
     elif value == 4:
-        def cache():
+        def form_cache():
             try:
                 chunks = drive.cache(f'covers/{ctx.guild.id}_card.png')
             except Exception:
                 chunks = drive.cache(f'covers/default_card.png')
             return io.BytesIO(chunks)
         loop = asyncio.get_event_loop()
-        content = loop.run_in_executor(None, cache)
+        content = loop.run_in_executor(None, form_cache)
         emd = discord.Embed(title=f'{Emo.CHECK} Welcome Card')
         emd.set_image(url=f'attachment://card.png')
         await ctx.send_followup(embed=emd, file=discord.File(await content, filename='card.png'))
