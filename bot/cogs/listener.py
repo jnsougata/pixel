@@ -81,7 +81,7 @@ class Listeners(commands.Cog):
                             return io.BytesIO(drive.cache('covers/default_card.png'))
 
                     loop = asyncio.get_event_loop()
-                    bg_bytes = loop.run_in_executor(None, get_background)
+                    bg_bytes = await loop.run_in_executor(None, get_background)
                     avatar = member.display_avatar.with_format('png')
                     bytes_ = await avatar.read()
                     round_bg = Io.draw(size=(1500, 1500), color='#FFFFFF')
