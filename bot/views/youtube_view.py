@@ -190,6 +190,5 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot, url: str):
                         f'\nText Channels for specific YouTube Channels'
                         f'\nonce you have a default Text Channel assigned'
                         f'\n\n**` Steps: `**'
-                        f'\n\n**`/setup`**  select **`receiver`** from menu.'
-                        f'\nTap **`Edit`**  select **`text channel`** from menu')
+                        f'\n\n**`/setup`**  select **`receiver`** from options')
         await ctx.edit_response(embed=emd, view=None)

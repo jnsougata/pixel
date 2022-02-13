@@ -25,7 +25,7 @@ class Setup(SlashCog):
     def register(self):
         return ext.SlashCommand(
             name='setup',
-            description='Setup PixeL for your Server',
+            description='configure PixeL for your Server',
             options=[
                 ext.IntOption(
                     name='remove',
@@ -41,7 +41,7 @@ class Setup(SlashCog):
                     required=False),
                 ext.IntOption(
                     name='overview',
-                    description='overview of old configuration',
+                    description='overview of existing configuration',
                     choices=[
                         ext.Choice(name='youtube', value=0),
                         ext.Choice(name='receiver', value=1),

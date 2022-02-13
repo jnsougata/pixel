@@ -40,7 +40,7 @@ class Help(SlashCog):
         return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
 
     def register(self):
-        return SlashCommand(name='help', description='PixeL\'s help menu')
+        return SlashCommand(name='help', description='information about the features',)
 
     async def command(self, ctx: ApplicationContext):
 
@@ -67,8 +67,11 @@ class Help(SlashCog):
         await view.wait()
         if view.value:
             emd = discord.Embed(
-                description=f'{Emo.INFO} Access all of these'
-                            f'\nfollowing options by only using **/setup**'
+                title=f'{Emo.INFO} /setup: access all features',
+                description=f'\u200b\n{Emo.DEL} **Remove**'
+                            f'\nRemoves configuration of a selected option'
+                            f'\n\n{Emo.SETUP} **Overview**'
+                            f'\nGives an overview of any selected option'
                             f'\n\n{Emo.PING} **Receiver**'
                             f'\nUsed to add or remove a text channel'
                             f'\nto receive youtube alerts for your server'
@@ -86,7 +89,7 @@ class Help(SlashCog):
                             f'\nfor your server to welcome new members'
                             f'\n\n{Emo.CUSTOM} **Custom Message**'
                             f'\nUsed to add or remove a custom message'
-                            f'\nto be sent with Youtube Alert or Welcome Card',
+                            f'\nto be sent with YT Alert & Welcome Card',
 
                 color=0x005aef,
             )
