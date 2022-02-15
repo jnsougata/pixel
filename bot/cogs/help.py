@@ -1,13 +1,12 @@
 import discord
+import extslash
 import traceback
 from typing import Any
-from extslash import *
 from bot.extras.emojis import Emo
-from extslash.commands import SlashCog, ApplicationContext, Bot
 
 
 class CustomView(discord.ui.View):
-    def __init__(self, ctx: ApplicationContext):
+    def __init__(self, ctx: extslash.ApplicationContext):
         self.ctx = ctx
 
         invite = discord.ui.Button(label='Invite', style=discord.ButtonStyle.link,
@@ -30,26 +29,25 @@ class CustomView(discord.ui.View):
         pass
 
 
-class Help(SlashCog):
-    def __init__(self, bot: Bot):
+class Help(extslash.Cog):
+    def __init__(self, bot: extslash.Bot):
         self.bot = bot
 
-    @staticmethod
-    def check(ctx: ApplicationContext):
-        perms = ctx.channel.permissions_for(ctx.me)
-        return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
-
-    def register(self):
-        return SlashCommand(name='help', description='information about the features',)
-
-    async def command(self, ctx: ApplicationContext):
+    @extslash.Cog.command(
+        command=extslash.SlashCommand(name='help', description='information about the features')
+    )
+    async def help_command(self, ctx: extslash.ApplicationContext):
 
         await ctx.defer()
+
+        def check(ctx: extslash.ApplicationContext):
+            perms = ctx.channel.permissions_for(ctx.me)
+            return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
 
         if not ctx.guild:
             return await ctx.send_followup('🚫 This command can only be used inside a **SERVER**')
 
-        if not self.check(ctx):
+        if not check(ctx):
             await ctx.send_followup(
                 f'{Emo.WARN} Please make sure I have permissions to send '
                 f'`messages` `embeds` `custom emojis` `images` (**here**)')
@@ -95,14 +93,15 @@ class Help(SlashCog):
             )
             await ctx.edit_response(embed=emd, view=None)
 
-    async def on_error(self, ctx: ApplicationContext, error: Exception):
+    @extslash.Cog.listener
+    async def on_command_error(self, ctx: extslash.ApplicationContext, error: Exception):
         phrase = 'Something went wrong, please try again... 😔'
-        await ctx.send_response(phrase, ephemeral=True)
+        await ctx.send_followup(phrase, ephemeral=True)
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
         await logger.send(f'```py\n{tb}\n```')
 
 
-def setup(bot: Bot):
+def setup(bot: extslash.Bot):
     bot.add_slash_cog(Help(bot))

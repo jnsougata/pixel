@@ -3,7 +3,7 @@ import aiotube
 import discord
 import asyncio
 from bot.extras.emojis import Emo
-from extslash.commands import ApplicationContext
+from extslash import ApplicationContext
 from bot.extras.func import db_fetch_object, drive
 
 

@@ -1,7 +1,7 @@
 import asyncio
 import discord
 from bot.extras.emojis import *
-from extslash.commands import ApplicationContext, Bot
+from extslash import ApplicationContext, Bot
 from bot.extras.func import db_fetch_object, db_push_object
 
 

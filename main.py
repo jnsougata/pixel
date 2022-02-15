@@ -1,12 +1,12 @@
 import os
 import discord
-from extslash import commands
+import extslash
 
 intent = discord.Intents().default()
 intent.members = True
 
 
-class PixeL(commands.Bot):
+class PixeL(extslash.Bot):
     def __init__(self):
         super().__init__(intents=intent, help_command=None, command_prefix='🞽')
 

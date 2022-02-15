@@ -2,7 +2,7 @@ import discord
 import asyncio
 from aiotube import Channel
 from bot.extras.emojis import *
-from extslash.commands import ApplicationContext, Bot
+from extslash import ApplicationContext, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
@@ -173,7 +173,6 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot, url: str):
                 if isinstance(e, asyncio.TimeoutError):
                     await ctx.edit_response('Bye! you took so long')
                 else:
-                    print(e)
                     await ctx.edit_response(
                         embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
         else:
