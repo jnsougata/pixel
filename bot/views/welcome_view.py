@@ -44,7 +44,6 @@ async def sub_view_welcomecard(ctx: ApplicationContext, bot: Bot, url: str):
         loop.run_in_executor(None, func)
 
     else:
-        prefix = await db_fetch_prefix(ctx.guild.id)
         emd = discord.Embed(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
             description=f'Please set a Text Channel'

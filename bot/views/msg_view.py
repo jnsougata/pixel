@@ -31,7 +31,10 @@ async def secondary_callback(ctx: ApplicationContext, bot: Bot, event: str, vali
             db_data[event] = resp.content
             await db_push_object(ctx.guild.id, db_data, 'text')
         except asyncio.TimeoutError:
-            await ctx.edit_response(embeds=[discord.Embed(description='Bye! you took too long to respond!')])
+            try:
+                await ctx.edit_response(embed=discord.Embed(description='Bye! you took too long to respond!'))
+            except discord.errors.NotFound:
+                pass
     elif value == 2:
         db_data[event] = ''
         await db_push_object(ctx.guild.id, db_data, 'text')
