@@ -5,7 +5,7 @@ from extslash import ApplicationContext, Bot
 from bot.extras.func import db_fetch_object, db_push_object
 
 
-async def sub_view_pingrole(ctx: ApplicationContext, bot: Bot, role: discord.Role):
+async def sub_view_pingrole(ctx: ApplicationContext, role: discord.Role):
     if role == ctx.guild.default_role:
         mention = '@everyone'
     else:

@@ -115,16 +115,16 @@ class Setup(extslash.Cog):
                 await sub_view_youtube(ctx, url)
             elif ctx.options[0].name == 'receiver':
                 channel = ctx.options[0].value
-                await sub_view_receiver(ctx, self.bot, channel)
+                await sub_view_receiver(ctx, channel)
             elif ctx.options[0].name == 'reception':
                 channel = ctx.options[0].value
-                await sub_view_reception(ctx, self.bot, channel)
+                await sub_view_reception(ctx, channel)
             elif ctx.options[0].name == 'ping_role':
                 role = ctx.options[0].value
-                await sub_view_pingrole(ctx, self.bot, role)
+                await sub_view_pingrole(ctx, role)
             elif ctx.options[0].name == 'welcome_card':
                 cdn_url = ctx.options[0].value.url
-                await sub_view_welcomecard(ctx, self.bot, cdn_url)
+                await sub_view_welcomecard(ctx, cdn_url)
             elif ctx.options[0].name == 'custom_message':
                 value = ctx.options[0].value
                 await sub_view_msg(ctx, self.bot, value)

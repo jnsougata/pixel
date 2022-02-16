@@ -31,7 +31,7 @@ class Option(discord.ui.View):
             self.stop()
 
 
-async def sub_view_welcomecard(ctx: ApplicationContext, bot: Bot, url: str):
+async def sub_view_welcomecard(ctx: ApplicationContext, url: str):
     reception = await db_fetch_object(guild_id=ctx.guild.id, key='welcome')
     if reception and reception[0].isdigit():
         emd = discord.Embed(title=f'{Emo.CHECK} Welcome Card Updated')

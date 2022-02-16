@@ -4,7 +4,7 @@ from extslash import ApplicationContext, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
-async def sub_view_reception(ctx: ApplicationContext, bot: Bot, channel: discord.TextChannel):
+async def sub_view_reception(ctx: ApplicationContext, channel: discord.TextChannel):
     emd = discord.Embed(
         title=f'{Emo.CHECK} Reception Updated',
         description=f'Current set reception channel is {channel.mention}'
