@@ -112,7 +112,7 @@ class Setup(extslash.Cog):
 
             if ctx.options[0].name == 'youtube':
                 url = ctx.options[0].value
-                await sub_view_youtube(ctx, self.bot, url)
+                await sub_view_youtube(ctx, url)
             elif ctx.options[0].name == 'receiver':
                 channel = ctx.options[0].value
                 await sub_view_receiver(ctx, self.bot, channel)

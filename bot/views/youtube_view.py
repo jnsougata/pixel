@@ -18,10 +18,8 @@ class ReceiverMenu(discord.ui.Select):
             self,
             db_data: dict,
             youtube_info: dict,
-            bot: Bot,
             ctx: ApplicationContext,
     ):
-        self.bot = bot
         self.ctx = ctx
         self.db_data = db_data
         self.info = youtube_info
@@ -89,7 +87,7 @@ class TextSelection(discord.ui.View):
             self.stop()
 
 
-async def sub_view_youtube(ctx: ApplicationContext, bot: Bot, url: str):
+async def sub_view_youtube(ctx: ApplicationContext, url: str):
 
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
@@ -164,8 +162,7 @@ async def sub_view_youtube(ctx: ApplicationContext, bot: Bot, url: str):
                         else:
                             db_data = {}
                         receiver_view = Temp()
-                        receiver_view.add_item(ReceiverMenu(
-                            bot=bot, ctx=ctx, db_data=db_data, youtube_info=info))
+                        receiver_view.add_item(ReceiverMenu(ctx=ctx, db_data=db_data, youtube_info=info))
                         await ctx.edit_response(embed=emd, view=receiver_view)
                 else:
                     await ctx.delete_response()
