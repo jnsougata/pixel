@@ -30,8 +30,6 @@ class CustomView(discord.ui.View):
 
 
 class Help(extslash.Cog):
-    def __init__(self, bot: extslash.Bot):
-        self.bot = bot
 
     @extslash.Cog.command(
         command=extslash.SlashCommand(name='help', description='information about the features')
@@ -97,11 +95,11 @@ class Help(extslash.Cog):
     async def on_command_error(self, ctx: extslash.ApplicationContext, error: Exception):
         phrase = 'Something went wrong, please try again... 😔'
         await ctx.send_followup(phrase, ephemeral=True)
-        logger = self.bot.get_channel(938059433794240523)
+        logger = ctx.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
         await logger.send(f'```py\n{tb}\n```')
 
 
 def setup(bot: extslash.Bot):
-    bot.add_slash_cog(Help(bot))
+    bot.add_slash_cog(Help())

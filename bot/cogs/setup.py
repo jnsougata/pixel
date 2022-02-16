@@ -13,8 +13,6 @@ from bot.views.remove_config import sub_view_remove
 
 
 class Setup(extslash.Cog):
-    def __init__(self, bot: extslash.Bot):
-        self.bot = bot
 
 
     @extslash.Cog.command(
@@ -127,7 +125,7 @@ class Setup(extslash.Cog):
                 await sub_view_welcomecard(ctx, cdn_url)
             elif ctx.options[0].name == 'custom_message':
                 value = ctx.options[0].value
-                await sub_view_msg(ctx, self.bot, value)
+                await sub_view_msg(ctx, value)
             elif ctx.options[0].name == 'overview':
                 await sub_view_config(ctx.options[0].value, ctx)
             elif ctx.options[0].name == 'remove':
@@ -137,4 +135,4 @@ class Setup(extslash.Cog):
 
 
 def setup(bot: extslash.Bot):
-    bot.add_slash_cog(Setup(bot))
+    bot.add_slash_cog(Setup())

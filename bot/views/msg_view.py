@@ -6,7 +6,7 @@ from bot.extras.func import db_push_object, db_fetch_object
 
 
 async def secondary_callback(
-        ctx: extslash.ApplicationContext, bot: extslash.Bot, event: str, valid_scope: discord.Embed, value: int):
+        ctx: extslash.ApplicationContext, bot: discord.Client, event: str, valid_scope: discord.Embed, value: int):
     raw_data = await db_fetch_object(ctx.guild.id, 'text')
     if raw_data:
         db_data = raw_data
@@ -71,7 +71,9 @@ class ActionView(discord.ui.View):
             self.stop()
 
 
-async def sub_view_msg(ctx: extslash.ApplicationContext, bot: extslash.Bot, value: int):
+async def sub_view_msg(ctx: extslash.ApplicationContext, value: int):
+
+    bot = ctx.bot
 
     if value == 0:
         welcome_action = ActionView(ctx)
