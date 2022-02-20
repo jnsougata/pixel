@@ -1,6 +1,6 @@
 import discord
 import traceback
-import extslash
+import app_util
 from bot.extras.emojis import Emo
 from bot.views.msg_view import sub_view_msg
 from bot.views.view_config import sub_view_config
@@ -12,83 +12,83 @@ from bot.views.welcome_view import sub_view_welcomecard
 from bot.views.remove_config import sub_view_remove
 
 
-class Setup(extslash.Cog):
+class Setup(app_util.Cog):
 
 
-    @extslash.Cog.command(
-        command=extslash.SlashCommand(
+    @app_util.Cog.command(
+        command=app_util.SlashCommand(
             name='setup',
             description='configure PixeL for your Server',
             options=[
-                extslash.IntOption(
+                app_util.IntOption(
                     name='remove',
                     description='remove any old configuration',
                     choices=[
-                        extslash.Choice(name='youtube', value=0),
-                        extslash.Choice(name='receiver', value=1),
-                        extslash.Choice(name='reception', value=2),
-                        extslash.Choice(name='ping_role', value=3),
-                        extslash.Choice(name='welcome_card', value=4),
-                        extslash.Choice(name='custom_message', value=5)
+                        app_util.Choice(name='youtube', value=0),
+                        app_util.Choice(name='receiver', value=1),
+                        app_util.Choice(name='reception', value=2),
+                        app_util.Choice(name='ping_role', value=3),
+                        app_util.Choice(name='welcome_card', value=4),
+                        app_util.Choice(name='custom_message', value=5)
                     ],
                     required=False),
-                extslash.IntOption(
+                app_util.IntOption(
                     name='overview',
                     description='overview of existing configuration',
                     choices=[
-                        extslash.Choice(name='youtube', value=0),
-                        extslash.Choice(name='receiver', value=1),
-                        extslash.Choice(name='reception', value=2),
-                        extslash.Choice(name='ping_role', value=3),
-                        extslash.Choice(name='welcome_card', value=4),
-                        extslash.Choice(name='custom_message', value=5)
+                        app_util.Choice(name='youtube', value=0),
+                        app_util.Choice(name='receiver', value=1),
+                        app_util.Choice(name='reception', value=2),
+                        app_util.Choice(name='ping_role', value=3),
+                        app_util.Choice(name='welcome_card', value=4),
+                        app_util.Choice(name='custom_message', value=5)
                     ],
                     required=False),
 
-                extslash.StrOption(
+                app_util.StrOption(
                     name='youtube',
                     description='add any youtube channel by URL / ID',
                     required=False),
 
-                extslash.ChannelOption(
+                app_util.ChannelOption(
                     name='receiver',
                     description='text channel to receive youtube videos',
-                    channel_types=[extslash.ChannelType.GUILD_TEXT, extslash.ChannelType.GUILD_NEWS],
+                    channel_types=[app_util.ChannelType.GUILD_TEXT, app_util.ChannelType.GUILD_NEWS],
                     required=False),
 
-                extslash.ChannelOption(
+                app_util.ChannelOption(
                     name='reception',
                     description='text channel to receive welcome cards',
-                    channel_types=[extslash.ChannelType.GUILD_TEXT, extslash.ChannelType.GUILD_NEWS],
+                    channel_types=[app_util.ChannelType.GUILD_TEXT, app_util.ChannelType.GUILD_NEWS],
                     required=False),
 
-                extslash.RoleOption(
+                app_util.RoleOption(
                     name='ping_role',
                     description='role to ping with youtube notification',
                     required=False),
 
-                extslash.AttachmentOption(
+                app_util.AttachmentOption(
                     name='welcome_card',
                     description='image file to send when new member joins',
                     required=False),
 
-                extslash.IntOption(
+                app_util.IntOption(
                     name='custom_message',
                     description='custom welcome and notification message',
                     choices=[
-                        extslash.Choice(name='upload_message', value=1),
-                        extslash.Choice(name='welcome_message', value=0),
-                        extslash.Choice(name='livestream_message', value=2),
+                        app_util.Choice(name='upload_message', value=1),
+                        app_util.Choice(name='welcome_message', value=0),
+                        app_util.Choice(name='livestream_message', value=2),
                     ],
                     required=False),
             ],
         )
     )
-    async def setup_command(self, ctx: extslash.ApplicationContext):
+    async def setup_command(self, ctx: app_util.Context):
 
         await ctx.defer()
 
-        def check(ctx: extslash.ApplicationContext):
+        def check(ctx: app_util.Context):
             perms = ctx.channel.permissions_for(ctx.me)
             return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
 
@@ -134,5 +134,5 @@ class Setup(extslash.Cog):
             await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
 
 
-def setup(bot: extslash.Bot):
-    bot.add_slash_cog(Setup())
+def setup(bot: app_util.Bot):
+    bot.add_application_cog(Setup())

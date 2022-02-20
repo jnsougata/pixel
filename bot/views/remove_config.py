@@ -3,7 +3,7 @@ import aiotube
 import discord
 import asyncio
 from bot.extras.emojis import Emo
-from extslash import ApplicationContext, Bot
+from app_util import Context, Bot
 from bot.extras.func import db_fetch_object, drive, db_push_object, drive
 
 
@@ -18,7 +18,7 @@ async def create_menu(data: dict, loop: asyncio.AbstractEventLoop):
 
 
 class ChannelMenu(discord.ui.Select):
-    def __init__(self, ctx: ApplicationContext, menu: list):
+    def __init__(self, ctx: Context, menu: list):
         self.ctx = ctx
         super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing channels')
 
@@ -51,7 +51,7 @@ class ChannelMenu(discord.ui.Select):
             await db_push_object(guild_id=self.ctx.guild.id, item=rc_data, key='receivers')
 
 
-async def sub_view_remove(ctx: ApplicationContext, value: int):
+async def sub_view_remove(ctx: Context, value: int):
 
     if value == 0:
         data = await db_fetch_object(ctx.guild.id, 'receivers')
@@ -96,7 +96,7 @@ async def sub_view_remove(ctx: ApplicationContext, value: int):
         if data:
 
             class OptionView(discord.ui.View):
-                def __init__(self, ctx: ApplicationContext):
+                def __init__(self, ctx: Context):
                     self.ctx = ctx
                     self.timeout = 60
                     super().__init__()

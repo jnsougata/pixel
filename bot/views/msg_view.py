@@ -1,12 +1,12 @@
 import asyncio
 import discord
 from bot.extras.emojis import *
-import extslash
+import app_util
 from bot.extras.func import db_push_object, db_fetch_object
 
 
 async def secondary_callback(
-        ctx: extslash.ApplicationContext, bot: discord.Client, event: str, valid_scope: discord.Embed, value: int):
+        ctx: app_util.Context, bot: discord.Client, event: str, valid_scope: discord.Embed, value: int):
     raw_data = await db_fetch_object(ctx.guild.id, 'text')
     if raw_data:
         db_data = raw_data
@@ -47,7 +47,7 @@ async def secondary_callback(
 
 
 class ActionView(discord.ui.View):
-    def __init__(self, ctx: extslash.ApplicationContext):
+    def __init__(self, ctx: app_util.Context):
         self.ctx = ctx
         super().__init__()
         self.value = None
@@ -71,7 +71,7 @@ class ActionView(discord.ui.View):
             self.stop()
 
 
-async def sub_view_msg(ctx: extslash.ApplicationContext, value: int):
+async def sub_view_msg(ctx: app_util.Context, value: int):
 
     bot = ctx.bot
 

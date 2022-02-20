@@ -1,12 +1,12 @@
 import discord
-import extslash
+import app_util
 import traceback
 from typing import Any
 from bot.extras.emojis import Emo
 
 
 class CustomView(discord.ui.View):
-    def __init__(self, ctx: extslash.ApplicationContext):
+    def __init__(self, ctx: app_util.Context):
         self.ctx = ctx
 
         invite = discord.ui.Button(label='Invite', style=discord.ButtonStyle.link,
@@ -29,16 +29,16 @@ class CustomView(discord.ui.View):
         pass
 
 
-class Help(extslash.Cog):
+class Help(app_util.Cog):
 
-    @extslash.Cog.command(
-        command=extslash.SlashCommand(name='help', description='information about the features')
+    @app_util.Cog.command(
+        command=app_util.SlashCommand(name='help', description='information about the features')
     )
-    async def help_command(self, ctx: extslash.ApplicationContext):
+    async def help_command(self, ctx: app_util.Context):
 
         await ctx.defer()
 
-        def check(ctx: extslash.ApplicationContext):
+        def check(ctx: app_util.Context):
             perms = ctx.channel.permissions_for(ctx.me)
             return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
 
@@ -91,8 +91,8 @@ class Help(extslash.Cog):
             )
             await ctx.edit_response(embed=emd, view=None)
 
-    @extslash.Cog.listener
-    async def on_command_error(self, ctx: extslash.ApplicationContext, error: Exception):
+    @app_util.Cog.listener
+    async def on_command_error(self, ctx: app_util.Context, error: Exception):
         phrase = 'Something went wrong, please try again... 😔'
         await ctx.send_followup(phrase, ephemeral=True)
         logger = ctx.bot.get_channel(938059433794240523)
@@ -101,5 +101,5 @@ class Help(extslash.Cog):
         await logger.send(f'```py\n{tb}\n```')
 
 
-def setup(bot: extslash.Bot):
-    bot.add_slash_cog(Help())
+def setup(bot: app_util.Bot):
+    bot.add_application_cog(Help())

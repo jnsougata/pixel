@@ -2,7 +2,7 @@ import discord
 import asyncio
 from aiotube import Channel
 from bot.extras.emojis import *
-from extslash import ApplicationContext, Bot
+from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
@@ -18,7 +18,7 @@ class ReceiverMenu(discord.ui.Select):
             self,
             db_data: dict,
             youtube_info: dict,
-            ctx: ApplicationContext,
+            ctx: Context,
     ):
         self.ctx = ctx
         self.db_data = db_data
@@ -50,7 +50,7 @@ class ReceiverMenu(discord.ui.Select):
 
 
 class Confirmation(discord.ui.View):
-    def __init__(self, ctx: ApplicationContext):
+    def __init__(self, ctx: Context):
         self.ctx = ctx
         self.value = None
         super().__init__()
@@ -69,7 +69,7 @@ class Confirmation(discord.ui.View):
 
 
 class TextSelection(discord.ui.View):
-    def __init__(self, ctx: ApplicationContext):
+    def __init__(self, ctx: Context):
         self.ctx = ctx
         self.value = None
         super().__init__()
@@ -87,7 +87,7 @@ class TextSelection(discord.ui.View):
             self.stop()
 
 
-async def sub_view_youtube(ctx: ApplicationContext, url: str):
+async def sub_view_youtube(ctx: Context, url: str):
 
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 

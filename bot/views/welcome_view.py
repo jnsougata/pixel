@@ -2,12 +2,12 @@ import aiohttp
 import discord
 import asyncio
 from bot.extras.emojis import *
-from extslash import ApplicationContext, Bot
+from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object, drive
 
 
 class Option(discord.ui.View):
-    def __init__(self, ctx: ApplicationContext):
+    def __init__(self, ctx: Context):
         self.ctx = ctx
         super().__init__()
         self.value = None
@@ -31,7 +31,7 @@ class Option(discord.ui.View):
             self.stop()
 
 
-async def sub_view_welcomecard(ctx: ApplicationContext, url: str):
+async def sub_view_welcomecard(ctx: Context, url: str):
     reception = await db_fetch_object(guild_id=ctx.guild.id, key='welcome')
     if reception and reception[0].isdigit():
         emd = discord.Embed(title=f'{Emo.CHECK} Welcome Card Updated')

@@ -3,11 +3,11 @@ import aiotube
 import discord
 import asyncio
 from bot.extras.emojis import Emo
-from extslash import ApplicationContext
+from app_util import Context
 from bot.extras.func import db_fetch_object, drive
 
 
-async def sub_view_config(value: int, ctx: ApplicationContext):
+async def sub_view_config(value: int, ctx: Context):
 
     if value == 0:
         data = await db_fetch_object(ctx.guild.id, 'receivers')

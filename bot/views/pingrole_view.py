@@ -1,11 +1,11 @@
 import asyncio
 import discord
 from bot.extras.emojis import *
-from extslash import ApplicationContext, Bot
+from app_util import Context, Bot
 from bot.extras.func import db_fetch_object, db_push_object
 
 
-async def sub_view_pingrole(ctx: ApplicationContext, role: discord.Role):
+async def sub_view_pingrole(ctx: Context, role: discord.Role):
     if role == ctx.guild.default_role:
         mention = '@everyone'
     else:
