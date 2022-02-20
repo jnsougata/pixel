@@ -13,7 +13,19 @@ from bot.views.remove_config import sub_view_remove
 
 
 class Setup(app_util.Cog):
+    def __init__(self, bot: app_util.Bot):
+        self.bot = bot
 
+    @app_util.Cog.command(
+        command=app_util.SlashCommand(
+            name='ping',
+            description='shows the avg latency of the bot',
+        ),
+        guild_id=877399405056102431
+    )
+    async def ping_command(self, ctx: app_util.Context):
+        await ctx.defer(ephemeral=True)
+        await ctx.send_followup(f'**Pong:** {round(self.bot.latency * 1000)}ms')
 
     @app_util.Cog.command(
         command=app_util.SlashCommand(
@@ -135,4 +147,4 @@ class Setup(app_util.Cog):
 
 
 def setup(bot: app_util.Bot):
-    bot.add_application_cog(Setup())
+    bot.add_application_cog(Setup(bot))
