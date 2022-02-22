@@ -24,6 +24,16 @@ class Override(app_util.Cog):
     )
     async def force_check(self, ctx: app_util.Context):
 
+        await ctx.defer(ephemeral=True)
+
+        if not isinstance(ctx.author, discord.Member):
+            await ctx.send_followup('🚫 This command can only be used inside a **SERVER**')
+            return
+
+        if not ctx.author.guild_permissions.administrator:
+            await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
+            return
+
         # helper funcs
         async def create_receiver(guild: discord.Guild, youtube_id: str):
             custom = await db_fetch_object(guild_id=guild.id, key='receivers')
@@ -59,8 +69,6 @@ class Override(app_util.Cog):
                     text = text.replace(key, value)
                 return text
 
-
-        await ctx.defer(ephemeral=True)
         url = ctx.options['url'].value
         ch = Channel(url)
 
