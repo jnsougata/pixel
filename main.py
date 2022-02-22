@@ -12,6 +12,7 @@ class PixeL(app_util.Bot):
             intents=intent,
             help_command=None,
             command_prefix='$_*',
+            chunk_guilds_at_startup=False,
         )
 
     async def on_ready(self):
