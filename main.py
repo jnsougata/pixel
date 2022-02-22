@@ -8,10 +8,13 @@ intent.members = True
 
 class PixeL(app_util.Bot):
     def __init__(self):
-        super().__init__(intents=intent, help_command=None, command_prefix='🞽')
+        super().__init__(
+            intents=intent,
+            help_command=None,
+            command_prefix='$_*',
+        )
 
     async def on_ready(self):
-        print('------')
         print(f'Logged in as {self.user} (ID: {self.user.id})')
         print('------')
 

@@ -5,11 +5,11 @@ from bot.extras.emojis import Emo
 from bot.views.msg_view import sub_view_msg
 from bot.views.view_config import sub_view_config
 from bot.views.youtube_view import sub_view_youtube
-from bot.views.receiver_view import sub_view_receiver
-from bot.views.reception_view import sub_view_reception
-from bot.views.pingrole_view import sub_view_pingrole
-from bot.views.welcome_view import sub_view_welcomecard
 from bot.views.remove_config import sub_view_remove
+from bot.views.receiver_view import sub_view_receiver
+from bot.views.pingrole_view import sub_view_pingrole
+from bot.views.reception_view import sub_view_reception
+from bot.views.welcome_view import sub_view_welcomecard
 
 
 class Setup(app_util.Cog):
@@ -120,28 +120,28 @@ class Setup(app_util.Cog):
                 await ctx.send_followup('> 👀  you must select at least one option'),
                 return
 
-            if ctx.options[0].name == 'youtube':
-                url = ctx.options[0].value
+            if ctx.options.get('youtube'):
+                url = ctx.options['youtube'].value
                 await sub_view_youtube(ctx, url)
-            elif ctx.options[0].name == 'receiver':
-                channel = ctx.options[0].value
+            elif ctx.options.get('receiver'):
+                channel = ctx.options['receiver'].value
                 await sub_view_receiver(ctx, channel)
-            elif ctx.options[0].name == 'reception':
-                channel = ctx.options[0].value
+            elif ctx.options.get('reception'):
+                channel = ctx.options['reception'].value
                 await sub_view_reception(ctx, channel)
-            elif ctx.options[0].name == 'ping_role':
-                role = ctx.options[0].value
+            elif ctx.options.get('ping_role'):
+                role = ctx.options['ping_role'].value
                 await sub_view_pingrole(ctx, role)
-            elif ctx.options[0].name == 'welcome_card':
-                cdn_url = ctx.options[0].value.url
+            elif ctx.options.get('welcome_card'):
+                cdn_url = ctx.options['welcome_card'].value.url
                 await sub_view_welcomecard(ctx, cdn_url)
-            elif ctx.options[0].name == 'custom_message':
-                value = ctx.options[0].value
-                await sub_view_msg(ctx, value)
-            elif ctx.options[0].name == 'overview':
-                await sub_view_config(ctx.options[0].value, ctx)
-            elif ctx.options[0].name == 'remove':
-                await sub_view_remove(ctx, ctx.options[0].value)
+            elif ctx.options.get('custom_message'):
+                value = ctx.options['custom_message'].value
+                await sub_view_msg(ctx, value, self.bot)
+            elif ctx.options.get('overview'):
+                await sub_view_config(ctx.options['overview'].value, ctx)
+            elif ctx.options.get('remove'):
+                await sub_view_remove(ctx, ctx.options['remove'].value)
         else:
             await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
 

@@ -71,9 +71,7 @@ class ActionView(discord.ui.View):
             self.stop()
 
 
-async def sub_view_msg(ctx: app_util.Context, value: int):
-
-    bot = ctx.bot
+async def sub_view_msg(ctx: app_util.Context, value: int, bot: app_util.Bot):
 
     if value == 0:
         welcome_action = ActionView(ctx)

@@ -2,9 +2,9 @@ import io
 import asyncio
 import discord
 import discord.errors
+import airdrive.errors
 from discord.ext import commands
 from bot.extras.emojis import Emo
-import airdrive.errors
 from bot.extras.card import Io, Canvas
 from bot.extras.func import db_fetch_object, drive
 
@@ -67,7 +67,17 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         if not member.bot:
+
             guild_id = member.guild.id
+            if guild_id == 834662394068336670:
+                # this is only for support server
+                #  not to be used in others
+                role = member.guild.get_role(838441883721924729)
+                try:
+                    await member.add_roles(role)
+                except Exception:
+                    pass
+
             raw = await db_fetch_object(guild_id=guild_id, key='welcome')
             if raw and raw[0].isdigit():
                 reception = member.guild.get_channel(int(raw[0]))
@@ -126,14 +136,6 @@ class Listeners(commands.Cog):
                     except Exception:
                         pass
 
-            if guild_id == 834662394068336670:
-                # this is only for support server
-                #  not to be used in others
-                role = member.guild.get_role(838441883721924729)
-                try:
-                    await member.add_roles(role)
-                except Exception:
-                    pass
 
 
 def setup(bot):

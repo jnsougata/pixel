@@ -21,5 +21,3 @@ async def db_fetch_object(guild_id: int, key: str):
     if data:
         return data.get('item')
     return None
-
-

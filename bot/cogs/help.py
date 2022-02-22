@@ -31,6 +31,9 @@ class CustomView(discord.ui.View):
 
 class Help(app_util.Cog):
 
+    def __init__(self, bot: app_util.Bot):
+        self.bot = bot
+
     @app_util.Cog.command(
         command=app_util.SlashCommand(name='help', description='information about the features')
     )
@@ -95,11 +98,11 @@ class Help(app_util.Cog):
     async def on_command_error(self, ctx: app_util.Context, error: Exception):
         phrase = 'Something went wrong, please try again... 😔'
         await ctx.send_followup(phrase, ephemeral=True)
-        logger = ctx.bot.get_channel(938059433794240523)
+        logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
         await logger.send(f'```py\n{tb}\n```')
 
 
 def setup(bot: app_util.Bot):
-    bot.add_application_cog(Help())
+    bot.add_application_cog(Help(bot))
