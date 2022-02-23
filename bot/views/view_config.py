@@ -83,7 +83,7 @@ async def sub_view_config(value: int, ctx: Context):
         data = await db_fetch_object(ctx.guild.id, 'text')
         if data:
             slots = ['welcome', 'upload', 'live']
-            all_info = [f"**{slot.capitalize()}** ```\n{data.get(slot, 'None')}\n```"
+            all_info = [f"**{slot.capitalize()}** ```\n{data.get(slot, 'None')}\n```"[:1000] + '...'
                         for slot in slots]
             emd = discord.Embed(title=f'{Emo.CHECK} Custom Messages', description='\n\n'.join(all_info))
             await ctx.send_followup(embed=emd)
