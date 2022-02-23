@@ -16,6 +16,7 @@ class ErrorHandler(app_util.Cog):
         await ctx.send_followup(phrase, ephemeral=True)
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
+        stack.insert(0, f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n')
         tb = ''.join(stack)
         await logger.send(f'```py\n{tb}\n```')
 
