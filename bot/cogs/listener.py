@@ -45,8 +45,7 @@ class Listeners(commands.Cog):
         await logger.send(
             embed=discord.Embed(
                 title=f'{Emo.MIC} {guild.name}',
-                description=f'```\nOwner: {guild.owner}'
-                            f'\n\nMembers: {guild.member_count}'
+                description=f'```\nMembers: {guild.member_count}'
                             f'\n\nID: {guild.id}\n```',
                 colour=discord.Colour.blurple()
             )
@@ -59,7 +58,7 @@ class Listeners(commands.Cog):
         await registry.send(
             embed=discord.Embed(
                 title=f'{Emo.MIC} {guild.name}',
-                description=f'```\nInspect for suspicious activity\nGuild ID: {guild.id}\n```',
+                description=f'```\nGuild ID: {guild.id}\n```',
                 colour=discord.Colour.red()
             )
         )
