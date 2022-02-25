@@ -26,7 +26,10 @@ class Listeners(commands.Cog):
             f'<@{bot_id}> setup': True,
         }
         if content_map.get(message.content.lower()):
-            await message.channel.send('ugh! I\'ve given up on prefixes! please use `/`')
+            try:
+                await message.channel.send('ugh! I\'ve given up on prefixes! please use `/`')
+            except discord.errors.Forbidden:
+                return
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
