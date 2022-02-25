@@ -11,9 +11,12 @@
 ### **Features:**
 
  ✅ Add Multiple YouTube Channels for Notifications
+ 
  ✅ Customize with High Resolution Welcome Card
- ✅ Customizable notification messages
- ✅ Customizable ping role
+ 
+ ✅ Customizable Notification Messages
+ 
+ ✅ Customizable Ping Role
 
 
 ### **One command to set up everything**
