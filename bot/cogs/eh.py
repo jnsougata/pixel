@@ -14,16 +14,22 @@ class ErrorHandler(app_util.Cog):
     async def on_command_error(self, ctx: app_util.Context, error: Exception):
         phrase = 'Something went wrong, please try again... 😔'
 
+        button = discord.ui.Button(
+            label='SUPPORT SERVER',
+            url='https://discord.gg/VE5qRFfmG2',
+            style=discord.ButtonStyle.link)
+
         embed = discord.Embed(
-            description=f'😔 **Something went wrong**'
+            description=f'😔 **Something Went Wrong**'
                         f'\n\n{Emo.MOD} Dev has been notified'
                         f'\nand will be fixing it soon...'
                         f'\n\n{Emo.SUP} You can also join the support server'
-                        f'\n**[here](https://discord.gg/VE5qRFfmG2)** to get more information',
+                        f'\nto get more information about the issue and more',
             color=discord.Color.red()
         )
-
-        await ctx.send_followup(phrase, ephemeral=True)
+        view = discord.ui.View()
+        view.add_item(button)
+        await ctx.send_followup(embed=embed, view=view, ephemeral=True)
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
