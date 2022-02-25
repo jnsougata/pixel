@@ -15,16 +15,15 @@ class ErrorHandler(app_util.Cog):
         phrase = 'Something went wrong, please try again... 😔'
 
         button = discord.ui.Button(
-            label='SUPPORT SERVER',
+            label='DEV SERVER',
             url='https://discord.gg/VE5qRFfmG2',
             style=discord.ButtonStyle.link)
 
         embed = discord.Embed(
-            description=f'😔 **Something Went Wrong**'
-                        f'\n\n{Emo.MOD} Dev has been notified'
-                        f'\nand will be fixing it soon...'
-                        f'\n\n{Emo.SUP} You can also join the support server'
-                        f'\nto get more information about the issue and more',
+            description=f'(**!**) Something went wrong'
+                        f'\n\n{Emo.STAFF}  Developer will be fixing it soon'
+                        f'\n\n{Emo.SUP}  You can also join the development server'
+                        f'\nto get more information and share your feedback!',
             color=discord.Color.red()
         )
         view = discord.ui.View()
