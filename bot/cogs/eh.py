@@ -32,7 +32,13 @@ class ErrorHandler(app_util.Cog):
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
-        await logger.send(f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```')
+        if len(tb) < 4096:
+            await logger.send(embed=discord.Embed(
+                description=f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```'))
+        else:
+            print(f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```')
+            await logger.send(embed=discord.Embed(
+                description=f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb[:4096]}\n```'))
 
 
 def setup(bot: app_util.Bot):
