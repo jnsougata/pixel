@@ -26,6 +26,7 @@ class ErrorHandler(app_util.Cog):
                         f'\nto get more information and share your feedback!',
             color=discord.Color.red()
         )
+        embed.set_thumbnail(url=self.bot.user.avatar.url)
         view = discord.ui.View()
         view.add_item(button)
         await ctx.send_followup(embed=embed, view=view, ephemeral=True)
