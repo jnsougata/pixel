@@ -11,8 +11,22 @@ from bot.extras.func import db_fetch_object, drive
 
 class Listeners(commands.Cog):
 
-    def __init__(self, bot):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    @commands.Cog.listener()
+    async def on_message(self, message: discord.Message):
+        bot_id = self.bot.user.id
+        content_map = {
+            f'<@!{bot_id}>': True,
+            f'<@{bot_id}>': True,
+            f'<@!{bot_id}> help': True,
+            f'<@{bot_id}> help': True,
+            f'<@!{bot_id}> setup': True,
+            f'<@{bot_id}> setup': True,
+        }
+        if content_map.get(message.content.lower()):
+            await message.channel.send('ugh! I\'ve given up on prefixes! please use `/`')
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):

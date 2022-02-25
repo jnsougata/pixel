@@ -21,8 +21,8 @@ class ErrorHandler(app_util.Cog):
 
         embed = discord.Embed(
             description=f'(**!**) Something went wrong'
-                        f'\n\n{Emo.STAFF}  Developer will be fixing it soon'
-                        f'\n\n{Emo.SUP}  You can also join the development server'
+                        f'\n\n{Emo.STAFF} Developer will be fixing it soon'
+                        f'\n\n{Emo.DISCORD} You can also join the development server'
                         f'\nto get more information and share your feedback!',
             color=discord.Color.red()
         )

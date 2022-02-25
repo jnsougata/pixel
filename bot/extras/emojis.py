@@ -34,3 +34,4 @@ class Emo:
     SETUP = '<:setup:936619226259652760>'
     LIVE = '<:Livenow:863077635848536124>'
     STAFF = '<:DiscordStaff:862723146183475250>'
+    DISCORD = '<:Discord:862734764019941377>'
