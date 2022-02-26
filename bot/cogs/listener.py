@@ -27,7 +27,7 @@ class Listeners(commands.Cog):
         }
         if content_map.get(message.content.lower()):
             try:
-                await message.channel.send('ugh! I\'ve given up on prefixes! please use `/`')
+                await message.channel.send(f'👀 I\'ve given up on prefixes! Please use {Emo.SLASH}')
             except discord.errors.Forbidden:
                 return
 
@@ -83,16 +83,6 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         if not member.bot:
-
-            guild_id = member.guild.id
-            if guild_id == 834662394068336670:
-                # this is only for support server
-                #  not to be used in others
-                role = member.guild.get_role(838441883721924729)
-                try:
-                    await member.add_roles(role)
-                except Exception:
-                    pass
 
             raw = await db_fetch_object(guild_id=guild_id, key='welcome')
             if raw and raw[0].isdigit():
@@ -151,7 +141,6 @@ class Listeners(commands.Cog):
                             await reception.send(embed=emd, file=file)
                     except Exception:
                         pass
-
 
 
 def setup(bot):

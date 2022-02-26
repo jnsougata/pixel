@@ -35,3 +35,4 @@ class Emo:
     LIVE = '<:Livenow:863077635848536124>'
     STAFF = '<:DiscordStaff:862723146183475250>'
     DISCORD = '<:Discord:862734764019941377>'
+    SLASH = '<:slash:947088718215385118>'

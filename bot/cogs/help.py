@@ -29,6 +29,21 @@ class CustomView(discord.ui.View):
         pass
 
 
+async def job(ctx: app_util.Context):
+
+    def check():
+        p = ctx.channel.permissions_for(ctx.me)
+        return p.send_messages and p.embed_links and p.attach_files and p.external_emojis
+
+    if not ctx.guild:
+        await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
+    elif not check():
+        await ctx.send_response(
+            f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
+    else:
+        return True
+
+
 class Help(app_util.Cog):
 
     def __init__(self, bot: app_util.Bot):
@@ -37,22 +52,10 @@ class Help(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(name='help', description='information about the features')
     )
+    @app_util.Cog.before_invoke(job=job)
     async def help_command(self, ctx: app_util.Context):
 
         await ctx.defer()
-
-        def check(ctx: app_util.Context):
-            perms = ctx.channel.permissions_for(ctx.me)
-            return perms.send_messages and perms.embed_links and perms.attach_files and perms.external_emojis
-
-        if not ctx.guild:
-            return await ctx.send_followup('🚫 This command can only be used inside a **SERVER**')
-
-        if not check(ctx):
-            await ctx.send_followup(
-                f'{Emo.WARN} Please make sure I have permissions to send '
-                f'`messages` `embeds` `custom emojis` `images` (**here**)')
-            return
 
         emd = discord.Embed(
             description=f'\n\n{Emo.SETUP} Start setup using **`/setup`**'
