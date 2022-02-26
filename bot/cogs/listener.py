@@ -83,7 +83,7 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         if not member.bot:
-
+            guild_id = member.guild.id
             raw = await db_fetch_object(guild_id=guild_id, key='welcome')
             if raw and raw[0].isdigit():
                 reception = member.guild.get_channel(int(raw[0]))
