@@ -90,7 +90,8 @@ class Override(app_util.Cog):
                         live_id = live.id
                         if raw[channel_id]['live'] != live_id:
                             await ctx.send_followup(
-                                f'Found new livestream: {live_url}\nSending notification...', ephemeral=True)
+                                f'{Emo.LIVE} Found new livestream: {live_url}'
+                                f'\nSending notification...', ephemeral=True)
                             try:
                                 message = await custom_message('live', ctx.guild, ch.name, live_url)
                                 if message:
@@ -118,7 +119,8 @@ class Override(app_util.Cog):
                         old_id = raw[channel_id]['upload']
                         if latest_id != old_id:
                             await ctx.send_followup(
-                                f'Found new upload: {latest_url}\nSending notification...', ephemeral=True)
+                                f'{Emo.YT} Found new upload: {latest_url}'
+                                f'\nSending notification...', ephemeral=True)
                             try:
                                 message = await self.custom_message('upload', ctx.guild, ch.name, latest_url)
                                 if message:
