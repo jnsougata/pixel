@@ -1,7 +1,7 @@
 deta
 aiohttp
 pillow==9.0.1
-aiotube==1.4.8
+aiotube==1.5.2
 app_util==0.1.4
 airdrive==0.2.8
 requests==2.27.1

@@ -124,10 +124,16 @@ async def sub_view_youtube(ctx: Context, url: str):
                 await new_view.wait()
                 if new_view.value:
                     if old_data:
-                        old_data[info['id']] = {'live': 'empty', 'upload': channel.latest.id}
+                        old_data[info['id']] = {
+                            'live': channel.recent_streamed.id,
+                            'upload': channel.recent_uploaded.id
+                        }
                         await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
                     else:
-                        empty = {info['id']: {'live': 'empty', 'upload': channel.latest.id}}
+                        empty = {info['id']: {
+                            'live': channel.recent_streamed.id,
+                            'upload': channel.recent_uploaded.id}
+                        }
                         await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
                     text_select_view = TextSelection(ctx)
                     embed = discord.Embed(
