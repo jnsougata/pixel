@@ -85,8 +85,9 @@ class Override(app_util.Cog):
                 mention = await create_ping(ctx.guild)
                 try:
                     if ch.live:
-                        live_url = ch.livestream
-                        live_id = live_url.replace('https://www.youtube.com/watch?v=', '')
+                        live = ch.livestream
+                        live_url = live.url
+                        live_id = live.id
                         if raw[channel_id]['live'] != live_id:
                             await ctx.send_followup(
                                 f'Found new livestream: {live_url}\nSending notification...', ephemeral=True)
@@ -107,47 +108,44 @@ class Override(app_util.Cog):
                                 pass
                             finally:
                                 raw[channel_id]['live'] = live_id
+                        else:
+                            await ctx.send_followup(f'{Emo.LIVE} new livestream NOT FOUND', ephemeral=True)
+
+                    latest = ch.recent_uploaded
+                    if latest:
+                        latest_id = latest.id
+                        latest_url = latest.url
+                        old_id = raw[channel_id]['upload']
+                        if latest_id != old_id:
+                            await ctx.send_followup(
+                                f'Found new upload: {latest_url}\nSending notification...', ephemeral=True)
+                            try:
+                                message = await self.custom_message('upload', ctx.guild, ch.name, latest_url)
+                                if message:
+                                    await receiver.send(message)
+                                else:
+                                    if mention:
+                                        await receiver.send(
+                                            f'> {Emo.YT} **{ch.name}** uploaded a new video'
+                                            f'\n> {mention} {latest_url}')
+                                    else:
+                                        await receiver.send(
+                                            f'> {Emo.YT} **{ch.name}** uploaded a new video'
+                                            f'\n> {latest_url}')
+                            except Exception:
+                                pass
+                            finally:
+                                raw[channel_id]['upload'] = latest_id
                                 await db_push_object(guild_id=ctx.guild.id, item=raw, key='youtube')
                         else:
-                            await ctx.send_followup(f'{Emo.WARN} no new livestream found', ephemeral=True)
-                    else:
-                        await ctx.send_followup(
-                            f'{Emo.WARN} currently channel is not live!', ephemeral=True)
-                        latest = ch.latest
-                        if latest:
-                            latest_id = latest.id
-                            latest_url = latest.url
-                            old_id = raw[channel_id]['upload']
-                            live_id = raw[channel_id]['live']
-                            if latest_id != old_id and latest_id != live_id:
-                                await ctx.send_followup(
-                                    f'Found new upload: {latest_url}\nSending notification...', ephemeral=True)
-                                try:
-                                    message = await self.custom_message('upload', ctx.guild, ch.name, latest_url)
-                                    if message:
-                                        await receiver.send(message)
-                                    else:
-                                        if mention:
-                                            await receiver.send(
-                                                f'> {Emo.YT} **{ch.name}** uploaded a new video'
-                                                f'\n> {mention} {latest_url}')
-                                        else:
-                                            await receiver.send(
-                                                f'> {Emo.YT} **{ch.name}** uploaded a new video'
-                                                f'\n> {latest_url}')
-                                except Exception:
-                                    pass
-                                finally:
-                                    raw[channel_id]['upload'] = latest_id
-                                    await db_push_object(guild_id=ctx.guild.id, item=raw, key='youtube')
-                            else:
-                                await ctx.send_followup(f'{Emo.WARN} no new upload found', ephemeral=True)
+                            await ctx.send_followup(f'{Emo.YT} new upload NOT FOUND', ephemeral=True)
+
+                    await db_push_object(guild_id=ctx.guild.id, item=raw, key='youtube')
+
                 except Exception:
                     await ctx.send_followup(f'{Emo.WARN} Something Unexpected Occurred!')
-
             else:
                 await ctx.send_followup(f'{Emo.WARN} I didn\'t find any receiver!')
-
         else:
             await ctx.send_followup(f'{Emo.WARN} this youtube channel doesn\'t belong to this server!')
 
