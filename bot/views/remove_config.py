@@ -45,8 +45,14 @@ class ChannelMenu(discord.ui.Select):
             await self.ctx.edit_response(embed=emd, view=None)
             yt_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
             rc_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='receivers')
-            yt_data.pop(self.values[0])
-            rc_data.pop(self.values[0])
+            try:
+                yt_data.pop(self.values[0])
+            except KeyError:
+                pass
+            try:
+                rc_data.pop(self.values[0])
+            except KeyError:
+                pass
             await db_push_object(guild_id=self.ctx.guild.id, item=yt_data, key='youtube')
             await db_push_object(guild_id=self.ctx.guild.id, item=rc_data, key='receivers')
 
