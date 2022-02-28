@@ -123,18 +123,31 @@ async def sub_view_youtube(ctx: Context, url: str):
                 await ctx.edit_response(embed=emd, view=new_view)
                 await new_view.wait()
                 if new_view.value:
-                    if old_data:
-                        old_data[info['id']] = {
-                            'live': channel.recent_streamed.id,
-                            'upload': channel.recent_uploaded.id
-                        }
-                        await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
+                    live = channel.recent_streamed
+                    upload = channel.recent_uploaded
+                    live_id = live.id if live else None
+                    upload_id = upload.id if upload else None
+                    if upload_id:
+                        if old_data:
+                            old_data[info['id']] = {
+                                'live': live_id if live_id else 'empty',
+                                'upload': upload_id
+                            }
+                            await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
+                        else:
+                            empty = {info['id']: {
+                                'live': live_id if live_id else 'empty',
+                                'upload': upload_id}
+                            }
+                            await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
                     else:
-                        empty = {info['id']: {
-                            'live': channel.recent_streamed.id,
-                            'upload': channel.recent_uploaded.id}
-                        }
-                        await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
+                        await ctx.edit_response(
+                            embed=discord.Embed(
+                                title=f'{Emo.WARN} No uploads found {Emo.WARN}',
+                                description=f'No video has been found in this Channel!'
+                                            f'\nPlease try with a channel with videos in it.'),
+                            view=None)
+                        return
                     text_select_view = TextSelection(ctx)
                     embed = discord.Embed(
                         title=f'Wait! one more step',
@@ -177,7 +190,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                     await ctx.edit_response('Bye! you took so long')
                 else:
                     await ctx.edit_response(
-                        embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
+                        embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'), view=None)
         else:
             await ctx.edit_response(
                 embed=discord.Embed(
