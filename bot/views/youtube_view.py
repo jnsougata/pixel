@@ -163,7 +163,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                             emd = discord.Embed(
                                 description=f'{Emo.YT} **[{info["name"]}]({info["url"]})**'
                                             f'\n\n> {Emo.CHECK} YouTube channel added successfully'
-                                            f'\n> Bound to <#{receiver[0]}> for receiving notifications',
+                                            f'\n> Bound to <#{receiver[0]}> for sending notifications',
                                 url=info['url'])
                             await ctx.edit_response(embed=emd, view=None)
                         if receivers:
