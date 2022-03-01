@@ -74,12 +74,15 @@ class Override(app_util.Cog):
 
         try:
             channel_id = ch.id
+            channel_name = ch.name
         except Exception:
             await ctx.send_followup(f'{Emo.WARN} entered invalid youtube channel url')
             return
+        else:
+            await ctx.send_followup(f'{Emo.CHECK} Checking for new videos in {channel_name}')
 
-        raw = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
-        if raw and raw.get(channel_id):
+        data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
+        if data and data.get(channel_id):
             receiver = await create_receiver(ctx.guild, channel_id)
             if receiver:
                 mention = await create_ping(ctx.guild)
@@ -88,12 +91,12 @@ class Override(app_util.Cog):
                         live = ch.livestream
                         live_url = live.url
                         live_id = live.id
-                        if raw[channel_id]['live'] != live_id:
+                        if data[channel_id]['live'] != live_id:
                             await ctx.send_followup(
                                 f'{Emo.LIVE} Found new livestream: {live_url}'
                                 f'\nSending notification...', ephemeral=True)
                             try:
-                                message = await custom_message('live', ctx.guild, ch.name, live_url)
+                                message = await custom_message('live', ctx.guild, channel_name, live_url)
                                 if message:
                                     await receiver.send(message)
                                 else:
@@ -105,10 +108,13 @@ class Override(app_util.Cog):
                                         await receiver.send(
                                             f'> {Emo.LIVE} **{ch.name}** is live now'
                                             f'\n> {live_url}')
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                print(e)
+                                await ctx.send_followup(f'{Emo.WARN} Failed to send notification'
+                                                        f'\nPlease check your server configuration'
+                                                        f'\n\n** This notification will not be sent again **')
                             finally:
-                                raw[channel_id]['live'] = live_id
+                                data[channel_id]['live'] = live_id
                         else:
                             await ctx.send_followup(f'{Emo.LIVE} new livestream NOT FOUND', ephemeral=True)
 
@@ -116,13 +122,12 @@ class Override(app_util.Cog):
                     if latest:
                         latest_id = latest.id
                         latest_url = latest.url
-                        old_id = raw[channel_id]['upload']
-                        if latest_id != old_id:
+                        if latest_id != data[channel_id]['upload']:
                             await ctx.send_followup(
                                 f'{Emo.YT} Found new upload: {latest_url}'
                                 f'\nSending notification...', ephemeral=True)
                             try:
-                                message = await self.custom_message('upload', ctx.guild, ch.name, latest_url)
+                                message = await self.custom_message('upload', ctx.guild, channel_name, latest_url)
                                 if message:
                                     await receiver.send(message)
                                 else:
@@ -134,15 +139,18 @@ class Override(app_util.Cog):
                                         await receiver.send(
                                             f'> {Emo.YT} **{ch.name}** uploaded a new video'
                                             f'\n> {latest_url}')
-                            except Exception:
-                                pass
+                            except Exception as e:
+                                print(e)
+                                await ctx.send_followup(f'{Emo.WARN} Failed to send notification'
+                                                        f'\nPlease check your sever configuration'
+                                                        f'\n\n** This notification will not be sent again **')
                             finally:
-                                raw[channel_id]['upload'] = latest_id
-                                await db_push_object(guild_id=ctx.guild.id, item=raw, key='youtube')
+                                data[channel_id]['upload'] = latest_id
+                                await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
                         else:
                             await ctx.send_followup(f'{Emo.YT} new upload NOT FOUND', ephemeral=True)
 
-                    await db_push_object(guild_id=ctx.guild.id, item=raw, key='youtube')
+                    await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
 
                 except Exception:
                     await ctx.send_followup(f'{Emo.WARN} Something Unexpected Occurred!')
