@@ -65,7 +65,7 @@ class Canvas:
         self.height = size[1]
         self.output = buff
 
-    def set_background(self, _byte, _blur: bool = False):
+    def set_background(self, fp, blur: bool = False):
         """
         :param:  bytesio form of the image
         :param: to make the background blurry
@@ -73,9 +73,9 @@ class Canvas:
         """
         canvas = Image.open(self.output)
         size = canvas.size
-        bg = Image.open(_byte).convert('RGB')
+        bg = Image.open(fp).convert('RGB')
         _bg = bg.resize(size)
-        if _blur:
+        if blur:
             buff = io.BytesIO()
             _bg_blur = _bg.filter(ImageFilter.BLUR)
             _bg_blur.save(buff, 'png')
@@ -87,7 +87,7 @@ class Canvas:
             buff.seek(0)
             self.output = buff
 
-    def add_image(self, _byte, resize: Tuple = None, crop: Tuple = None,
+    def add_image(self, fp, resize: Tuple = None, crop: Tuple = None,
                   position: Tuple = None):
         """
         :param: _byte: bytesio form of the image
@@ -99,7 +99,7 @@ class Canvas:
         :raises: if crop and resize both are available
         :return: None
         """
-        img = Image.open(_byte)
+        img = Image.open(fp)
         canvas = Image.open(self.output)
         if resize is not None and crop is None:
             auto_align = ((self.width - resize[0]) // 2, (self.height - resize[1]) // 2)
@@ -135,20 +135,9 @@ class Canvas:
         else:
             raise Exception('Use either Resize or Crop')
 
-    def add_round_image(self, _byte, resize: Tuple = None, crop: Tuple = None,
-                        position: Tuple = None):
-        """
-        :param: bytesio form of the image
-        :param: tuple of length 2 (width, height) to resize the image
-        :param: tuple of length 4 (left, top, right, bottom) to crop the image
-        :param: tuple of coordinate (x,y) to where the image will be added into canvas
-        :raises: if _path and _byte both are available
-        :raises: if NoneType is passed as image
-        :raises: if crop and resize both are available
-        :return: None
-        """
+    def add_round_image(self, fp, resize: Tuple = None, crop: Tuple = None, position: Tuple = None):
         canvas = Image.open(self.output)
-        img = Image.open(_byte)
+        img = Image.open(fp)
         if resize is not None and crop is None:
             main = img.resize(resize)
             mask = Image.new("L", main.size, 0)
@@ -194,16 +183,7 @@ class Canvas:
         else:
             raise RuntimeError('Use either Resize or Crop')
 
-    def add_text(self, text: str, auto_align: bool, size: float = None, color: str = None,
-                 position: Tuple = None):
-        """
-        :param str text: text to be added to the image
-        :param bool auto_align: for horizontal text alignment
-        :param int size: size of text
-        :param str color: name of color or color code
-        :param Tuple position: tuple of coordinate (x,y) to where the text will be added into canvas
-        :return: None
-        """
+    def add_text(self, text: str, auto_align: bool, size: float = None, color: str = None, position: Tuple = None):
         canvas = Image.open(self.output)
         draw = ImageDraw.Draw(canvas)
         text = text

@@ -3,6 +3,7 @@ import asyncio
 import discord
 import discord.errors
 import airdrive.errors
+from PIL import UnidentifiedImageError
 from discord.ext import commands
 from bot.extras.emojis import Emo
 from bot.extras.card import Io, Canvas
@@ -91,20 +92,28 @@ class Listeners(commands.Cog):
 
                     def get_background():
                         try:
-                            path = f'covers/{guild_id}_card.png'
-                            return io.BytesIO(drive.cache(path))
+                            return io.BytesIO(drive.cache(f'covers/{guild_id}_card.png'))
                         except airdrive.errors.FileNotFound:
                             return io.BytesIO(drive.cache('covers/default_card.png'))
 
+                    def get_default():
+                        return io.BytesIO(drive.cache('covers/default_card.png'))
+
                     loop = asyncio.get_event_loop()
-                    bg_bytes = await loop.run_in_executor(None, get_background)
+                    bg_data = await loop.run_in_executor(None, get_background)
                     avatar = member.display_avatar.with_format('png')
-                    bytes_ = await avatar.read()
+                    av_data = await avatar.read()
                     round_bg = Io.draw(size=(1500, 1500), color='#FFFFFF')
                     canvas = Canvas(size=(1860, 846), color='black')
-                    canvas.set_background(_byte=bg_bytes, _blur=True)
-                    canvas.add_round_image(_byte=round_bg, resize=(420, 420), position=(720, 105))
-                    canvas.add_round_image(_byte=io.BytesIO(bytes_), resize=(390, 390), position=(735, 120))
+
+                    try:
+                        canvas.set_background(fp=bg_data, blur=True)
+                    except UnidentifiedImageError:
+                        bg_data = await loop.run_in_executor(None, get_default)
+                        canvas.set_background(fp=bg_data, blur=True)
+
+                    canvas.add_round_image(fp=round_bg, resize=(420, 420), position=(720, 105))
+                    canvas.add_round_image(fp=io.BytesIO(av_data), resize=(390, 390), position=(735, 120))
                     canvas.add_text(text=f'{member}', auto_align=True, size=90, position=(660, 540))
                     canvas.add_text(
                         size=90,
@@ -125,10 +134,11 @@ class Listeners(commands.Cog):
                             text = text.replace(key, value)
                         return text
 
-                    text_dict = await db_fetch_object(member.guild.id, 'text')
-                    if text_dict and text_dict.get('welcome'):
-                        raw_text = text_dict.get('welcome')
-                        message = converted(text_dict.get('welcome'))
+                    msg_data = await db_fetch_object(member.guild.id, 'text')
+                    custom_msg = msg_data.get('welcome')
+                    if msg_data and custom_msg:
+                        raw_text = msg_data.get('welcome')
+                        message = converted(msg_data.get('welcome'))
                     else:
                         raw_text = ' '
                         message = f'Welcome to **{member.guild.name}**'
@@ -140,7 +150,7 @@ class Listeners(commands.Cog):
                         else:
                             await reception.send(embed=emd, file=file)
                     except Exception:
-                        pass
+                        return
 
 
 def setup(bot):
