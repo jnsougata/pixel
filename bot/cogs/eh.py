@@ -12,7 +12,6 @@ class ErrorHandler(app_util.Cog):
 
     @app_util.Cog.listener
     async def on_command_error(self, ctx: app_util.Context, error: Exception):
-        phrase = 'Something went wrong, please try again... 😔'
 
         button = discord.ui.Button(
             label='DEV SERVER',
