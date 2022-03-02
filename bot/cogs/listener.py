@@ -135,10 +135,9 @@ class Listeners(commands.Cog):
                         return text
 
                     msg_data = await db_fetch_object(member.guild.id, 'text')
-                    custom_msg = msg_data.get('welcome')
-                    if msg_data and custom_msg:
-                        raw_text = msg_data.get('welcome')
-                        message = converted(msg_data.get('welcome'))
+                    if msg_data and msg_data.get('welcome'):
+                        raw_text = msg_data['welcome']
+                        message = converted(raw_text)
                     else:
                         raw_text = ' '
                         message = f'Welcome to **{member.guild.name}**'
