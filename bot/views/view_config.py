@@ -7,7 +7,7 @@ from app_util import Context
 from bot.extras.func import db_fetch_object, drive
 
 
-async def sub_view_config(value: int, ctx: Context):
+async def sub_view_config(ctx: Context, value: int):
 
     if value == 0:
         data = await db_fetch_object(ctx.guild.id, 'receivers')
@@ -16,7 +16,7 @@ async def sub_view_config(value: int, ctx: Context):
                 info = []
                 for key, value in data.items():
                     yt_channel = aiotube.Channel(key)
-                    info.append(f'[{yt_channel.name}]({yt_channel.url})\n\u200b■ <#{value}>')
+                    info.append(f'■ [{yt_channel.name}]({yt_channel.url}) (<#{value}>)')
                 return info
             loop = asyncio.get_event_loop()
             values = await loop.run_in_executor(None, get_values)

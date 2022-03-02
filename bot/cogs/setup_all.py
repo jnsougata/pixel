@@ -43,8 +43,7 @@ class Setup(app_util.Cog):
         guild_id=877399405056102431
     )
     async def ping_command(self, ctx: app_util.Context):
-        await ctx.defer(ephemeral=True)
-        await ctx.send_followup(f'**Pong:** {round(self.bot.latency * 1000)}ms')
+        await ctx.send_response(f'**Pong:** {round(self.bot.latency * 1000)}ms')
 
     @app_util.Cog.command(
         command=app_util.SlashCommand(
@@ -119,32 +118,38 @@ class Setup(app_util.Cog):
         )
     )
     @app_util.Cog.before_invoke(job=job)
-    async def setup_command(self, ctx: app_util.Context):
+    async def setup_command(
+            self, ctx: app_util.Context,
+            *, youtube: str, ping_role: discord.Role,
+            receiver: discord.TextChannel, reception: discord.TextChannel,
+            welcome_card: discord.Attachment, custom_message: int, remove: int, overview: int):
 
         await ctx.defer()
 
-        if ctx.options.get('youtube'):
-            url = ctx.options['youtube'].value
-            await sub_view_youtube(ctx, url)
-        elif ctx.options.get('receiver'):
-            channel = ctx.options['receiver'].value
-            await sub_view_receiver(ctx, channel)
-        elif ctx.options.get('reception'):
-            channel = ctx.options['reception'].value
-            await sub_view_reception(ctx, channel)
-        elif ctx.options.get('ping_role'):
-            role = ctx.options['ping_role'].value
-            await sub_view_pingrole(ctx, role)
-        elif ctx.options.get('welcome_card'):
-            cdn_url = ctx.options['welcome_card'].value.url
-            await sub_view_welcomecard(ctx, cdn_url)
-        elif ctx.options.get('custom_message'):
-            value = ctx.options['custom_message'].value
-            await sub_view_msg(ctx, value, self.bot)
-        elif ctx.options.get('overview'):
-            await sub_view_config(ctx.options['overview'].value, ctx)
-        elif ctx.options.get('remove'):
-            await sub_view_remove(ctx, ctx.options['remove'].value)
+        if youtube:
+            await sub_view_youtube(ctx, youtube)
+            return
+        if receiver:
+            await sub_view_receiver(ctx, receiver)
+            return
+        if reception:
+            await sub_view_reception(ctx, reception)
+            return
+        if ping_role:
+            await sub_view_pingrole(ctx, ping_role)
+            return
+        if welcome_card:
+            await sub_view_welcomecard(ctx, welcome_card.url)
+            return
+        if custom_message:
+            await sub_view_msg(ctx, custom_message, self.bot)
+            return
+        if overview is not None:
+            await sub_view_config(ctx, overview)
+            return
+        if remove is not None:
+            await sub_view_remove(ctx, remove)
+            return
 
 
 def setup(bot: app_util.Bot):
