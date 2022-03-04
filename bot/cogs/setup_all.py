@@ -3,16 +3,14 @@ import traceback
 import app_util
 from bot.extras.emojis import Emo
 from bot.views.msg_view import sub_view_msg
-from bot.views.view_config import sub_view_config
 from bot.views.youtube_view import sub_view_youtube
-from bot.views.remove_config import sub_view_remove
 from bot.views.receiver_view import sub_view_receiver
 from bot.views.pingrole_view import sub_view_pingrole
 from bot.views.reception_view import sub_view_reception
 from bot.views.welcome_view import sub_view_welcomecard
 
 
-async def job(ctx: app_util.Context):
+async def check(ctx: app_util.Context):
 
     def check():
         p = ctx.channel.permissions_for(ctx.me)
@@ -90,39 +88,15 @@ class Setup(app_util.Cog):
                         app_util.Choice(name='livestream_message', value=2),
                     ],
                     required=False),
-                app_util.IntOption(
-                    name='remove',
-                    description='remove any old configuration',
-                    choices=[
-                        app_util.Choice(name='youtube', value=0),
-                        app_util.Choice(name='receiver', value=1),
-                        app_util.Choice(name='reception', value=2),
-                        app_util.Choice(name='ping_role', value=3),
-                        app_util.Choice(name='welcome_card', value=4),
-                        app_util.Choice(name='custom_message', value=5)
-                    ],
-                    required=False),
-                app_util.IntOption(
-                    name='overview',
-                    description='overview of existing configuration',
-                    choices=[
-                        app_util.Choice(name='youtube', value=0),
-                        app_util.Choice(name='receiver', value=1),
-                        app_util.Choice(name='reception', value=2),
-                        app_util.Choice(name='ping_role', value=3),
-                        app_util.Choice(name='welcome_card', value=4),
-                        app_util.Choice(name='custom_message', value=5)
-                    ],
-                    required=False),
             ],
         )
     )
-    @app_util.Cog.before_invoke(job=job)
+    @app_util.Cog.before_invoke(check)
     async def setup_command(
             self, ctx: app_util.Context,
-            *, youtube: str, ping_role: discord.Role,
-            receiver: discord.TextChannel, reception: discord.TextChannel,
-            welcome_card: discord.Attachment, custom_message: int, remove: int, overview: int):
+            *,
+            youtube: str, ping_role: discord.Role, receiver: discord.TextChannel,
+            reception: discord.TextChannel, welcome_card: discord.Attachment, custom_message: int):
 
         await ctx.defer()
 
@@ -143,12 +117,6 @@ class Setup(app_util.Cog):
             return
         if custom_message:
             await sub_view_msg(ctx, custom_message, self.bot)
-            return
-        if overview is not None:
-            await sub_view_config(ctx, overview)
-            return
-        if remove is not None:
-            await sub_view_remove(ctx, remove)
             return
 
 

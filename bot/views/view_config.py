@@ -16,7 +16,7 @@ async def sub_view_config(ctx: Context, value: int):
                 info = []
                 for key, value in data.items():
                     yt_channel = aiotube.Channel(key)
-                    info.append(f'■ [{yt_channel.name}]({yt_channel.url}) (<#{value}>)')
+                    info.append(f'[{yt_channel.name}]({yt_channel.url}) ⊶ <#{value}>')
                 return info
             loop = asyncio.get_event_loop()
             values = await loop.run_in_executor(None, get_values)

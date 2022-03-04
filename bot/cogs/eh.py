@@ -28,7 +28,10 @@ class ErrorHandler(app_util.Cog):
         embed.set_thumbnail(url=self.bot.user.avatar.url)
         view = discord.ui.View()
         view.add_item(button)
-        await ctx.send_followup(embed=embed, view=view, ephemeral=True)
+        if not ctx.responded:
+            await ctx.send_response(embed=embed, view=view, ephemeral=True)
+        else:
+            await ctx.send_followup(embed=embed, view=view)
         logger = self.bot.get_channel(938059433794240523)
         stack = traceback.format_exception(type(error), error, error.__traceback__)
         tb = ''.join(stack)
