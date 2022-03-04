@@ -36,3 +36,5 @@ class Emo:
     STAFF = '<:DiscordStaff:862723146183475250>'
     DISCORD = '<:Discord:862734764019941377>'
     SLASH = '<:slash:947088718215385118>'
+    BUG = '<:botbug:949433101757587486>'
+    PIXEL = '<:pixel_emo:949437387992354816>'

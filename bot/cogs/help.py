@@ -19,12 +19,6 @@ class CustomView(discord.ui.View):
         self.add_item(invite)
         self.add_item(upvote)
 
-    @discord.ui.button(label='Info', style=discord.ButtonStyle.blurple)
-    async def edit(self, button: discord.ui.Button, interaction: discord.Interaction):
-        if self.ctx.author == interaction.user:
-            self.value = True
-            self.stop()
-
     async def on_timeout(self) -> None:
         pass
 
@@ -54,48 +48,31 @@ class Help(app_util.Cog):
     )
     @app_util.Cog.before_invoke(job=job)
     async def help_command(self, ctx: app_util.Context):
-
-        await ctx.defer()
-
-        emd = discord.Embed(
-            description=f'\n\n{Emo.SETUP} Start setup using **`/setup`**'
-                        f'\n\n{Emo.FAQ} To know more about **setup** tap **`Info`**'
-                        f'\n\n{Emo.SUP} Having issues? Join **[Dev & Support](https://discord.gg/VE5qRFfmG2)**',
-            color=0x005aef)
-
         view = CustomView(ctx)
-        await ctx.send_followup(embed=emd, view=view)
-
-        await view.wait()
-        if view.value:
-            emd = discord.Embed(
-                title=f'{Emo.INFO} /setup: access all features',
-                description=f'\u200b\n{Emo.DEL} **Remove**'
-                            f'\nRemoves configuration of a selected option'
-                            f'\n\n{Emo.SETUP} **Overview**'
-                            f'\nGives an overview of any selected option'
-                            f'\n\n{Emo.PING} **Receiver**'
-                            f'\nUsed to add or remove a text channel'
-                            f'\nto receive youtube alerts for your server'
-                            f'\n\n{Emo.YT} **YouTube**'
-                            f'\nUsed to add or remove youtube'
-                            f'\nchannel to your server for live alerts'
-                            f'\n\n{Emo.DEAL} **Reception**'
-                            f'\nUsed to add or remove a text'
-                            f'\nchannel for receiving welcome cards'
-                            f'\n\n{Emo.BELL} **Ping Role**'
-                            f'\nUsed to add or remove a custom role'
-                            f'\nto be mentioned with the YT Notifications'
-                            f'\n\n{Emo.IMG} **Welcome Card**'
-                            f'\nUsed to add or remove a welcome card'
-                            f'\nfor your server to welcome new members'
-                            f'\n\n{Emo.CUSTOM} **Custom Message**'
-                            f'\nUsed to add or remove a custom message'
-                            f'\nto be sent with YT Alert & Welcome Card',
-
-                color=0x005aef,
-            )
-            await ctx.edit_response(embed=emd, view=None)
+        emd = discord.Embed(
+            description=f'\n{Emo.SLASH}**setup**'
+                        f'\n\n> {Emo.YT} `YouTube`'
+                        f'\n> adds youtube channel for notifications'
+                        f'\n\n> {Emo.PING} `Receiver`'
+                        f'\n> adds a text channel to receive notifications'
+                        f'\n\n> {Emo.DEAL} `Reception`'
+                        f'\n> adds a text channel to receive welcome card'
+                        f'\n\n> {Emo.BELL} `Ping Role`'
+                        f'\n> adds a role to ping users with notifications'
+                        f'\n\n> {Emo.IMG} `Welcome Card`'
+                        f'\n> adds an image to use as welcome greeting card'
+                        f'\n\n> {Emo.CUSTOM} `Custom Message`'
+                        f'\n> adds a custom message to send with notifications'
+                        f'\n\n{Emo.SLASH}**more**'
+                        f'\n\n> {Emo.DEL} `Remove`'
+                        f'\n> removes old settings of the selected option'
+                        f'\n\n> {Emo.DATABASE} `Overview`'
+                        f'\n> shows an overview about the previously set option'
+                        f'\n\n{Emo.BUG} Having issues? '
+                        f'Ask [Development & Support](https://discord.gg/VE5qRFfmG2)',
+            color=0x2f3136,
+        )
+        await ctx.send_response(embed=emd, view=view)
 
 
 def setup(bot: app_util.Bot):

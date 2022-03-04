@@ -43,7 +43,7 @@ class Listeners(commands.Cog):
                         f'\n\n**Important Links**'
                         f'\n[Invite]({invite}) - Add the bot to another server'
                         f'\n[Support Server]({support}) - Get some bot support here!',
-            color=0xf2163b,
+            color=0x2f3136,
         )
 
         async def valid_intro_channel(_guild: discord.Guild):
@@ -141,7 +141,7 @@ class Listeners(commands.Cog):
                     else:
                         raw_text = ' '
                         message = f'Welcome to **{member.guild.name}**'
-                    emd = discord.Embed(description=message, color=0x303434)
+                    emd = discord.Embed(description=message, color=0x2f3136)
                     emd.set_image(url="attachment://hq_card.png")
                     try:
                         if '[ping.member]' in raw_text:

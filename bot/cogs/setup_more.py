@@ -69,7 +69,6 @@ class More(app_util.Cog):
                     required=False),
             ],
         ),
-        guild_id=877399405056102431
     )
     @app_util.Cog.before_invoke(check_job)
     async def more_command(self, ctx: app_util.Context, *, remove: int, overview: int):
