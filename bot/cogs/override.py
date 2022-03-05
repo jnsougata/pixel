@@ -127,7 +127,7 @@ class Override(app_util.Cog):
                                 f'{Emo.YT} Found new upload: {latest_url}'
                                 f'\nSending notification...', ephemeral=True)
                             try:
-                                message = await self.custom_message('upload', ctx.guild, channel_name, latest_url)
+                                message = await custom_message('upload', ctx.guild, channel_name, latest_url)
                                 if message:
                                     await receiver.send(message)
                                 else:
