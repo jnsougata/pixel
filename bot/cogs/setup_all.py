@@ -115,7 +115,7 @@ class Setup(app_util.Cog):
         if welcome_card:
             await sub_view_welcomecard(ctx, welcome_card.url)
             return
-        if custom_message:
+        if custom_message is not None:
             await sub_view_msg(ctx, custom_message, self.bot)
             return
 
