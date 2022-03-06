@@ -26,7 +26,7 @@ value_list = [for_welcome, for_upload, for_live]
 
 async def update_message(ctx: app_util.Context, bot: app_util.Bot, *, option_value: int, event: str, data: dict):
     prefilled = value_list[option_value]
-    modal = app_util.Modal(client=bot, title=f'Custom Message')
+    modal = app_util.Modal(client=bot, title=f'{event.capitalize()} Message')
     modal.add_field(
         label='See Editing Scopes Here',
         style=app_util.TextInputStyle.PARAGRAPH,
