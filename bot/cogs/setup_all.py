@@ -98,21 +98,24 @@ class Setup(app_util.Cog):
             youtube: str, ping_role: discord.Role, receiver: discord.TextChannel,
             reception: discord.TextChannel, welcome_card: discord.Attachment, custom_message: int):
 
-        await ctx.defer()
-
         if youtube:
+            await ctx.defer()
             await sub_view_youtube(ctx, youtube)
             return
         if receiver:
+            await ctx.defer()
             await sub_view_receiver(ctx, receiver)
             return
         if reception:
+            await ctx.defer()
             await sub_view_reception(ctx, reception)
             return
         if ping_role:
+            await ctx.defer()
             await sub_view_pingrole(ctx, ping_role)
             return
         if welcome_card:
+            await ctx.defer()
             await sub_view_welcomecard(ctx, welcome_card.url)
             return
         if custom_message is not None:

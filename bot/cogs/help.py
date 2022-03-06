@@ -46,7 +46,7 @@ class Help(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(name='help', description='information about the features')
     )
-    @app_util.Cog.before_invoke(job=job)
+    @app_util.Cog.before_invoke(coroutine_job=job)
     async def help_command(self, ctx: app_util.Context):
         view = CustomView(ctx)
         emd = discord.Embed(
@@ -68,6 +68,8 @@ class Help(app_util.Cog):
                         f'\n> removes old settings of the selected option'
                         f'\n\n> {Emo.DATABASE} `Overview`'
                         f'\n> shows an overview about the previously set option'
+                        f'\n\n{Emo.SLASH}**force**'
+                        f'\n> forces the bot to check for new videos or livestreams'
                         f'\n\n{Emo.BUG} Having issues? '
                         f'Ask [Development & Support](https://discord.gg/VE5qRFfmG2)',
             color=0x2f3136,

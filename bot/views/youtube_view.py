@@ -53,6 +53,7 @@ class Confirmation(discord.ui.View):
     def __init__(self, ctx: Context):
         self.ctx = ctx
         self.value = None
+        self.timeout = 120
         super().__init__()
 
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
@@ -65,6 +66,10 @@ class Confirmation(discord.ui.View):
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
             self.value = False
+            self.stop()
+
+    async def on_timeout(self) -> None:
+        if not self.is_finished():
             self.stop()
 
 
@@ -109,10 +114,8 @@ async def sub_view_youtube(ctx: Context, url: str):
                 info = channel.info
                 emd = discord.Embed(
                     title=f'{Emo.YT} {info["name"]}',
-                    description=f'\n> **Subs:** {info["subscribers"]}'
-                                f'\n> **Views:** {info["views"]}',
-                    url=info["url"],
-                    color=0xc4302b)
+                    description=f'\n> **Subs:** {info["subscribers"]}\n> **Views:** {info["views"]}',
+                    url=info["url"], color=0xc4302b)
                 banner_url = info.get('banner_url')
                 avatar_url = info.get('avatar_url')
                 if banner_url and banner_url.startswith('http'):
@@ -130,13 +133,13 @@ async def sub_view_youtube(ctx: Context, url: str):
                     if upload_id:
                         if old_data:
                             old_data[info['id']] = {
-                                'live': live_id if live_id else 'empty',
+                                'live': live_id or 'empty',
                                 'upload': upload_id
                             }
                             await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
                         else:
                             empty = {info['id']: {
-                                'live': live_id if live_id else 'empty',
+                                'live': live_id or 'empty',
                                 'upload': upload_id}
                             }
                             await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
