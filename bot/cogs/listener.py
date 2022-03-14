@@ -152,5 +152,5 @@ class Listeners(commands.Cog):
                         return
 
 
-def setup(bot):
-    bot.add_cog(Listeners(bot))
+async def setup(bot):
+    await bot.add_cog(Listeners(bot))

@@ -70,7 +70,7 @@ class More(app_util.Cog):
             ],
         ),
     )
-    @app_util.Cog.before_invoke(check_job)
+    @app_util.Cog.before_invoke(check=check_job)
     async def more_command(self, ctx: app_util.Context, *, remove: int, overview: int):
 
         await ctx.defer()
@@ -84,5 +84,5 @@ class More(app_util.Cog):
             return
 
 
-def setup(bot: app_util.Bot):
-    bot.add_application_cog(More(bot))
+async def setup(bot: app_util.Bot):
+    await bot.add_application_cog(More(bot))

@@ -57,16 +57,16 @@ class Setup(app_util.Cog):
                     name='receiver',
                     description='text channel to receive youtube videos',
                     channel_types=[
-                        app_util.ChannelType.GUILD_TEXT,
-                        app_util.ChannelType.GUILD_NEWS],
+                        app_util.DiscordChannelType.GUILD_TEXT,
+                        app_util.DiscordChannelType.GUILD_NEWS],
                     required=False),
 
                 app_util.ChannelOption(
                     name='reception',
                     description='text channel to receive welcome cards',
                     channel_types=[
-                        app_util.ChannelType.GUILD_TEXT,
-                        app_util.ChannelType.GUILD_NEWS],
+                        app_util.DiscordChannelType.GUILD_TEXT,
+                        app_util.DiscordChannelType.GUILD_NEWS],
                     required=False),
 
                 app_util.RoleOption(
@@ -91,7 +91,7 @@ class Setup(app_util.Cog):
             ],
         )
     )
-    @app_util.Cog.before_invoke(check)
+    @app_util.Cog.before_invoke(check=check)
     async def setup_command(
             self, ctx: app_util.Context,
             *,
@@ -123,5 +123,5 @@ class Setup(app_util.Cog):
             return
 
 
-def setup(bot: app_util.Bot):
-    bot.add_application_cog(Setup(bot))
+async def setup(bot: app_util.Bot):
+    await bot.add_application_cog(Setup(bot))

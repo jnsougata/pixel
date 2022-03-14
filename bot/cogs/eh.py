@@ -44,5 +44,5 @@ class ErrorHandler(app_util.Cog):
                 description=f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb[:4096]}\n```'))
 
 
-def setup(bot: app_util.Bot):
-    bot.add_application_cog(ErrorHandler(bot))
+async def setup(bot: app_util.Bot):
+    await bot.add_application_cog(ErrorHandler(bot))

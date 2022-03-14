@@ -160,5 +160,5 @@ class Override(app_util.Cog):
             await ctx.send_followup(f'{Emo.WARN} this youtube channel doesn\'t belong to this server!')
 
 
-def setup(bot: app_util.Bot):
-    bot.add_application_cog(Override(bot))
+async def setup(bot: app_util.Bot):
+    await bot.add_application_cog(Override(bot))

@@ -46,7 +46,7 @@ class Help(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(name='help', description='information about the features')
     )
-    @app_util.Cog.before_invoke(coroutine_job=job)
+    @app_util.Cog.before_invoke(check=job)
     async def help_command(self, ctx: app_util.Context):
         view = CustomView(ctx)
         emd = discord.Embed(
@@ -77,5 +77,5 @@ class Help(app_util.Cog):
         await ctx.send_response(embed=emd, view=view)
 
 
-def setup(bot: app_util.Bot):
-    bot.add_application_cog(Help(bot))
+async def setup(bot: app_util.Bot):
+    await bot.add_application_cog(Help(bot))
