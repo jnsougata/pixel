@@ -36,7 +36,7 @@ class ReceiverSelection(discord.ui.Select):
                 await self.ctx.delete_response()
 
 
-class YouTubeConfirmation(discord.ui.View):
+class YouTubeConf(discord.ui.View):
     def __init__(self, ctx: Context):
         self.ctx = ctx
         self.value = None
@@ -88,14 +88,12 @@ async def sub_view_youtube(ctx: Context, url: str):
             return ctx.guild.get_channel(int(raw[0]))
 
     if raw and _check():
-
         old_data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
         if old_data:
             total_channels = list(old_data)
         else:
             total_channels = []
         if len(total_channels) < 24:
-
             try:
                 channel = Channel(url.replace(' ', ''))
                 info = channel.info
@@ -109,8 +107,8 @@ async def sub_view_youtube(ctx: Context, url: str):
                     emd.set_image(url=banner_url)
                 if avatar_url and avatar_url.startswith('http'):
                     emd.set_thumbnail(url=info["avatar_url"])
-                conf_view = YouTubeConfirmation(ctx)
-                await ctx.edit_response(embed=emd, view=conf_view)
+                conf_view = YouTubeConf(ctx)
+                await ctx.send_followup(embed=emd, view=conf_view)
                 await conf_view.wait()
                 if conf_view.value:
                     live = channel.recent_streamed
@@ -178,7 +176,6 @@ async def sub_view_youtube(ctx: Context, url: str):
             await ctx.edit_response(
                 embed=discord.Embed(
                     description=f'{Emo.WARN} You have exceeded the maximum allowed channels {Emo.WARN}'))
-
     else:
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
@@ -189,4 +186,4 @@ async def sub_view_youtube(ctx: Context, url: str):
                         f'\nonce you have a default Text Channel assigned'
                         f'\n\n**` Steps: `**'
                         f'\n\n**`/setup`**  select **`receiver`** from options')
-        await ctx.edit_response(embed=emd, view=None)
+        await ctx.send_followup(embed=emd, view=None)
