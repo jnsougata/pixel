@@ -6,13 +6,7 @@ from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
-class Temp(discord.ui.View):
-    def __init__(self):
-        super().__init__()
-        self.message = None
-
-
-class ReceiverMenu(discord.ui.Select):
+class ReceiverSelection(discord.ui.Select):
 
     def __init__(
             self,
@@ -177,8 +171,8 @@ async def sub_view_youtube(ctx: Context, url: str):
                             db_data = receivers
                         else:
                             db_data = {}
-                        receiver_view = Temp()
-                        receiver_view.add_item(ReceiverMenu(ctx=ctx, db_data=db_data, youtube_info=info))
+                        receiver_view = discord.ui.View()
+                        receiver_view.add_item(ReceiverSelection(ctx=ctx, db_data=db_data, youtube_info=info))
                         await ctx.edit_response(embed=emd, view=receiver_view)
                 else:
                     await ctx.delete_response()
