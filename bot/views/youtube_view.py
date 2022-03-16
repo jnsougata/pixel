@@ -14,10 +14,8 @@ class ReceiverSelection(discord.ui.Select):
         self.info = youtube_info
         channels = ctx.guild.text_channels
         eligible = [channel for channel in channels if channel.permissions_for(ctx.me).embed_links]
-        options = [
-            discord.SelectOption(label=channel.name, value=str(channel.id), emoji=Emo.TEXT)
-            for channel in eligible[:24]
-        ]
+        options = [discord.SelectOption(label=channel.name, value=str(channel.id), emoji=Emo.TEXT)
+                   for channel in eligible[:24]]
         options.insert(0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN))
         super().__init__(placeholder='Select a text channel', min_values=1, max_values=1, options=options)
 
@@ -36,7 +34,7 @@ class ReceiverSelection(discord.ui.Select):
                 await self.ctx.delete_response()
 
 
-class YouTubeConf(discord.ui.View):
+class ConfirmChannel(discord.ui.View):
     def __init__(self, ctx: Context):
         self.ctx = ctx
         self.value = None
@@ -78,6 +76,10 @@ class TextChannelSelection(discord.ui.View):
             self.value = False
             self.stop()
 
+    async def on_timeout(self) -> None:
+        if not self.is_finished():
+            self.stop()
+
 
 async def sub_view_youtube(ctx: Context, url: str):
 
@@ -107,7 +109,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                     emd.set_image(url=banner_url)
                 if avatar_url and avatar_url.startswith('http'):
                     emd.set_thumbnail(url=info["avatar_url"])
-                conf_view = YouTubeConf(ctx)
+                conf_view = ConfirmChannel(ctx)
                 await ctx.send_followup(embed=emd, view=conf_view)
                 await conf_view.wait()
                 if conf_view.value:
@@ -137,9 +139,9 @@ async def sub_view_youtube(ctx: Context, url: str):
                                     f'\n\n{Emo.TEXT} To select another receiver tap **`Select`**',
                         color=0xc4302b)
                     await ctx.edit_response(embed=embed, view=selector)
-                    receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
                     await selector.wait()
-                    if selector.value is True:
+                    receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
+                    if selector.value:
                         receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
                         if receiver and receiver[0].isdigit():
                             emd = discord.Embed(
@@ -154,7 +156,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                             db_data = {}
                         db_data[info['id']] = str(receiver[0])
                         await db_push_object(guild_id=ctx.guild.id, item=db_data, key='receivers')
-                    elif selector.value is False:
+                    else:
                         emd = discord.Embed(
                             description=f'{Emo.TEXT} Select a text channel from the menu below:')
                         if receivers:
