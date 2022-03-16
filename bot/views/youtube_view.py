@@ -170,12 +170,12 @@ async def sub_view_youtube(ctx: Context, url: str):
                     await ctx.delete_response()
             except Exception as e:
                 if isinstance(e, asyncio.TimeoutError):
-                    await ctx.edit_response('Bye! you took so long')
+                    await ctx.send_followup('Bye! you took so long')
                 else:
-                    await ctx.edit_response(
+                    await ctx.send_followup(
                         embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'), view=None)
         else:
-            await ctx.edit_response(
+            await ctx.send_followup(
                 embed=discord.Embed(
                     description=f'{Emo.WARN} You have exceeded the maximum allowed channels {Emo.WARN}'))
     else:
