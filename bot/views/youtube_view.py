@@ -73,7 +73,7 @@ class Confirmation(discord.ui.View):
             self.stop()
 
 
-class TextSelection(discord.ui.View):
+class TextChannelSelection(discord.ui.View):
     def __init__(self, ctx: Context):
         self.ctx = ctx
         self.value = None
@@ -145,16 +145,16 @@ async def sub_view_youtube(ctx: Context, url: str):
                                             f'\nPlease try with a channel with videos in it.'),
                             view=None)
                         return
-                    text_select_view = TextSelection(ctx)
+                    selector = TextChannelSelection(ctx)
                     embed = discord.Embed(
                         title=f'Wait! one more step',
                         description=f'{Emo.TEXT} To use default receiver tap **`Default`**'
                                     f'\n\n{Emo.TEXT} To select another receiver tap **`Select`**',
                         color=0xc4302b)
-                    await ctx.edit_response(embed=embed, view=text_select_view)
+                    await ctx.edit_response(embed=embed, view=selector)
                     receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
-                    await text_select_view.wait()
-                    if text_select_view.value == 0:
+                    await selector.wait()
+                    if selector.value == 0:
                         receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
                         if receiver and receiver[0].isdigit():
                             emd = discord.Embed(
@@ -170,7 +170,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                         db_data[info['id']] = str(receiver[0])
                         await db_push_object(guild_id=ctx.guild.id, item=db_data, key='receivers')
 
-                    elif text_select_view.value == 1:
+                    elif selector.value == 1:
                         emd = discord.Embed(
                             description=f'{Emo.TEXT} Select a text channel from the menu below:')
                         if receivers:
