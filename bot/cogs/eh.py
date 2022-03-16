@@ -37,7 +37,8 @@ class ErrorHandler(app_util.Cog):
         tb = ''.join(stack)
         if len(tb) < 4096:
             await logger.send(embed=discord.Embed(
-                description=f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```'))
+                description=f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**'
+                            f'\n\n**Command Name:** {ctx.name}\n```py\n{tb}\n```'))
         else:
             print(f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```')
             await logger.send(embed=discord.Embed(
