@@ -8,12 +8,7 @@ from bot.extras.func import db_push_object, db_fetch_object
 
 class ReceiverSelection(discord.ui.Select):
 
-    def __init__(
-            self,
-            db_data: dict,
-            youtube_info: dict,
-            ctx: Context,
-    ):
+    def __init__(self, db_data: dict, youtube_info: dict, ctx: Context):
         self.ctx = ctx
         self.db_data = db_data
         self.info = youtube_info
@@ -23,9 +18,7 @@ class ReceiverSelection(discord.ui.Select):
             discord.SelectOption(label=channel.name, value=str(channel.id), emoji=Emo.TEXT)
             for channel in eligible[:24]
         ]
-        options.insert(
-            0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN)
-        )
+        options.insert(0, discord.SelectOption(label='Exit', value='0', emoji=Emo.WARN))
         super().__init__(placeholder='Select a text channel', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
@@ -43,7 +36,7 @@ class ReceiverSelection(discord.ui.Select):
                 await self.ctx.delete_response()
 
 
-class Confirmation(discord.ui.View):
+class YouTubeConfirmation(discord.ui.View):
     def __init__(self, ctx: Context):
         self.ctx = ctx
         self.value = None
@@ -76,13 +69,13 @@ class TextChannelSelection(discord.ui.View):
     @discord.ui.button(label='Default', style=discord.ButtonStyle.green)
     async def confirm(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = 0
+            self.value = True
             self.stop()
 
     @discord.ui.button(label='Select', style=discord.ButtonStyle.blurple)
     async def cancel(self, button: discord.ui.Button, interaction: discord.Interaction):
         if self.ctx.author == interaction.user:
-            self.value = 1
+            self.value = False
             self.stop()
 
 
@@ -116,10 +109,10 @@ async def sub_view_youtube(ctx: Context, url: str):
                     emd.set_image(url=banner_url)
                 if avatar_url and avatar_url.startswith('http'):
                     emd.set_thumbnail(url=info["avatar_url"])
-                new_view = Confirmation(ctx)
-                await ctx.edit_response(embed=emd, view=new_view)
-                await new_view.wait()
-                if new_view.value:
+                conf_view = YouTubeConfirmation(ctx)
+                await ctx.edit_response(embed=emd, view=conf_view)
+                await conf_view.wait()
+                if conf_view.value:
                     live = channel.recent_streamed
                     upload = channel.recent_uploaded
                     live_id = live.id if live else None
@@ -148,7 +141,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                     await ctx.edit_response(embed=embed, view=selector)
                     receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
                     await selector.wait()
-                    if selector.value == 0:
+                    if selector.value is True:
                         receiver = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
                         if receiver and receiver[0].isdigit():
                             emd = discord.Embed(
@@ -163,8 +156,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                             db_data = {}
                         db_data[info['id']] = str(receiver[0])
                         await db_push_object(guild_id=ctx.guild.id, item=db_data, key='receivers')
-
-                    elif selector.value == 1:
+                    elif selector.value is False:
                         emd = discord.Embed(
                             description=f'{Emo.TEXT} Select a text channel from the menu below:')
                         if receivers:
