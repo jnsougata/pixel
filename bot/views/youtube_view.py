@@ -130,18 +130,12 @@ async def sub_view_youtube(ctx: Context, url: str):
                     upload = channel.recent_uploaded
                     live_id = live.id if live else None
                     upload_id = upload.id if upload else None
-                    if upload_id:
+                    if upload_id or live_id:
                         if old_data:
-                            old_data[info['id']] = {
-                                'live': live_id or 'empty',
-                                'upload': upload_id
-                            }
+                            old_data[info['id']] = {'live': live_id or 'empty', 'upload': upload_id or 'empty'}
                             await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
                         else:
-                            empty = {info['id']: {
-                                'live': live_id or 'empty',
-                                'upload': upload_id}
-                            }
+                            empty = {info['id']: {'live': live_id or 'empty', 'upload': upload_id or 'empty'}}
                             await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
                     else:
                         await ctx.edit_response(
