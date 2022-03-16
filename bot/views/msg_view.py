@@ -3,18 +3,18 @@ import app_util
 from bot.extras.emojis import *
 from bot.extras.func import db_push_object, db_fetch_object
 
-for_welcome = '''For member name: [member.name]
+for_welcome = '''For member name use: [member.name]
 For server name use: [guild.name]
 To notify user use: [ping.member]
-To mention user silently: [member.mention]'''
+To mention user silently use: [member.mention]'''
 
 for_upload = '''To ping role use: [ping]
 For upload url use: [url]
 For channel name use: [name]'''
 
-for_live = '''To ping role: [ping]
-For livestream url: [url]
-For channel name: [name]'''
+for_live = '''To ping role use: [ping]
+For livestream url use: [url]
+For channel name use: [name]'''
 
 value_list = [for_welcome, for_upload, for_live]
 
