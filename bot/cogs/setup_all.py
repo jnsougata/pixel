@@ -18,8 +18,8 @@ async def check(ctx: app_util.Context):
 
     if not ctx.guild:
         await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
-    elif not ctx.author.guild_permissions.administrator:
-        await ctx.send_response('> 👀  You are not an **Admin** or **Equivalent**')
+    elif not ctx.author.guild_permissions.manage_guild:
+        await ctx.send_response('> 👀  You are not an **Admin** or **Server Manager**')
     elif not check():
         await ctx.send_response(
             f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
@@ -34,10 +34,7 @@ class Setup(app_util.Cog):
         self.bot = bot
 
     @app_util.Cog.command(
-        command=app_util.SlashCommand(
-            name='ping',
-            description='shows the avg latency of the bot',
-        ),
+        command=app_util.SlashCommand(name='ping', description='shows the avg latency of the bot'),
         guild_id=877399405056102431
     )
     async def ping_command(self, ctx: app_util.Context):

@@ -23,7 +23,7 @@ class CustomView(discord.ui.View):
         pass
 
 
-async def job(ctx: app_util.Context):
+async def check(ctx: app_util.Context):
 
     def check():
         p = ctx.channel.permissions_for(ctx.me)
@@ -46,7 +46,7 @@ class Help(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(name='help', description='information about the features')
     )
-    @app_util.Cog.before_invoke(check=job)
+    @app_util.Cog.before_invoke(check=check)
     async def help_command(self, ctx: app_util.Context):
         view = CustomView(ctx)
         emd = discord.Embed(
