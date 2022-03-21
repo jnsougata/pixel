@@ -32,7 +32,7 @@ async def autocomplete_channel(ctx: app_util.Context, youtube: str):
                 choices = [app_util.Choice(name=f'{name} ({channel_id})', value=channel_id)]
                 await ctx.send_automated_choices(choices)
         else:
-            choices = [app_util.Choice(name=f'Can\'t find any channel...', value='null')]
+            choices = [app_util.Choice(name=f'can\'t find any channel', value='null')]
             await ctx.send_automated_choices(choices)
 
     else:
@@ -50,7 +50,7 @@ class ReceiverSelection(discord.ui.Select):
         eligible = [channel for channel in channels if channel.permissions_for(ctx.me).embed_links]
         options = [discord.SelectOption(label=channel.name, value=str(channel.id), emoji=Emo.TEXT)
                    for channel in eligible[:24]]
-        options.insert(0, discord.SelectOption(label='DEFAULT', value='0', emoji=Emo.PING))
+        options.insert(0, discord.SelectOption(label='default', value='0', emoji=Emo.CHECK))
         super().__init__(placeholder='Select a text channel', min_values=1, max_values=1, options=options)
 
     async def callback(self, interaction: discord.Interaction):
@@ -78,8 +78,6 @@ class ReceiverSelection(discord.ui.Select):
 
 async def sub_view_youtube(ctx: Context, url: str):
 
-    print('[YT]', url)
-
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
     def _check():
@@ -100,7 +98,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                     title=f'{Emo.YT} {info["name"]}',
                     description=f'\n> **Subs:** {info["subscribers"]}\n> **Views:** {info["views"]}',
                     url=info["url"], color=0xc4302b)
-                emd.set_footer(text='Select a text channel from the menu below to receive notifications')
+                emd.set_footer(text='Select a text channel from the menu to receive notifications for current channel')
                 banner_url = info.get('banner_url')
                 avatar_url = info.get('avatar_url')
                 if banner_url and banner_url.startswith('http'):
