@@ -47,15 +47,6 @@ class ReceiverSelection(discord.ui.Select):
 
 async def sub_view_youtube(ctx: Context, url: str):
 
-    """if url == 'null':
-        return await ctx.edit_response(
-            embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
-
-    if '(' in url:
-        youtube_param = re.findall('\((.*?)\)', url)[0]
-    else:
-        youtube_param = url"""
-
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
     def _check():
