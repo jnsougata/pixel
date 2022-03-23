@@ -62,6 +62,16 @@ async def sub_view_youtube(ctx: Context, url: str):
         if len(total_channels) < 24:
             try:
                 channel = Channel(url)
+            except (aiotube.InvalidURL, aiotube.BadURL, aiotube.AIOError):
+                await ctx.send_followup(
+                    embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
+                return
+            except aiotube.TooManyRequests:
+                await ctx.send_followup(
+                    embed=discord.Embed(
+                        description=f'{Emo.WARN} you are requesting too often, try again in a few seconds'))
+                return
+            else:
                 info = channel.info
                 emd = discord.Embed(
                     title=f'{Emo.YT} {info["name"]}',
@@ -73,7 +83,7 @@ async def sub_view_youtube(ctx: Context, url: str):
                 if banner_url and banner_url.startswith('http'):
                     emd.set_image(url=banner_url)
                 if avatar_url and avatar_url.startswith('http'):
-                    emd.set_thumbnail(url=info["avatar_url"])
+                    emd.set_thumbnail(url=avatar_url)
                 live = channel.recent_streamed
                 upload = channel.recent_uploaded
                 live_id = live.id if live else None
@@ -102,13 +112,6 @@ async def sub_view_youtube(ctx: Context, url: str):
                 menu.timeout = 120
                 menu.add_item(ReceiverSelection(ctx, info, data))
                 await ctx.send_followup(embed=emd, view=menu)
-            except Exception as e:
-                print(e)
-                if isinstance(e, asyncio.TimeoutError):
-                    await ctx.send_followup('Bye! you took so long', view=None)
-                else:
-                    await ctx.send_followup(
-                        embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'), view=None)
         else:
             await ctx.send_followup(
                 embed=discord.Embed(
