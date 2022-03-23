@@ -1,3 +1,4 @@
+import re
 import aiotube
 import app_util
 import discord
@@ -78,6 +79,11 @@ class ReceiverSelection(discord.ui.Select):
 
 async def sub_view_youtube(ctx: Context, url: str):
 
+    if '(' in url:
+        youtube_param = re.findall('\((.*?)\)', url)[0]
+    else:
+        youtube_param = url
+
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
     def _check():
@@ -92,7 +98,7 @@ async def sub_view_youtube(ctx: Context, url: str):
             total_channels = []
         if len(total_channels) < 24:
             try:
-                channel = Channel(url)
+                channel = Channel(youtube_param)
                 info = channel.info
                 emd = discord.Embed(
                     title=f'{Emo.YT} {info["name"]}',
