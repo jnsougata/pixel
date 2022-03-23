@@ -3,7 +3,7 @@ import traceback
 import app_util
 from bot.extras.emojis import Emo
 from bot.views.msg_view import sub_view_msg
-from bot.views.youtube_view import sub_view_youtube, autocomplete_channel
+from bot.views.youtube_view import sub_view_youtube
 from bot.views.receiver_view import sub_view_receiver
 from bot.views.pingrole_view import sub_view_pingrole
 from bot.views.reception_view import sub_view_reception
@@ -48,7 +48,7 @@ class Setup(app_util.Cog):
                 app_util.StrOption(
                     name='youtube',
                     description='type any youtube channel by url or id',
-                    required=False, autocomplete=True),
+                    required=False),
 
                 app_util.ChannelOption(
                     name='receiver',
@@ -88,7 +88,7 @@ class Setup(app_util.Cog):
             ],
         )
     )
-    @app_util.Cog.before_invoke(check=check, autocomplete_handler=autocomplete_channel)
+    @app_util.Cog.before_invoke(check=check)
     async def setup_command(
             self, ctx: app_util.Context,
             *,

@@ -9,38 +9,6 @@ from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
-async def autocomplete_channel(ctx: app_util.Context, youtube: str):
-    if youtube:
-        if youtube.startswith('http') and '/channel/' in youtube and len(youtube) > 55:
-            url = youtube
-        elif youtube.startswith('http') and '/c/' in youtube and len(youtube) > 26:
-            url = youtube
-        elif youtube.startswith('UC') and len(youtube) == 24:
-            url = youtube
-        else:
-            url = None
-
-        if url:
-            try:
-                channel = aiotube.Channel(url)
-            except aiotube.errors.InvalidURL:
-                choices = [app_util.Choice(name=f'Invalid channel ID or URL', value='null')]
-                await ctx.send_automated_choices(choices)
-            else:
-                name = channel.name
-                url = channel.url
-                channel_id = channel.id
-                choices = [app_util.Choice(name=f'{name} ({channel_id})', value=channel_id)]
-                await ctx.send_automated_choices(choices)
-        else:
-            choices = [app_util.Choice(name=f'can\'t find any channel', value='null')]
-            await ctx.send_automated_choices(choices)
-
-    else:
-        choices = [app_util.Choice(name=f'keep typing...', value='null')]
-        await ctx.send_automated_choices(choices)
-
-
 class ReceiverSelection(discord.ui.Select):
 
     def __init__(self, ctx, info, data):
@@ -79,14 +47,14 @@ class ReceiverSelection(discord.ui.Select):
 
 async def sub_view_youtube(ctx: Context, url: str):
 
-    if url == 'null':
+    """if url == 'null':
         return await ctx.edit_response(
             embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
 
     if '(' in url:
         youtube_param = re.findall('\((.*?)\)', url)[0]
     else:
-        youtube_param = url
+        youtube_param = url"""
 
     raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
 
@@ -102,7 +70,7 @@ async def sub_view_youtube(ctx: Context, url: str):
             total_channels = []
         if len(total_channels) < 24:
             try:
-                channel = Channel(youtube_param)
+                channel = Channel(url)
                 info = channel.info
                 emd = discord.Embed(
                     title=f'{Emo.YT} {info["name"]}',
