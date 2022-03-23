@@ -16,11 +16,11 @@ async def sub_view_config(ctx: Context, value: int):
                 info = []
                 for key, value in data.items():
                     yt_channel = aiotube.Channel(key)
-                    info.append(f'[{yt_channel.name}]({yt_channel.url}) ⊶ <#{value}>')
+                    info.append(f'{Emo.TEXT} <#{value}> {Emo.YT} [{yt_channel.name}]({yt_channel.url}) ')
                 return info
             loop = asyncio.get_event_loop()
             values = await loop.run_in_executor(None, get_values)
-            emd = discord.Embed(title=f'{Emo.YT} Subscriptions', description='\n\n'.join(values))
+            emd = discord.Embed(description='\n\n'.join(values))
             await ctx.send_followup(embed=emd)
         else:
             await ctx.send_followup('> 👀 you haven\'t subscribed to any channels yet!')
