@@ -50,7 +50,7 @@ class Override(app_util.Cog):
             if data and data[0].isdigit():
                 role = guild.get_role(int(data[0]))
                 if role and role == guild.default_role:
-                    return role
+                    return str(role)
                 elif role:
                     return role.mention
                 return None
