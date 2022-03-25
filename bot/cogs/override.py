@@ -5,34 +5,40 @@ from aiotube import Channel
 from bot.extras.func import db_push_object, db_fetch_object
 
 
+async def check(ctx: app_util.Context):
+
+    def check():
+        p = ctx.channel.permissions_for(ctx.me)
+        return p.send_messages and p.embed_links and p.attach_files and p.external_emojis
+
+    if not ctx.guild:
+        await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
+    elif not ctx.author.guild_permissions.manage_guild:
+        await ctx.send_response('> 👀  You are not an **Admin** or **Server Manager**')
+    elif not check():
+        await ctx.send_response(
+            f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
+    elif not ctx.options:
+        await ctx.send_response('> 👀  you must select at least one option')
+    else:
+        return True
+
+
 class Override(app_util.Cog):
     def __init__(self, bot: app_util.Bot):
         self.bot = bot
 
+    @app_util.Cog.before_invoke(check=check)
     @app_util.Cog.command(
         command=app_util.SlashCommand(
             name='force',
             description='forces to check for new videos',
-            options=[
-                app_util.StrOption(
-                    name='url',
-                    description='youtube channel url to check',
-                    required=True
-                )
-            ]
+            options=[app_util.StrOption(name='url', description='youtube channel url to check', required=True)]
         ),
     )
     async def force_check(self, ctx: app_util.Context):
 
         await ctx.defer(ephemeral=True)
-
-        if not isinstance(ctx.author, discord.Member):
-            await ctx.send_followup('🚫 This command can only be used inside a **SERVER**')
-            return
-
-        if not ctx.author.guild_permissions.administrator:
-            await ctx.send_followup('> 👀  You are not an **Admin** or **Equivalent**')
-            return
 
         # helper funcs
         async def create_receiver(guild: discord.Guild, youtube_id: str):
@@ -57,11 +63,7 @@ class Override(app_util.Cog):
 
         async def custom_message(event: str, guild: discord.Guild, channel_name: str, video_url: str):
             ping = await create_ping(guild)
-            scopes = {
-                '[ping]': ping if ping else '',
-                '[name]': channel_name,
-                '[url]': video_url,
-            }
+            scopes = {'[ping]': ping if ping else '', '[name]': channel_name, '[url]': video_url}
             text_dict = await db_fetch_object(guild_id=guild.id, key='text')
             if text_dict and text_dict.get(event):
                 text = text_dict.get(event)
@@ -74,90 +76,92 @@ class Override(app_util.Cog):
 
         try:
             channel_id = ch.id
-            channel_name = ch.name
         except Exception:
-            await ctx.send_followup(f'{Emo.WARN} entered invalid youtube channel url')
-            return
+            return await ctx.send_followup(f'{Emo.WARN} entered invalid youtube channel url or id')
         else:
+            channel_name = ch.name
             await ctx.send_followup(f'{Emo.CHECK} Checking for new videos in {channel_name}')
-
-        data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
-        if data and data.get(channel_id):
-            receiver = await create_receiver(ctx.guild, channel_id)
-            if receiver:
-                mention = await create_ping(ctx.guild)
-                try:
-                    if ch.live:
-                        live = ch.livestream
-                        live_url = live.url
-                        live_id = live.id
-                        if data[channel_id]['live'] != live_id:
-                            await ctx.send_followup(
-                                f'{Emo.LIVE} Found new livestream: {live_url}'
-                                f'\nSending notification...', ephemeral=True)
-                            try:
-                                message = await custom_message('live', ctx.guild, channel_name, live_url)
-                                if message:
-                                    await receiver.send(message)
-                                else:
-                                    if mention:
-                                        await receiver.send(
-                                            f'> {Emo.LIVE} **{ch.name}** is live now'
-                                            f'\n> {mention} {live_url}')
+            data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
+            if data and data.get(channel_id):
+                receiver = await create_receiver(ctx.guild, channel_id)
+                if receiver:
+                    mention = await create_ping(ctx.guild)
+                    try:
+                        if ch.live:
+                            live = ch.livestream
+                            live_url = live.url
+                            live_id = live.id
+                            if data[channel_id]['live'] != live_id:
+                                await ctx.send_followup(
+                                    f'{Emo.LIVE} Found new livestream: {live_url}'
+                                    f'\nSending notification...', ephemeral=True)
+                                try:
+                                    message = await custom_message('live', ctx.guild, channel_name, live_url)
+                                    if message:
+                                        await receiver.send(message)
                                     else:
-                                        await receiver.send(
-                                            f'> {Emo.LIVE} **{ch.name}** is live now'
-                                            f'\n> {live_url}')
-                            except Exception as e:
-                                print(e)
-                                await ctx.send_followup(f'{Emo.WARN} Failed to send notification'
-                                                        f'\nPlease check your server configuration'
-                                                        f'\n\n** This notification will not be sent again **')
-                            finally:
-                                data[channel_id]['live'] = live_id
-                        else:
-                            await ctx.send_followup(f'{Emo.LIVE} new livestream NOT FOUND', ephemeral=True)
+                                        if mention:
+                                            await receiver.send(
+                                                f'> {Emo.LIVE} **{ch.name}** is live now'
+                                                f'\n> {mention} {live_url}')
+                                        else:
+                                            await receiver.send(
+                                                f'> {Emo.LIVE} **{ch.name}** is live now'
+                                                f'\n> {live_url}')
+                                except Exception as e:
+                                    print(e)
+                                    await ctx.send_followup(
+                                        f'{Emo.WARN} Failed to send notification'
+                                        f'\nPlease check your server configuration'
+                                        f'\n\n** This notification will not be sent again **',
+                                        ephemeral=True
+                                    )
+                                finally:
+                                    data[channel_id]['live'] = live_id
+                            else:
+                                await ctx.send_followup(f'{Emo.LIVE} new livestream NOT FOUND', ephemeral=True)
 
-                    latest = ch.recent_uploaded
-                    if latest:
-                        latest_id = latest.id
-                        latest_url = latest.url
-                        if latest_id != data[channel_id]['upload']:
-                            await ctx.send_followup(
-                                f'{Emo.YT} Found new upload: {latest_url}'
-                                f'\nSending notification...', ephemeral=True)
-                            try:
-                                message = await custom_message('upload', ctx.guild, channel_name, latest_url)
-                                if message:
-                                    await receiver.send(message)
-                                else:
-                                    if mention:
-                                        await receiver.send(
-                                            f'> {Emo.YT} **{ch.name}** uploaded a new video'
-                                            f'\n> {mention} {latest_url}')
+                        latest = ch.recent_uploaded
+                        if latest:
+                            latest_id = latest.id
+                            latest_url = latest.url
+                            if latest_id != data[channel_id]['upload']:
+                                await ctx.send_followup(
+                                    f'{Emo.YT} Found new upload: {latest_url}'
+                                    f'\nSending notification...', ephemeral=True)
+                                try:
+                                    message = await custom_message('upload', ctx.guild, channel_name, latest_url)
+                                    if message:
+                                        await receiver.send(message)
                                     else:
-                                        await receiver.send(
-                                            f'> {Emo.YT} **{ch.name}** uploaded a new video'
-                                            f'\n> {latest_url}')
-                            except Exception as e:
-                                print(e)
-                                await ctx.send_followup(f'{Emo.WARN} Failed to send notification'
-                                                        f'\nPlease check your sever configuration'
-                                                        f'\n\n** This notification will not be sent again **')
-                            finally:
-                                data[channel_id]['upload'] = latest_id
-                                await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
-                        else:
-                            await ctx.send_followup(f'{Emo.YT} new upload NOT FOUND', ephemeral=True)
-
-                    await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
-
-                except Exception:
-                    await ctx.send_followup(f'{Emo.WARN} Something Unexpected Occurred!')
+                                        if mention:
+                                            await receiver.send(
+                                                f'> {Emo.YT} **{ch.name}** uploaded a new video'
+                                                f'\n> {mention} {latest_url}')
+                                        else:
+                                            await receiver.send(
+                                                f'> {Emo.YT} **{ch.name}** uploaded a new video'
+                                                f'\n> {latest_url}')
+                                except Exception as e:
+                                    print(e)
+                                    await ctx.send_followup(
+                                        f'{Emo.WARN} Failed to send notification'
+                                        f'\nPlease check your sever configuration'
+                                        f'\n\n** This notification will not be sent again **',
+                                        ephemeral=True
+                                    )
+                                finally:
+                                    data[channel_id]['upload'] = latest_id
+                                    await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
+                            else:
+                                await ctx.send_followup(f'{Emo.YT} new upload NOT FOUND', ephemeral=True)
+                        await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
+                    except Exception:
+                        await ctx.send_followup(f'{Emo.WARN} Something Unexpected Occurred!')
+                else:
+                    await ctx.send_followup(f'{Emo.WARN} I didn\'t find any receiver!')
             else:
-                await ctx.send_followup(f'{Emo.WARN} I didn\'t find any receiver!')
-        else:
-            await ctx.send_followup(f'{Emo.WARN} this youtube channel doesn\'t belong to this server!')
+                await ctx.send_followup(f'{Emo.WARN} this youtube channel doesn\'t belong to this server!')
 
 
 async def setup(bot: app_util.Bot):
