@@ -116,6 +116,8 @@ class Override(app_util.Cog):
                                     data[channel_id]['live'] = live_id
                             else:
                                 await ctx.send_followup(f'{Emo.LIVE} New livestream NOT FOUND', ephemeral=True)
+                        else:
+                            await ctx.send_followup(f'{Emo.CHECK} Channel is currently NOT LIVE', ephemeral=True)
 
                         latest = ch.recent_uploaded
                         if latest:
