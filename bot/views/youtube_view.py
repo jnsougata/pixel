@@ -84,25 +84,15 @@ async def sub_view_youtube(ctx: Context, url: str):
                     emd.set_image(url=banner_url)
                 if avatar_url and avatar_url.startswith('http'):
                     emd.set_thumbnail(url=avatar_url)
-                live = channel.recent_streamed
                 upload = channel.recent_uploaded
-                live_id = live.id if live else None
                 upload_id = upload.id if upload else None
-                if upload_id or live_id:
-                    if old_data:
-                        old_data[info['id']] = {'live': live_id or 'empty', 'upload': upload_id or 'empty'}
-                        await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
-                    else:
-                        empty = {info['id']: {'live': live_id or 'empty', 'upload': upload_id or 'empty'}}
-                        await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
+                if old_data:
+                    old_data[info['id']] = {'live': 'empty', 'upload': upload_id or 'empty'}
+                    await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
                 else:
-                    await ctx.edit_response(
-                        embed=discord.Embed(
-                            title=f'{Emo.WARN} No uploads found {Emo.WARN}',
-                            description=f'No video has been found in this Channel!'
-                                        f'\nPlease try with a channel with videos in it.'),
-                        view=None)
-                    return
+                    empty = {info['id']: {'live': 'empty', 'upload': upload_id or 'empty'}}
+                    await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
+
                 receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
                 if receivers:
                     data = receivers
