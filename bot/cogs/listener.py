@@ -54,10 +54,7 @@ class Listeners(commands.Cog):
         intro = await valid_intro_channel(guild)
 
         if intro:
-            try:
-                await intro.send(embed=emd)
-            except discord.errors.Forbidden:
-                pass
+            await intro.send(embed=emd)
 
         logger = self.bot.get_channel(899864601057976330)
         await logger.send(
