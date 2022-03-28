@@ -78,8 +78,8 @@ async def sub_view_youtube(ctx: Context, url: str):
                     description=f'\n> **Subs:** {info["subscribers"]}\n> **Views:** {info["views"]}',
                     url=info["url"], color=0xc4302b)
                 emd.set_footer(text='Select a text channel from the menu to receive notifications for current channel')
-                banner_url = info.get('banner_url')
-                avatar_url = info.get('avatar_url')
+                banner_url = info.get('banner')
+                avatar_url = info.get('avatar')
                 if banner_url and banner_url.startswith('http'):
                     emd.set_image(url=banner_url)
                 if avatar_url and avatar_url.startswith('http'):
