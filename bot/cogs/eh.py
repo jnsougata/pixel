@@ -11,7 +11,7 @@ class ErrorHandler(app_util.Cog):
         self.bot = bot
 
     @app_util.Cog.listener
-    async def on_command_error(self, ctx: app_util.Context, error: Exception):
+    async def on_app_command_error(self, ctx: app_util.Context, error: Exception):
 
         button = discord.ui.Button(
             label='DEV SERVER',
