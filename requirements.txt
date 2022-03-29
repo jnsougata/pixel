@@ -3,6 +3,6 @@ pillow==9.0.1
 aiohttp==3.8.1
 airdrive==0.2.8
 requests==2.27.1
-git+https://github.com/jnsougata/aiotube
 git+https://github.com/Rapptz/discord.py
+git+https://github.com/jnsougata/aiotube
 git+https://github.com/jnsougata/app_util
