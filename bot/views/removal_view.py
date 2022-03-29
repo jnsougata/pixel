@@ -11,7 +11,7 @@ async def create_menu(data: dict, loop: asyncio.AbstractEventLoop):
     channel_ids = list(data)
 
     def get_channel_names():
-        return [aiotube.Channel(id_).name for id_ in channel_ids]
+        return [aiotube.Channel(id_).name or 'EMPTY' for id_ in channel_ids]
     channel_names = await loop.run_in_executor(None, get_channel_names)
     return [discord.SelectOption(label=name, value=id_, emoji=Emo.YT)
             for name, id_ in zip(channel_names, channel_ids)][:24]
