@@ -5,6 +5,16 @@ from bot.extras.func import db_push_object, db_fetch_object
 
 
 async def sub_view_reception(ctx: Context, channel: discord.TextChannel):
+    
+    if not channel.permissions_for(ctx.me).send_messages:
+        
+        embed=discord.Embed(
+            title=f'{Emo.WARN} I Cannot Set That As A Receiver',
+            description=f'I cannot set the receiver as {channel.mention} Because I am unable to send messages in that channel'
+        )
+        await ctx.edit_response(embed=embed)
+        return
+    
     emd = discord.Embed(
         title=f'{Emo.CHECK} Reception Updated',
         description=f'Current set reception channel is {channel.mention}'
