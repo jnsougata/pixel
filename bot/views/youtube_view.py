@@ -3,7 +3,6 @@ import aiotube
 import app_util
 import discord
 import asyncio
-from aiotube import Channel
 from bot.extras.emojis import *
 from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object
@@ -61,8 +60,8 @@ async def sub_view_youtube(ctx: Context, url: str):
             total_channels = []
         if len(total_channels) < 24:
             try:
-                channel = Channel(url)
-            except (aiotube.InvalidURL, aiotube.BadURL, aiotube.AIOError):
+                channel = aiotube.Channel(url)
+            except (aiotube.errors.InvalidURL, aiotube.errors.BadURL, aiotube.errors.AIOError):
                 await ctx.send_followup(
                     embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
                 return
