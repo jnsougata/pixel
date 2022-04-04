@@ -24,7 +24,9 @@ async def check(ctx: app_util.Context):
         await ctx.send_response(
             f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
     elif not ctx.options:
-        await ctx.send_response('> 👀  you must select at least one option')
+        await ctx.send_response('> 👀  you must select **at least one option**')
+    elif len(ctx.options) > 1:
+        await ctx.send_response('> 👀  please use only **one option at a time**')
     else:
         return True
 
@@ -43,7 +45,7 @@ class Setup(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(
             name='setup',
-            description='configure PixeL for your Server',
+            description='configure PixeL for your server',
             options=[
                 app_util.StrOption(
                     name='youtube',

@@ -8,6 +8,11 @@ from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
+def has_perms(channel: discord.TextChannel, ctx: Context):
+    bot_can = channel.permissions_for(ctx.me)
+    return bot_can.send_messages and bot_can.embed_links and bot_can.use_external_emojis
+
+
 class ReceiverSelection(discord.ui.Select):
 
     def __init__(self, ctx, info, data):
@@ -15,11 +20,14 @@ class ReceiverSelection(discord.ui.Select):
         self.db_data = data
         self.info = info
         channels = ctx.guild.text_channels
-        eligible = [channel for channel in channels if channel.permissions_for(ctx.me).embed_links]
-        options = [discord.SelectOption(label=channel.name, value=str(channel.id), emoji=Emo.TEXT)
-                   for channel in eligible[:24]]
-        options.insert(0, discord.SelectOption(label='default', value='0', emoji=Emo.CHECK))
-        super().__init__(placeholder='Select a text channel', min_values=1, max_values=1, options=options)
+        eligible = [channel for channel in channels if has_perms(channel, ctx)][:24]
+        options = [
+            discord.SelectOption(label=channel.name, value=str(channel.id), emoji=Emo.TEXT) for channel in eligible]
+        options.insert(0, discord.SelectOption(label='default', value='0', emoji=Emo.TEXT))
+        super().__init__(
+            placeholder='select a text channel to set as receiver',
+            min_values=1, max_values=1, options=options,
+        )
 
     async def callback(self, interaction: discord.Interaction):
         if interaction.user == self.ctx.author:
@@ -98,13 +106,12 @@ async def sub_view_youtube(ctx: Context, url: str):
                 else:
                     data = {}
                 menu = discord.ui.View()
-                menu.timeout = 120
                 menu.add_item(ReceiverSelection(ctx, info, data))
                 await ctx.send_followup(embed=emd, view=menu)
         else:
             await ctx.send_followup(
                 embed=discord.Embed(
-                    description=f'{Emo.WARN} You have exceeded the maximum allowed channels {Emo.WARN}'))
+                    description=f'{Emo.WARN} You have exceeded the number of maximum allowed channels {Emo.WARN}'))
     else:
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',

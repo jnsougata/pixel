@@ -7,6 +7,34 @@ from app_util import Context, Bot
 from bot.extras.func import db_fetch_object, drive, db_push_object, drive
 
 
+class OptionView(discord.ui.View):
+    def __init__(self, ctx: Context):
+        self.ctx = ctx
+        super().__init__()
+        self.value = None
+
+    @discord.ui.button(label='Welcome', style=discord.ButtonStyle.green, emoji=f'{Emo.IMG}')
+    async def welcome(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = 1
+            self.stop()
+
+    @discord.ui.button(label='Upload', style=discord.ButtonStyle.blurple, emoji=f'{Emo.YT}')
+    async def upload(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = 2
+            self.stop()
+
+    @discord.ui.button(label='Live', style=discord.ButtonStyle.red, emoji=f'{Emo.LIVE}')
+    async def live(self, button: discord.ui.Button, interaction: discord.Interaction):
+        if self.ctx.author == interaction.user:
+            self.value = 3
+            self.stop()
+
+    async def on_timeout(self) -> None:
+        pass
+
+
 async def create_menu(data: dict, loop: asyncio.AbstractEventLoop):
     channel_ids = list(data)
 
@@ -20,41 +48,43 @@ async def create_menu(data: dict, loop: asyncio.AbstractEventLoop):
 class ChannelMenu(discord.ui.Select):
     def __init__(self, ctx: Context, menu: list):
         self.ctx = ctx
-        super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing channels')
+        super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing youtube channels')
 
 
     async def callback(self, interaction: discord.Interaction):
+        channel_id = self.values[0]
         if interaction.user == self.ctx.author:
-            if self.values[0] == '0':
+            if channel_id == '0':
                 await self.ctx.delete_response()
                 return
-            ch = aiotube.Channel(self.values[0])
+            ch = aiotube.Channel(channel_id)
             info = ch.info
             emd = discord.Embed(
-                description=f'{Emo.CROSS} [{info["name"]}]({info["url"]})'
-                            f'\n**Subs:** {info["subscribers"]}'
-                            f'\n**Views:** {info["views"]}'
-                            f'\n**Id:** {info["id"]}',
+                title=f'{Emo.WARN} {info["name"]}',
+                description=f'\n> **Subs:** {info["subscribers"]}'
+                            f'\n> **Views:** {info["views"]}'
+                            f'\n> **Id:** {info["id"]}',
+                url=info["url"],
                 color=0xc4302b)
-            banner_url = info.get('banner_url')
-            avatar_url = info.get('avatar_url')
+            banner_url = info['banner']
+            avatar_url = info['avatar']
             if banner_url and banner_url.startswith('http'):
                 emd.set_image(url=banner_url)
             if avatar_url and avatar_url.startswith('http'):
                 emd.set_thumbnail(url=avatar_url)
             await self.ctx.edit_response(embed=emd, view=None)
-            yt_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
-            rc_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='receivers')
+            channel_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
+            receiver_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='receivers')
             try:
-                yt_data.pop(self.values[0])
+                channel_data.pop(channel_id)
             except KeyError:
                 pass
             try:
-                rc_data.pop(self.values[0])
+                receiver_data.pop(channel_id)
             except KeyError:
                 pass
-            await db_push_object(guild_id=self.ctx.guild.id, item=yt_data, key='youtube')
-            await db_push_object(guild_id=self.ctx.guild.id, item=rc_data, key='receivers')
+            await db_push_object(guild_id=self.ctx.guild.id, item=channel_data, key='youtube')
+            await db_push_object(guild_id=self.ctx.guild.id, item=receiver_data, key='receivers')
 
 
 async def sub_view_remove(ctx: Context, value: int):
@@ -62,8 +92,7 @@ async def sub_view_remove(ctx: Context, value: int):
     if value == 0:
         data = await db_fetch_object(ctx.guild.id, 'receivers')
         if data:
-            loop = asyncio.get_event_loop()
-            menu = await create_menu(data, loop)
+            menu = await create_menu(data, ctx.client.loop)
             menu.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
             view = discord.ui.View()
             view.add_item(ChannelMenu(ctx, menu))
@@ -100,34 +129,6 @@ async def sub_view_remove(ctx: Context, value: int):
         data = await db_fetch_object(ctx.guild.id, 'text')
 
         if data:
-
-            class OptionView(discord.ui.View):
-                def __init__(self, ctx: Context):
-                    self.ctx = ctx
-                    self.timeout = 60
-                    super().__init__()
-                    self.value = None
-
-                @discord.ui.button(label='Welcome', style=discord.ButtonStyle.green, emoji=f'{Emo.IMG}')
-                async def welcome(self, button: discord.ui.Button, interaction: discord.Interaction):
-                    if self.ctx.author == interaction.user:
-                        self.value = 1
-                        self.stop()
-
-                @discord.ui.button(label='Upload', style=discord.ButtonStyle.blurple, emoji=f'{Emo.YT}')
-                async def upload(self, button: discord.ui.Button, interaction: discord.Interaction):
-                    if self.ctx.author == interaction.user:
-                        self.value = 2
-                        self.stop()
-
-                @discord.ui.button(label='Live', style=discord.ButtonStyle.red, emoji=f'{Emo.LIVE}')
-                async def live(self, button: discord.ui.Button, interaction: discord.Interaction):
-                    if self.ctx.author == interaction.user:
-                        self.value = 3
-                        self.stop()
-
-                async def on_timeout(self) -> None:
-                    pass
 
             view = OptionView(ctx)
             emd = discord.Embed(description='> Tap a button to remove corresponding msg:')
