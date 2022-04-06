@@ -14,19 +14,19 @@ class OptionView(discord.ui.View):
         self.value = None
 
     @discord.ui.button(label='Welcome', style=discord.ButtonStyle.green, emoji=f'{Emo.IMG}')
-    async def welcome(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def welcome(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.ctx.author == interaction.user:
             self.value = 1
             self.stop()
 
     @discord.ui.button(label='Upload', style=discord.ButtonStyle.blurple, emoji=f'{Emo.YT}')
-    async def upload(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def upload(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.ctx.author == interaction.user:
             self.value = 2
             self.stop()
 
     @discord.ui.button(label='Live', style=discord.ButtonStyle.red, emoji=f'{Emo.LIVE}')
-    async def live(self, button: discord.ui.Button, interaction: discord.Interaction):
+    async def live(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.ctx.author == interaction.user:
             self.value = 3
             self.stop()
