@@ -68,12 +68,12 @@ async def sub_view_youtube(ctx: Context, url: str):
             total_channels = []
         if len(total_channels) < 24:
             try:
-                channel = aiotube.Channel(url)
+                channel = aiotube.Channel(url.replace(' ', ''))
             except (aiotube.errors.InvalidURL, aiotube.errors.BadURL, aiotube.errors.AIOError):
                 await ctx.send_followup(
                     embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
                 return
-            except aiotube.TooManyRequests:
+            except aiotube.errors.TooManyRequests:
                 await ctx.send_followup(
                     embed=discord.Embed(
                         description=f'{Emo.WARN} you are requesting too often, try again in a few seconds'))
