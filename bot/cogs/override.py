@@ -73,8 +73,12 @@ class Override(app_util.Cog):
 
         try:
             ch = Channel(url)
+       
+            if ch is None:
+                return await ctx.send_followup(f'{Emo.WARN} Invalid Channel URL Or ID')
+            
         except Exception:
-            return await ctx.send_followup(f'{Emo.WARN} entered invalid youtube channel url or id')
+            return await ctx.send_followup(f'{Emo.WARN} Invalid Channel URL Or ID')
         else:
             channel_id = ch.id
             channel_name = ch.name
