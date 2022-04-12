@@ -38,7 +38,9 @@ class Override(app_util.Cog):
     )
     async def force_check(self, ctx: app_util.Context, url: str):
 
-        await ctx.defer(ephemeral=True)
+        base_string = ''
+
+        await ctx.defer()
 
         # helper funcs
         async def create_receiver(guild: discord.Guild, youtube_id: str):
@@ -73,12 +75,14 @@ class Override(app_util.Cog):
 
         try:
             ch = Channel(url)
+            info = ch.info
+            channel_id = info['id']
+            channel_name = info['name']
         except Exception:
-            return await ctx.send_followup(f'{Emo.WARN} entered invalid youtube channel url or id')
+            await ctx.send_followup(f'{Emo.WARN} entered **invalid** youtube channel url or id')
         else:
-            channel_id = ch.id
-            channel_name = ch.name
-            await ctx.send_followup(f'{Emo.CHECK} Checking for new videos in {channel_name}')
+            base_string += f'\n{Emo.CHECK} checking for new videos in **{channel_name}**'
+            fl = await ctx.send_followup(base_string)
             data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
             if data and data.get(channel_id):
                 receiver = await create_receiver(ctx.guild, channel_id)
@@ -90,9 +94,8 @@ class Override(app_util.Cog):
                             live_url = live.url
                             live_id = live.id
                             if data[channel_id]['live'] != live_id:
-                                await ctx.send_followup(
-                                    f'{Emo.LIVE} Found new livestream: {live_url}'
-                                    f'\nSending notification...', ephemeral=True)
+                                base_string += f'\n{Emo.LIVE} found new livestream: {live_url}'
+                                await fl.edit(base_string)
                                 try:
                                     message = await custom_message('live', ctx.guild, channel_name, live_url)
                                     if message:
@@ -103,30 +106,27 @@ class Override(app_util.Cog):
                                             content = f'> {Emo.LIVE} **{ch.name}** is live now \n> {mention} {live_url}'
                                         else:
                                             content = f'> {Emo.LIVE} **{ch.name}** is live now \n> {live_url}'
-                                except Exception as e:
-                                    print(e)
-                                    await ctx.send_followup(
-                                        f'{Emo.WARN} Failed to send livestream notification'
-                                        f'\nPlease check your server configuration'
-                                        f'\n\n** This notification will not be sent again **'
-                                        f'\n\n{live_url}',
-                                        ephemeral=True
-                                    )
+                                except Exception:
+                                    base_string += f'\n{Emo.WARN} Failed to send livestream notification' \
+                                                   f'\nPlease check your server configuration' \
+                                                   f'\n\n** This notification will not be sent again ** \n\n{live_url}'
+                                    await fl.edit(base_string)
                                 finally:
                                     data[channel_id]['live'] = live_id
                             else:
-                                await ctx.send_followup(f'{Emo.LIVE} New livestream NOT FOUND', ephemeral=True)
+                                base_string += f'\n{Emo.LIVE} new livestream **NOT FOUND**'
+                                await fl.edit(base_string)
                         else:
-                            await ctx.send_followup(f'{Emo.CHECK} Channel is currently NOT LIVE', ephemeral=True)
+                            base_string += f'\n{Emo.CHECK} channel is currently **NOT LIVE**'
+                            await fl.edit(base_string)
 
                         latest = ch.recent_uploaded
                         if latest:
                             latest_id = latest.id
                             latest_url = latest.url
                             if latest_id != data[channel_id]['upload']:
-                                await ctx.send_followup(
-                                    f'{Emo.YT} Found new upload: {latest_url}'
-                                    f'\nSending notification...', ephemeral=True)
+                                base_string += f'\n{Emo.YT} found new upload: {latest_url}'
+                                await fl.edit(base_string)
                                 message = await custom_message('upload', ctx.guild, channel_name, latest_url)
                                 if message:
                                     content = message
@@ -137,27 +137,26 @@ class Override(app_util.Cog):
                                         content = f'> {Emo.YT} **{ch.name}** uploaded a new video \n> {latest_url}'
                                 try:
                                     await receiver.send(content)
-                                except Exception as e:
-                                    print(e)
-                                    await ctx.send_followup(
-                                        f'{Emo.WARN} Failed to send upload notification'
-                                        f'\nPlease check your sever configuration'
-                                        f'\n\n** This notification will not be sent again **'
-                                        f'\n\n{latest_url}',
-                                        ephemeral=True
-                                    )
+                                except Exception:
+                                    base_string += f'\n{Emo.WARN} Failed to send upload notification'\
+                                        f'\nPlease check your sever configuration'\
+                                        f'\n\n** This notification will not be sent again **\n\n{latest_url}'
+                                    await fl.edit(base_string)
                                 finally:
                                     data[channel_id]['upload'] = latest_id
                                     await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
                             else:
-                                await ctx.send_followup(f'{Emo.YT} New upload NOT FOUND', ephemeral=True)
+                                base_string += f'\n{Emo.CHECK} new upload **NOT FOUND**'
+                                await fl.edit(base_string)
                         await db_push_object(guild_id=ctx.guild.id, item=data, key='youtube')
                     except Exception:
-                        await ctx.send_followup(f'{Emo.WARN} Something Unexpected Occurred!')
+                        base_string += f'\n{Emo.WARN} something unexpected occurred!'
+                        await fl.edit(base_string)
                 else:
-                    await ctx.send_followup(f'{Emo.WARN} I didn\'t find any receiver!')
+                    base_string += f'\n{Emo.WARN} I didn\'t find any receiver!'
+                    await fl.edit(base_string)
             else:
-                await ctx.send_followup(f'{Emo.WARN} this youtube channel doesn\'t belong to this server!')
+                await fl.edit(f'{Emo.WARN} this youtube channel doesn\'t belong to this server!')
 
 
 async def setup(bot: app_util.Bot):
