@@ -28,7 +28,7 @@ class Override(app_util.Cog):
     def __init__(self, bot: app_util.Bot):
         self.bot = bot
 
-    @app_util.Cog.before_invoke(check=check)
+    @app_util.Cog.before_invoke(check_handler=check)
     @app_util.Cog.command(
         command=app_util.SlashCommand(
             name='force',

@@ -46,7 +46,7 @@ class Help(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(name='help', description='information about the features')
     )
-    @app_util.Cog.before_invoke(check=check)
+    @app_util.Cog.before_invoke(check_handler=check)
     async def help_command(self, ctx: app_util.Context):
         view = CustomView(ctx)
         emd = discord.Embed(

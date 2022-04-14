@@ -70,7 +70,7 @@ class More(app_util.Cog):
             ],
         ),
     )
-    @app_util.Cog.before_invoke(check=check)
+    @app_util.Cog.before_invoke(check_handler=check)
     async def more_command(self, ctx: app_util.Context, *, remove: int, overview: int):
 
         await ctx.defer()

@@ -45,7 +45,7 @@ class Setup(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(
             name='setup',
-            description='configure PixeL for your server',
+            description='set configuration for your server',
             options=[
                 app_util.StrOption(
                     name='youtube',
@@ -90,7 +90,7 @@ class Setup(app_util.Cog):
             ],
         )
     )
-    @app_util.Cog.before_invoke(check=check)
+    @app_util.Cog.before_invoke(check_handler=check)
     async def setup_command(
             self, ctx: app_util.Context,
             *,
