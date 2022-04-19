@@ -84,7 +84,8 @@ class Listeners(commands.Cog):
 
         if not member.bot:
             guild_id = member.guild.id
-            reception_id = self.bot.cached[guild_id].get('RECEPTION')
+            cached = self.bot.cached.get(guild_id)
+            reception_id = cached.get('RECEPTION') if cached else None
 
             if reception_id and reception_id.isdigit():
                 reception = member.guild.get_channel(int(reception_id))
