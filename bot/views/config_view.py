@@ -1,34 +1,34 @@
 import io
 import aiotube
 import discord
-import asyncio
 from bot.extras.emojis import Emo
-from app_util import Context
-from bot.extras.func import db_fetch_object, drive
+from app_util import Context, Bot
+from bot.extras.func import drive
 
 
-async def sub_view_config(ctx: Context, value: int):
+async def sub_view_config(bot: Bot, ctx: Context, value: int):
 
     if value == 0:
-        data = await db_fetch_object(ctx.guild.id, 'receivers')
+        data = bot.cached[ctx.guild.id].get('CHANNELS')
         if data:
-            def get_values():
+
+            def build_list():
                 info = []
                 for key, value in data.items():
                     yt_channel = aiotube.Channel(key)
-                    info.append(f'{Emo.TEXT} <#{value}> {Emo.YT} [{yt_channel.name}]({yt_channel.url}) ')
+                    info.append(f'{Emo.TEXT} <#{value["receiver"]}> {Emo.YT} [{yt_channel.name}]({yt_channel.url}) ')
                 return info
-            loop = asyncio.get_event_loop()
-            values = await loop.run_in_executor(None, get_values)
+
+            values = await bot.loop.run_in_executor(None, build_list)
             emd = discord.Embed(description='\n\n'.join(values))
             await ctx.send_followup(embed=emd)
         else:
             await ctx.send_followup('> 👀 you haven\'t subscribed to any channels yet!')
 
     elif value == 1:
-        data = await db_fetch_object(ctx.guild.id, 'alertchannel')
-        if data and data[0].isdigit():
-            channel = ctx.guild.get_channel(int(data[0]))
+        data = data = bot.cached[ctx.guild.id].get('RECEIVER')
+        if data and data.isdigit():
+            channel = ctx.guild.get_channel(int(data))
             emd = discord.Embed(
                 title=f'{Emo.CHECK} Default Receiver',
                 description=f'The current set default receiver channel is '
@@ -39,9 +39,9 @@ async def sub_view_config(ctx: Context, value: int):
             await ctx.send_followup('> 👀 you haven\'t set any default receiver yet!')
 
     elif value == 2:
-        data = await db_fetch_object(ctx.guild.id, 'welcome')
-        if data and data[0].isdigit():
-            channel = ctx.guild.get_channel(int(data[0]))
+        data = data = bot.cached[ctx.guild.id].get('RECEPTION')
+        if data and data.isdigit():
+            channel = ctx.guild.get_channel(int(data))
             emd = discord.Embed(
                 title=f'{Emo.CHECK} Reception Channel',
                 description=f'The current set reception channel is {channel.mention if channel else "<#1>"}'
@@ -51,9 +51,9 @@ async def sub_view_config(ctx: Context, value: int):
             await ctx.send_followup('> 👀 you haven\'t set any reception channel yet!')
 
     elif value == 3:
-        data = await db_fetch_object(ctx.guild.id, 'arole')
-        if data and data[0].isdigit():
-            role = ctx.guild.get_role(int(data[0]))
+        data = data = bot.cached[ctx.guild.id].get('PINGROLE')
+        if data and data.isdigit():
+            role = ctx.guild.get_role(int(data))
             if role == ctx.guild.default_role:
                 mention = '@everyone'
             else:
@@ -67,27 +67,33 @@ async def sub_view_config(ctx: Context, value: int):
             await ctx.send_followup('> 👀 you haven\'t set any ping role yet!')
 
     elif value == 4:
-        def form_cache():
+
+        def cache_card():
             try:
                 chunks = drive.cache(f'covers/{ctx.guild.id}_card.png')
             except Exception:
                 chunks = drive.cache(f'covers/default_card.png')
             return io.BytesIO(chunks)
-        loop = asyncio.get_event_loop()
-        content = loop.run_in_executor(None, form_cache)
+
+        content = await bot.loop.run_in_executor(None, cache_card)
         emd = discord.Embed(title=f'{Emo.CHECK} Welcome Card')
         emd.set_image(url=f'attachment://card.png')
-        await ctx.send_followup(embed=emd, file=discord.File(await content, filename='card.png'))
+        await ctx.send_followup(embed=emd, file=discord.File(content, filename='card.png'))
 
     elif value == 5:
-        data = await db_fetch_object(ctx.guild.id, 'text')
+        data = data = bot.cached[ctx.guild.id].get('CUSTOM')
+
         if data:
             emojis = [Emo.DEAL, Emo.YT, Emo.LIVE]
-            slots = ['welcome', 'upload', 'live']
-            msg = [data.get(slot, 'None') for slot in slots]
-            zipped = zip(emojis, slots, msg)
-            embeds = [discord.Embed(title=f'{emoji} {slot.capitalize()} Message', description=f'```\n{msg}\n```')
-                      for emoji, slot, msg in zipped]
+            scopes = ['welcome', 'upload', 'live']
+            messages = [data.get(slot, None) for slot in scopes]
+            zipped = zip(emojis, scopes, messages)
+            embeds = [
+                discord.Embed(
+                    title=f'{emoji} {scope.capitalize()} Message',
+                    description=f'```\n{message}\n```')
+                for emoji, scope, message in zipped if message]
+
             await ctx.send_followup(embeds=embeds)
         else:
             await ctx.send_followup('> 👀 you haven\'t set any custom messages yet!')

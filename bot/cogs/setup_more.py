@@ -76,11 +76,11 @@ class More(app_util.Cog):
         await ctx.defer()
 
         if remove is not None:
-            await sub_view_remove(ctx, remove)
+            await sub_view_remove(self.bot, ctx, remove)
             return
 
         if overview is not None:
-            await sub_view_config(ctx, overview)
+            await sub_view_config(self.bot, ctx, overview)
             return
 
 

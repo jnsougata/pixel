@@ -99,26 +99,26 @@ class Setup(app_util.Cog):
 
         if youtube:
             await ctx.defer()
-            await sub_view_youtube(ctx, youtube)
+            await sub_view_youtube(self.bot, ctx, youtube)
             return
         if receiver:
             await ctx.defer()
-            await sub_view_receiver(ctx, receiver)
+            await sub_view_receiver(self.bot, ctx, receiver)
             return
         if reception:
             await ctx.defer()
-            await sub_view_reception(ctx, reception)
+            await sub_view_reception(self.bot, ctx, reception)
             return
         if ping_role:
             await ctx.defer()
-            await sub_view_pingrole(ctx, ping_role)
+            await sub_view_pingrole(self.bot, ctx, ping_role)
             return
         if welcome_card:
             await ctx.defer()
-            await sub_view_welcomecard(ctx, welcome_card.url)
+            await sub_view_welcomecard(self.bot, ctx, welcome_card.url)
             return
         if custom_message is not None:
-            await sub_view_msg(ctx, custom_message, self.bot)
+            await sub_view_msg(self.bot, ctx, custom_message)
             return
 
 

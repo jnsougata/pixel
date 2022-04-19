@@ -2,9 +2,9 @@ import aiotube
 import app_util
 import discord
 import asyncio
+from asyncdeta import Field
 from bot.extras.emojis import *
 from app_util import Context, Bot
-from bot.extras.func import db_push_object, db_fetch_object
 
 
 def has_perms(channel: discord.TextChannel, ctx: Context):
@@ -14,9 +14,9 @@ def has_perms(channel: discord.TextChannel, ctx: Context):
 
 class ReceiverSelection(discord.ui.Select):
 
-    def __init__(self, ctx, info, data):
+    def __init__(self, bot, ctx, info):
+        self.bot = bot
         self.ctx = ctx
-        self.db_data = data
         self.info = info
         channels = ctx.guild.text_channels
         eligible = [channel for channel in channels if has_perms(channel, ctx)][:24]
@@ -37,35 +37,38 @@ class ReceiverSelection(discord.ui.Select):
                                 f'\n> Bound to <#{self.values[0]}> for receiving notifications',
                     url=self.info['url'])
                 await self.ctx.edit_response(embed=emd, view=None)
-                self.db_data[self.info['id']] = str(self.values[0])
-                await db_push_object(guild_id=self.ctx.guild.id, item=self.db_data, key='receivers')
+                self.bot.cached[self.ctx.guild.id]['CHANNELS'][self.info['id']]['receiver'] = str(self.values[0])
             else:
-                default = await db_fetch_object(guild_id=self.ctx.guild.id, key='alertchannel')
+                default = self.bot.cached[self.ctx.guild.id]['RECEIVER']
                 emd = discord.Embed(
                     description=f'{Emo.YT} **[{self.info["name"]}]({self.info["url"]})**'
                                 f'\n\n> {Emo.CHECK} YouTube channel added successfully'
-                                f'\n> Bound to <#{default[0]}> for receiving notifications',
+                                f'\n> Bound to <#{default}> for receiving notifications',
                     url=self.info['url'])
                 await self.ctx.edit_response(embed=emd, view=None)
-                self.db_data[self.info['id']] = default[0]
-                await db_push_object(guild_id=self.ctx.guild.id, item=self.db_data, key='receivers')
+                self.bot.cached[self.ctx.guild.id]['CHANNELS'][self.info['id']]['receiver'] = default
+
+            await self.bot.db.add_field(
+                key=str(self.ctx.guild.id),
+                field=Field(name='CHANNELS', value=self.bot.cached[self.ctx.guild.id]['CHANNELS']),
+                force=True
+            )
 
 
-async def sub_view_youtube(ctx: Context, url: str):
+async def sub_view_youtube(bot: Bot, ctx: Context, url: str):
 
-    raw = await db_fetch_object(guild_id=ctx.guild.id, key='alertchannel')
+    def check():
+        receiver = bot.cached[ctx.guild.id].get('RECEIVER')
+        return receiver and receiver.isdigit() and ctx.guild.get_channel(int(receiver))
 
-    def _check():
-        if raw and raw[0].isdigit():
-            return ctx.guild.get_channel(int(raw[0]))
 
-    if raw and _check():
-        old_data = await db_fetch_object(guild_id=ctx.guild.id, key='youtube')
+    if check():
+        old_data = bot.cached[ctx.guild.id].get('CHANNELS')
         if old_data:
-            total_channels = list(old_data)
+            total_channels = len(list(old_data))
         else:
-            total_channels = []
-        if len(total_channels) < 24:
+            total_channels = 0
+        if total_channels <= 23:
             try:
                 channel = aiotube.Channel(url.replace(' ', ''))
                 info = channel.info
@@ -91,19 +94,15 @@ async def sub_view_youtube(ctx: Context, url: str):
                 upload = channel.recent_uploaded
                 upload_id = upload.id if upload else None
                 if old_data:
-                    old_data[info['id']] = {'live': 'empty', 'upload': upload_id or 'empty'}
-                    await db_push_object(guild_id=ctx.guild.id, item=old_data, key='youtube')
+                    bot.cached[ctx.guild.id]['CHANNELS'][info['id']] = {
+                        'live': 'empty', 'upload': upload_id or 'empty'
+                    }
                 else:
-                    empty = {info['id']: {'live': 'empty', 'upload': upload_id or 'empty'}}
-                    await db_push_object(guild_id=ctx.guild.id, item=empty, key='youtube')
-
-                receivers = await db_fetch_object(guild_id=ctx.guild.id, key='receivers')
-                if receivers:
-                    data = receivers
-                else:
-                    data = {}
+                    bot.cached[ctx.guild.id]['CHANNELS'] = {
+                        [info['id']]: {'live': 'empty', 'upload': upload_id or 'empty'}
+                    }
                 menu = discord.ui.View()
-                menu.add_item(ReceiverSelection(ctx, info, data))
+                menu.add_item(ReceiverSelection(bot, ctx, info))
                 await ctx.send_followup(embed=emd, view=menu)
         else:
             await ctx.send_followup(

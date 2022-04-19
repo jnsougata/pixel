@@ -1,10 +1,11 @@
+import asyncio
 import io
 import aiotube
 import discord
-import asyncio
+from asyncdeta import Field
 from bot.extras.emojis import Emo
 from app_util import Context, Bot
-from bot.extras.func import db_fetch_object, drive, db_push_object, drive
+from bot.extras.func import drive
 
 
 class OptionView(discord.ui.View):
@@ -35,14 +36,17 @@ class OptionView(discord.ui.View):
         pass
 
 
-async def create_menu(data: dict, loop: asyncio.AbstractEventLoop):
-    channel_ids = list(data)
+async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
 
     def get_channel_names():
         return [aiotube.Channel(id_).name or 'EMPTY' for id_ in channel_ids]
+
     channel_names = await loop.run_in_executor(None, get_channel_names)
-    return [discord.SelectOption(label=name, value=id_, emoji=Emo.YT)
-            for name, id_ in zip(channel_names, channel_ids)][:24]
+
+    return [
+               discord.SelectOption(label=name, value=id_, emoji=Emo.YT)
+               for name, id_ in zip(channel_names, channel_ids)
+           ][:24]
 
 
 class ChannelMenu(discord.ui.Select):
@@ -87,12 +91,14 @@ class ChannelMenu(discord.ui.Select):
             await db_push_object(guild_id=self.ctx.guild.id, item=receiver_data, key='receivers')
 
 
-async def sub_view_remove(ctx: Context, value: int):
+async def sub_view_remove(bot: Bot, ctx: Context, value: int):
 
     if value == 0:
-        data = await db_fetch_object(ctx.guild.id, 'receivers')
+
+        data = reception = bot.cached[ctx.guild.id].get('CHANNELS')
+
         if data:
-            menu = await create_menu(data, ctx.client.loop)
+            menu = await create_menu(ctx.client.loop, list(data))
             menu.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
             view = discord.ui.View()
             view.add_item(ChannelMenu(ctx, menu))
@@ -103,54 +109,55 @@ async def sub_view_remove(ctx: Context, value: int):
             await ctx.send_followup(embed=discord.Embed(description='> There is no channel to remove.'))
 
     elif value == 1:
-        await db_push_object(ctx.guild.id, ['removed'], 'alertchannel')
+        bot.cached[ctx.guild.id]['RECEIVER'] = None
         await ctx.send_followup(embed=discord.Embed(description='> Default notification channel has been removed.'))
+        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEIVER', None), force=True)
 
     elif value == 2:
-        await db_push_object(ctx.guild.id, ['removed'], 'welcome')
+        bot.cached[ctx.guild.id]['RECEPTION'] = None
         await ctx.send_followup(embed=discord.Embed(description='> Welcome message channel has been removed.'))
+        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', None), force=True)
 
     elif value == 3:
-        await db_push_object(ctx.guild.id, ['removed'], 'arole')
+        bot.cached[ctx.guild.id]['PINGROLE'] = None
         await ctx.send_followup(embed=discord.Embed(description='> Ping role has been removed.'))
+        await bot.db.add_field(key=str(ctx.guild.id), field=Field('PINGROLE', None), force=True)
 
     elif value == 4:
-        loop = asyncio.get_event_loop()
 
-        def remove_card():
+        def delete_card():
             try:
                 drive.delete(f'covers/{ctx.guild.id}_card.png')
-            finally:
-                return
-        await loop.run_in_executor(None, remove_card)
+            except:
+                pass
+        await bot.loop.run_in_executor(None, delete_card)
         await ctx.send_followup(embed=discord.Embed(description='> Welcome Card has been removed.'))
 
     elif value == 5:
-        data = await db_fetch_object(ctx.guild.id, 'text')
+
+        data = bot.cached[ctx.guild.id].get('CUSTOM')
 
         if data:
-
             view = OptionView(ctx)
-            emd = discord.Embed(description='> Tap a button to remove corresponding msg:')
+            emd = discord.Embed(description='> Tap a button to remove corresponding message:')
             await ctx.send_followup(embed=emd, view=view)
             await view.wait()
             if view.value == 1:
                 data['welcome'] = None
-                await db_push_object(ctx.guild.id, data, 'text')
+                await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
                 await ctx.edit_response(
                     embed=discord.Embed(description='> Custom Welcome message has been removed.'), view=None)
 
             elif view.value == 2:
                 data['upload'] = None
-                await db_push_object(ctx.guild.id, data, 'text')
+                await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
                 await ctx.edit_response(
                     embed=discord.Embed(description='> Custom Upload message has been removed.'), view=None)
 
             elif view.value == 3:
                 data['live'] = None
-                await db_push_object(ctx.guild.id, data, 'text')
+                await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
                 await ctx.edit_response(
                     embed=discord.Embed(description='> Custom Live message has been removed.'), view=None)
-
         else:
             await ctx.send_followup('> 👀 you haven\'t set any custom messages yet!')

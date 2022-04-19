@@ -1,6 +1,7 @@
 import os
 import discord
 import app_util
+from asyncdeta import Deta
 
 intent = discord.Intents().default()
 intent.members = True
@@ -19,8 +20,20 @@ class PixeL(app_util.Bot):
         print('------')
 
     async def setup_hook(self) -> None:
+        deta = Deta(os.getenv('DETA_TOKEN'))
+        await deta.connect(session=self.http._HTTPClient__session, loop=self.loop)
+        self.db = deta.base('01PIXEL')
+        await self.build_cache()
         for ext in self.init_ext:
             await self.load_extension(ext)
+
+    async def build_cache(self):
+        fields = await self.db.fetch_all()
+        ref_dict = {}
+        for field in fields:
+            ref_dict[int(field.pop('key'))] = field
+        self.cached = ref_dict
+
 
 
 pixel = PixeL()

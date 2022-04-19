@@ -1,10 +1,11 @@
 import discord
+from asyncdeta import Field
 from bot.extras.emojis import *
 from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
-async def sub_view_receiver(ctx: Context, channel: discord.TextChannel):
+async def sub_view_receiver(bot: Bot, ctx: Context, channel: discord.TextChannel):
 
     bot_can = channel.permissions_for(ctx.me)
 
@@ -32,4 +33,6 @@ async def sub_view_receiver(ctx: Context, channel: discord.TextChannel):
             description=f'The current set default receiver is {channel.mention}'
                         f'\nThis channel will be used by default for notifications')
         await ctx.edit_response(embed=emd)
-        await db_push_object(guild_id=ctx.guild.id, item=[str(channel.id)], key='alertchannel')
+
+        bot.cached[ctx.guild.id]['RECEIVER'] = str(channel.id)
+        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEIVER', str(channel.id)), force=True)

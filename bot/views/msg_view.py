@@ -1,7 +1,7 @@
 import discord
 import app_util
+from asyncdeta import Field
 from bot.extras.emojis import *
-from bot.extras.func import db_push_object, db_fetch_object
 
 for_welcome = '''For member name use: [member.name]
 For server name use: [guild.name]
@@ -49,19 +49,17 @@ async def send_form(ctx: app_util.Context, bot: app_util.Bot, *, option_value: i
         )
         await mcx.send_response(embed=embed)
         data[event] = message
-        await db_push_object(mcx.guild.id, data, 'text')
+        bot.cached[ctx.guild.id]['CUSTOM'] = data
+        await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
 
 
-async def sub_view_msg(ctx: app_util.Context, value: int, bot: app_util.Bot):
+async def sub_view_msg(bot: app_util.Bot, ctx: app_util.Context, value: int):
 
-    raw_data = await db_fetch_object(ctx.guild.id, 'text')
-    if raw_data:
-        db_data = raw_data
-    else:
-        db_data = {}
+    old_data = bot.cached[ctx.guild.id].get('CUSTOM')
+    data = old_data if old_data else {}
     if value == 0:
-        await send_form(ctx, bot, option_value=value, event='welcome', data=db_data)
+        await send_form(ctx, bot, option_value=value, event='welcome', data=data)
     elif value == 1:
-        await send_form(ctx, bot, option_value=value, event='upload', data=db_data)
+        await send_form(ctx, bot, option_value=value, event='upload', data=data)
     elif value == 2:
-        await send_form(ctx, bot, option_value=value, event='live', data=db_data)
+        await send_form(ctx, bot, option_value=value, event='live', data=data)

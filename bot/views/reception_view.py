@@ -4,7 +4,7 @@ from app_util import Context, Bot
 from bot.extras.func import db_push_object, db_fetch_object
 
 
-async def sub_view_reception(ctx: Context, channel: discord.TextChannel):
+async def sub_view_reception(bot: Bot, ctx: Context, channel: discord.TextChannel):
 
     bot_can = channel.permissions_for(ctx.me)
     
@@ -32,4 +32,6 @@ async def sub_view_reception(ctx: Context, channel: discord.TextChannel):
             description=f'Current set reception channel is {channel.mention}'
                         f'\nThis channel will be used to send welcome cards')
         await ctx.edit_response(embed=emd)
-        await db_push_object(guild_id=ctx.guild.id, item=[str(channel.id)], key='welcome')
+
+        bot.cached[ctx.guild.id]['RECEPTION'] = str(channel.id)
+        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', str(channel.id)), force=True)
