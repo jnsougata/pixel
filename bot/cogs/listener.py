@@ -1,13 +1,13 @@
 import io
 import asyncio
 import discord
-import discord.errors
 import airdrive.errors
-from PIL import UnidentifiedImageError
+from asyncdeta import Field
 from discord.ext import commands
 from bot.extras.emojis import Emo
+from bot.extras.func import drive
+from PIL import UnidentifiedImageError
 from bot.extras.card import Io, Canvas
-from bot.extras.func import db_fetch_object, drive
 
 
 class Listeners(commands.Cog):
@@ -34,10 +34,22 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
+
+        await self.bot.db.put_many(
+            key=str(guild.id),
+            fields=[
+                Field('CUSTOM', None),
+                Field('CHANNELS', None),
+                Field('RECEIVER', None),
+                Field('PINGROLE', None),
+                Field('RECEPTION', None),
+            ]
+        )
+        self.bot.cached[guild.id] = {}
         invite = 'https://top.gg/bot/848304171814879273/invite'
         support = 'https://discord.gg/G9fk5HHkZ5'
         emd = discord.Embed(
-            description=f'{Emo.MIC} Sup folks! I\'m **{guild.me.display_name}**'
+            description=f'{Emo.MIC} Sup folks! I\'m **{guild.me}**'
                         f'\n\nTo get started, send `/help`'
                         f'\n\nUse command `/setup` for everything'
                         f'\n\n**Important Links**'
@@ -46,71 +58,61 @@ class Listeners(commands.Cog):
             color=0x2f3136,
         )
 
-        async def valid_intro_channel(_guild: discord.Guild):
-            for channel in _guild.text_channels:
+        def any_text_channel():
+            for channel in guild.text_channels:
                 if channel.permissions_for(guild.me).send_messages:
                     return channel
-
-        intro = await valid_intro_channel(guild)
-
+        intro = any_text_channel()
         if intro:
             await intro.send(embed=emd)
-
         logger = self.bot.get_channel(899864601057976330)
-        await logger.send(
-            embed=discord.Embed(
-                title=f'{Emo.MIC} {guild.name}',
-                description=f'```\nMembers: {guild.member_count}'
-                            f'\n\nID: {guild.id}\n```',
-                colour=discord.Colour.blurple()
-            )
-        )
+        await logger.send(f'✅ {guild.name}(ID:{guild.id})'
+                          f'\n**Owner: {guild.owner_id}**'
+                          f'\n**Member Count: {guild.member_count}**')
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-
-        registry = self.bot.get_channel(899864601057976330)
-        await registry.send(
-            embed=discord.Embed(
-                title=f'{Emo.MIC} {guild.name}',
-                description=f'```\nGuild ID: {guild.id}\n```',
-                colour=discord.Colour.red()
-            )
-        )
+        self.bot.cached.pop(guild.id, None)
+        await self.bot.db.delete(str(guild.id))
+        logger = self.bot.get_channel(899864601057976330)
+        await logger.send(f'❌ {guild.name}(ID:{guild.id})'
+                          f'\n**Owner: {guild.owner_id}**'
+                          f'\n**Member Count: {guild.member_count}**')
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
+
         if not member.bot:
             guild_id = member.guild.id
-            raw = await db_fetch_object(guild_id=guild_id, key='welcome')
-            if raw and raw[0].isdigit():
-                reception = member.guild.get_channel(int(raw[0]))
+            reception_id = self.bot.cached[guild_id].get('RECEPTION')
+
+            if reception_id and reception_id.isdigit():
+                reception = member.guild.get_channel(int(reception_id))
                 if reception:
 
-                    def get_background():
+                    def get_default_cover():
+                        return io.BytesIO(drive.cache('covers/default_card.png'))
+
+                    def get_custom_cover():
                         try:
                             return io.BytesIO(drive.cache(f'covers/{guild_id}_card.png'))
                         except airdrive.errors.FileNotFound:
                             return io.BytesIO(drive.cache('covers/default_card.png'))
 
-                    def get_default():
-                        return io.BytesIO(drive.cache('covers/default_card.png'))
-
-                    loop = asyncio.get_event_loop()
-                    bg_data = await loop.run_in_executor(None, get_background)
+                    bg = await self.bot.loop.run_in_executor(None, get_custom_cover)
                     avatar = member.display_avatar.with_format('png')
-                    av_data = await avatar.read()
-                    round_bg = Io.draw(size=(1500, 1500), color='#FFFFFF')
+                    avatar_io = io.BytesIO(await avatar.read())
+                    round_layer = Io.draw(size=(1500, 1500), color='#FFFFFF')
                     canvas = Canvas(size=(1860, 846), color='black')
 
                     try:
-                        canvas.set_background(fp=bg_data, blur=True)
+                        canvas.set_background(fp=bg, blur=True)
                     except UnidentifiedImageError:
-                        bg_data = await loop.run_in_executor(None, get_default)
-                        canvas.set_background(fp=bg_data, blur=True)
+                        bg = await self.bot.loop.run_in_executor(None, get_default_cover)
+                        canvas.set_background(fp=bg, blur=True)
 
-                    canvas.add_round_image(fp=round_bg, resize=(420, 420), position=(720, 105))
-                    canvas.add_round_image(fp=io.BytesIO(av_data), resize=(390, 390), position=(735, 120))
+                    canvas.add_round_image(fp=round_layer, resize=(420, 420), position=(720, 105))
+                    canvas.add_round_image(fp=avatar_io, resize=(390, 390), position=(735, 120))
                     canvas.add_text(text=f'{member}', auto_align=True, size=90, position=(660, 540))
                     canvas.add_text(
                         size=90,
@@ -126,27 +128,27 @@ class Listeners(commands.Cog):
                         '[member.mention]': member.mention,
                     }
 
-                    def converted(text: str):
+                    def build_text(text: str):
                         for key, value in scopes.items():
                             text = text.replace(key, value)
                         return text
 
-                    msg_data = await db_fetch_object(member.guild.id, 'text')
-                    if msg_data and msg_data.get('welcome'):
-                        raw_text = msg_data['welcome']
-                        message = converted(raw_text)
+                    custom_text = self.bot.cached[guild_id].get('CUSTOM')
+                    if custom_text and custom_text.get('welcome'):
+                        plain_text = custom_text['welcome']
+                        message = build_text(plain_text)
                     else:
-                        raw_text = ' '
+                        plain_text = '[no.ping]'
                         message = f'Welcome to **{member.guild.name}**'
                     emd = discord.Embed(description=message, color=0x2f3136)
                     emd.set_image(url="attachment://hq_card.png")
                     try:
-                        if '[ping.member]' in raw_text:
+                        if '[ping.member]' in plain_text:
                             await reception.send(content=member.mention, embed=emd, file=file)
                         else:
                             await reception.send(embed=emd, file=file)
-                    except Exception:
-                        return
+                    except (discord.errors.Forbidden, discord.errors.HTTPException):
+                        pass
 
 
 async def setup(bot):
