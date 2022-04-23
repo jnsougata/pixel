@@ -1,5 +1,4 @@
 import io
-import sys
 import PIL
 import asyncio
 import aiohttp
@@ -15,11 +14,6 @@ class Io:
 
     @staticmethod
     def draw(size: Tuple, color: str = None):
-        """
-        :param: dimension of the image to be created
-        :param: color of the image (hex string or hex)
-        :return: image in form BytesIO object
-        """
         color = 0x36393f if color is None else color
         new_image = Image.new("RGB", size, color=color)
         buff = io.BytesIO()
@@ -27,34 +21,10 @@ class Io:
         buff.seek(0)
         return buff
 
-    @classmethod
-    async def fetch(cls, url: str):
-        """
-        :param: url of the image to be fetched
-        :return: image form the url in the form of BytesIO Object
-        """
-        async with aiohttp.ClientSession() as session:
-            try:
-                resp = await session.get(url)
-                file = io.BytesIO(await resp.read())
-                try:
-                    Image.open(file)
-                    return file
-                except PIL.UnidentifiedImageError:
-                    return None
-            except Exception:
-                return None
-            finally:
-                await session.close()
-
 
 class Canvas:
 
     def __init__(self, size: Tuple, color: str = None):
-        """
-        :param: tuple of width and height of Canvas
-        :param: Hex or String of the desired color-code
-        """
         color = 0x36393f if color is None else color
         size = size if len(size) >= 2 else None
         card = Image.new("RGB", size, color=color)
@@ -66,11 +36,6 @@ class Canvas:
         self.output = buff
 
     def set_background(self, fp, blur: bool = False):
-        """
-        :param:  bytesio form of the image
-        :param: to make the background blurry
-        :return: None
-        """
         canvas = Image.open(self.output)
         size = canvas.size
         bg = Image.open(fp).convert('RGB')
@@ -87,18 +52,7 @@ class Canvas:
             buff.seek(0)
             self.output = buff
 
-    def add_image(self, fp, resize: Tuple = None, crop: Tuple = None,
-                  position: Tuple = None):
-        """
-        :param: _byte: bytesio form of the image
-        :param: tuple of length 2 (width, height) to resize the image
-        :param: tuple of length 4 (left, top, right, bottom) to crop the image
-        :param: tuple of coordinate (x,y) to where the image will be added into canvas
-        :raises: if _path and _byte both are available
-        :raises: if NoneType is passed as image
-        :raises: if crop and resize both are available
-        :return: None
-        """
+    def add_image(self, fp, resize: Tuple = None, crop: Tuple = None, position: Tuple = None):
         img = Image.open(fp)
         canvas = Image.open(self.output)
         if resize is not None and crop is None:
