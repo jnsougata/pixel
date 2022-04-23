@@ -91,16 +91,10 @@ class Listeners(commands.Cog):
                 reception = member.guild.get_channel(int(reception_id))
                 if reception:
 
-                    def get_default_cover():
-                        return io.BytesIO(drive.cache('covers/default_card.png'))
-
-                    def get_custom_cover():
-                        try:
-                            return io.BytesIO(drive.cache(f'covers/{guild_id}_card.png'))
-                        except airdrive.errors.FileNotFound:
-                            return io.BytesIO(drive.cache('covers/default_card.png'))
-
-                    bg = await self.bot.loop.run_in_executor(None, get_custom_cover)
+                    try:
+                        bg = io.BytesIO(await self.bot.drive.download(f'covers/{guild_id}_card.png'))
+                    except:
+                        bg = io.BytesIO(await self.bot.drive.download('covers/default_card.png'))
                     avatar = member.display_avatar.with_format('png')
                     avatar_io = io.BytesIO(await avatar.read())
                     round_layer = Io.draw(size=(1500, 1500), color='#FFFFFF')
@@ -109,7 +103,7 @@ class Listeners(commands.Cog):
                     try:
                         canvas.set_background(fp=bg, blur=True)
                     except UnidentifiedImageError:
-                        bg = await self.bot.loop.run_in_executor(None, get_default_cover)
+                        bg = io.BytesIO(await self.bot.drive.download('covers/default_card.png'))
                         canvas.set_background(fp=bg, blur=True)
 
                     canvas.add_round_image(fp=round_layer, resize=(420, 420), position=(720, 105))

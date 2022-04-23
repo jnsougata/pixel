@@ -67,22 +67,17 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
             await ctx.send_followup('> 👀 you haven\'t set any ping role yet!')
 
     elif value == 4:
+        try:
+            card = await bot.drive.download(f'covers/{ctx.guild.id}_card.png')
+        except Exception:
+            card = await bot.drive.download(f'covers/default_card.png')
 
-        def cache_card():
-            try:
-                chunks = drive.cache(f'covers/{ctx.guild.id}_card.png')
-            except Exception:
-                chunks = drive.cache(f'covers/default_card.png')
-            return io.BytesIO(chunks)
-
-        content = await bot.loop.run_in_executor(None, cache_card)
         emd = discord.Embed(title=f'{Emo.CHECK} Welcome Card')
         emd.set_image(url=f'attachment://card.png')
-        await ctx.send_followup(embed=emd, file=discord.File(content, filename='card.png'))
+        await ctx.send_followup(embed=emd, file=discord.File(io.BytesIO(card), filename='card.png'))
 
     elif value == 5:
         data = data = bot.cached[ctx.guild.id].get('CUSTOM')
-
         if data:
             emojis = [Emo.DEAL, Emo.YT, Emo.LIVE]
             scopes = ['welcome', 'upload', 'live']

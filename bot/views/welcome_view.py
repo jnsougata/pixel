@@ -1,8 +1,8 @@
 import discord
 import asyncio
+import aiohttp
 from bot.extras.emojis import *
 from app_util import Context, Bot
-from bot.extras.func import drive
 
 
 async def sub_view_welcomecard(bot: Bot, ctx: Context, url: str):
@@ -14,11 +14,11 @@ async def sub_view_welcomecard(bot: Bot, ctx: Context, url: str):
         )
         emd.set_image(url=url)
         await ctx.edit_response(embed=emd)
-
-        def func():
-            drive.upload_from_url(url, f'covers/{ctx.guild.id}_card.png')
-        bot.loop.run_in_executor(None, func)
-
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url) as resp:
+                chunks = await resp.read()
+                await bot.drive.upload(file_name=f'covers/{ctx.guild.id}_card.png', content=chunks)
     else:
         emd = discord.Embed(
             title=f'{Emo.WARN} No Reception Found {Emo.WARN}',
