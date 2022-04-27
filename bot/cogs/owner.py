@@ -3,7 +3,7 @@ import app_util
 import traceback
 from typing import Any
 from bot.extras.emojis import Emo
-from bot.extras.func import drive, db_fetch_object
+from bot.extras.func import db_fetch_object
 import os
 import aiohttp
 from asyncdeta import Deta, Field, Update

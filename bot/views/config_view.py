@@ -3,7 +3,6 @@ import aiotube
 import discord
 from bot.extras.emojis import Emo
 from app_util import Context, Bot
-from bot.extras.func import drive
 
 
 async def sub_view_config(bot: Bot, ctx: Context, value: int):

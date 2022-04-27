@@ -5,7 +5,6 @@ import discord
 from asyncdeta import Field
 from bot.extras.emojis import Emo
 from app_util import Context, Bot
-from bot.extras.func import drive
 
 
 class OptionView(discord.ui.View):
