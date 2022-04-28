@@ -1,7 +1,6 @@
 import os
 from deta import Deta
 from typing import Union
-from airdrive import AirDrive
 from discord.ext import commands
 
 deta = Deta(os.getenv('DETA_TOKEN'))
