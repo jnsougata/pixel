@@ -4,6 +4,7 @@ from typing import Union
 from airdrive import AirDrive
 from discord.ext import commands
 
+deta = Deta(os.getenv('DETA_TOKEN'))
 
 
 async def db_push_object(guild_id: int, item: Union[list, dict, str, int, float], key: str):

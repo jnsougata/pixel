@@ -37,12 +37,25 @@ class ErrorHandler(app_util.Cog):
         tb = ''.join(stack)
         if len(tb) < 4096:
             await logger.send(embed=discord.Embed(
-                description=f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**'
-                            f'\n\n**Command Name:** {ctx.name}\n```py\n{tb}\n```'))
+                title='Something Unexpected Occurred!',
+                description=f'```py'
+                            f'\n-------------------------------'
+                            f'\ncommand_name = {ctx.name}'
+                            f'\nguild_name = {ctx.guild.name} '
+                            f'\nguild_id = {ctx.guild.id}'
+                            f'\n-------------------------------\n{tb}\n```')
+            )
         else:
-            print(f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```')
             await logger.send(embed=discord.Embed(
-                description=f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb[:4096]}\n```'))
+                title='Something Unexpected Occurred!',
+                description=f'```py'
+                            f'\n-------------------------------'
+                            f'\ncommand_name = {ctx.name}'
+                            f'\nguild_name = {ctx.guild.name} '
+                            f'\nguild_id = {ctx.guild.id}'
+                            f'\n-------------------------------\n{tb[:4000]}\n```')
+            )
+            print(f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```')
 
 
 async def setup(bot: app_util.Bot):
