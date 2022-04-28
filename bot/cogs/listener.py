@@ -1,7 +1,6 @@
 import io
 import asyncio
 import discord
-import airdrive.errors
 from asyncdeta import Field
 from discord.ext import commands
 from bot.extras.emojis import Emo
