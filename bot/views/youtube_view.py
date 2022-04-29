@@ -57,12 +57,9 @@ class ReceiverSelection(discord.ui.Select):
 
 async def sub_view_youtube(bot: Bot, ctx: Context, url: str):
 
-    def check():
-        receiver = bot.cached[ctx.guild.id].get('RECEIVER')
-        return receiver and receiver.isdigit() and ctx.guild.get_channel(int(receiver))
+    receiver = bot.cached[ctx.guild.id].get('RECEIVER')
 
-
-    if check():
+    if receiver and receiver.isdigit() and ctx.guild.get_channel(int(receiver)):
         old_data = bot.cached[ctx.guild.id].get('CHANNELS')
         if old_data:
             total_channels = len(list(old_data))
@@ -99,7 +96,7 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str):
                     }
                 else:
                     bot.cached[ctx.guild.id]['CHANNELS'] = {
-                        [info['id']]: {'live': 'empty', 'upload': upload_id or 'empty'}
+                        info['id']: {'live': 'empty', 'upload': upload_id or 'empty'}
                     }
                 menu = discord.ui.View()
                 menu.add_item(ReceiverSelection(bot, ctx, info))

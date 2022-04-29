@@ -43,7 +43,13 @@ class Listeners(commands.Cog):
                 Field('RECEPTION', None),
             ]
         )
-        self.bot.cached[guild.id] = {}
+        self.bot.cached[guild.id] = {
+            'CUSTOM': None,
+            'CHANNELS': None,
+            'RECEIVER': None,
+            'PINGROLE': None,
+            'RECEPTION': None,
+        }
         invite = 'https://top.gg/bot/848304171814879273/invite'
         support = 'https://discord.gg/G9fk5HHkZ5'
         emd = discord.Embed(

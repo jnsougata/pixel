@@ -33,10 +33,10 @@ class PixeL(app_util.Bot):
 
     async def build_cache(self):
         fields = await self.db.fetch_all()
-        ref_dict = {}
+        reference = {}
         for field in fields:
-            ref_dict[int(field.pop('key'))] = field
-        self.cached = ref_dict
+            reference[int(field.pop('key'))] = field
+        self.cached = reference
 
 
 pixel = PixeL()
