@@ -39,9 +39,9 @@ class ErrorHandler(app_util.Cog):
             await logger.send(embed=discord.Embed(
                 title='Something Unexpected Occurred!',
                 description=f'```py'
+                            f'\n{ctx.guild.name}'
                             f'\n-------------------------------'
                             f'\ncommand_name = {ctx.name}'
-                            f'\nguild_name = {ctx.guild.name} '
                             f'\nguild_id = {ctx.guild.id}'
                             f'\n-------------------------------\n{tb}\n```')
             )
