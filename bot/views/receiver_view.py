@@ -2,7 +2,6 @@ import discord
 from asyncdeta import Field
 from bot.extras.emojis import *
 from app_util import Context, Bot
-from bot.extras.func import db_push_object, db_fetch_object
 
 
 async def sub_view_receiver(bot: Bot, ctx: Context, channel: discord.TextChannel):

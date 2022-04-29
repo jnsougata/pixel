@@ -53,7 +53,6 @@ class ChannelMenu(discord.ui.Select):
         self.ctx = ctx
         super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing youtube channels')
 
-
     async def callback(self, interaction: discord.Interaction):
         channel_id = self.values[0]
         if interaction.user == self.ctx.author:
@@ -94,7 +93,7 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
 
     if value == 0:
 
-        data = reception = bot.cached[ctx.guild.id].get('CHANNELS')
+        data = bot.cached[ctx.guild.id].get('CHANNELS')
 
         if data:
             menu = await create_menu(ctx.client.loop, list(data))
