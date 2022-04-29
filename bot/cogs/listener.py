@@ -33,6 +33,14 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
 
+        self.bot.cached[guild.id] = {
+            'CUSTOM': None,
+            'CHANNELS': None,
+            'RECEIVER': None,
+            'PINGROLE': None,
+            'RECEPTION': None,
+        }
+
         await self.bot.db.put_many(
             key=str(guild.id),
             fields=[
@@ -43,13 +51,7 @@ class Listeners(commands.Cog):
                 Field('RECEPTION', None),
             ]
         )
-        self.bot.cached[guild.id] = {
-            'CUSTOM': None,
-            'CHANNELS': None,
-            'RECEIVER': None,
-            'PINGROLE': None,
-            'RECEPTION': None,
-        }
+
         invite = 'https://top.gg/bot/848304171814879273/invite'
         support = 'https://discord.gg/G9fk5HHkZ5'
         emd = discord.Embed(
