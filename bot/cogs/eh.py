@@ -37,7 +37,7 @@ class ErrorHandler(app_util.Cog):
         tb = ''.join(stack)
         if len(tb) < 4096:
             await logger.send(embed=discord.Embed(
-                title='Something Unexpected Occurred!',
+                title='Something Unexpected Occurred...',
                 description=f'```py'
                             f'\n{ctx.guild.name}'
                             f'\n-------------------------------'
@@ -47,11 +47,11 @@ class ErrorHandler(app_util.Cog):
             )
         else:
             await logger.send(embed=discord.Embed(
-                title='Something Unexpected Occurred!',
+                title='Something Unexpected Occurred...',
                 description=f'```py'
+                            f'\n{ctx.guild.name}'
                             f'\n-------------------------------'
                             f'\ncommand_name = {ctx.name}'
-                            f'\nguild_name = {ctx.guild.name} '
                             f'\nguild_id = {ctx.guild.id}'
                             f'\n-------------------------------\n{tb[:4000]}\n```')
             )
