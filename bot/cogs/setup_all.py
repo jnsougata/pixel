@@ -12,15 +12,13 @@ from bot.views.welcome_view import sub_view_welcomecard
 
 async def check(ctx: app_util.Context):
 
-    def check():
-        p = ctx.channel.permissions_for(ctx.me)
-        return p.send_messages and p.embed_links and p.attach_files and p.external_emojis
+    p = ctx.channel.permissions_for(ctx.me)
 
     if not ctx.guild:
         await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
     elif not ctx.author.guild_permissions.manage_guild:
         await ctx.send_response('> 👀  You are not an **Admin** or **Server Manager**')
-    elif not check():
+    elif not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
         await ctx.send_response(
             f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
     elif not ctx.options:
@@ -88,6 +86,7 @@ class Setup(app_util.Cog):
                     ],
                     required=False),
             ],
+            required_permission=discord.Permissions.manage_guild
         )
     )
     @app_util.Cog.before_invoke(check_handler=check)
