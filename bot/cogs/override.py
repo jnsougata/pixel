@@ -30,11 +30,12 @@ class Override(app_util.Cog):
         command=app_util.SlashCommand(
             name='force',
             description='forces to check for new videos',
-            options=[app_util.StrOption(name='url', description='youtube channel url to check', required=True)]
+            options=[app_util.StrOption(name='url', description='youtube channel url to check', required=True)],
+            required_permission=discord.Permissions.manage_guild
         ),
     )
     async def force_check(self, ctx: app_util.Context, url: str):
-        await ctx.send_response(f'> Command is under development...\n> Target url: {url}')
+        await ctx.send_response(f'> Command is under development...\n> Target url: {Channel(url).url}')
 
 
 async def setup(bot: app_util.Bot):
