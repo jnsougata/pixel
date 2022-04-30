@@ -34,7 +34,7 @@ class Override(app_util.Cog):
         ),
     )
     async def force_check(self, ctx: app_util.Context, url: str):
-        await ctx.send_response(f'> Command is under development...')
+        await ctx.send_response(f'> Command is under development...\n> Target url: {url}')
 
 
 async def setup(bot: app_util.Bot):
