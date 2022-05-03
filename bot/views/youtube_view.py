@@ -1,7 +1,7 @@
-import aiotube
-import app_util
 import discord
 import asyncio
+import aiotube
+import app_util
 from asyncdeta import Field
 from bot.extras.emojis import *
 from app_util import Context, Bot
@@ -44,7 +44,8 @@ class ReceiverSelection(discord.ui.Select):
                     description=f'{Emo.YT} **[{self.info["name"]}]({self.info["url"]})**'
                                 f'\n\n> {Emo.CHECK} YouTube channel added successfully'
                                 f'\n> Bound to <#{default}> for receiving notifications',
-                    url=self.info['url'])
+                    url=self.info['url']
+                )
                 await self.ctx.edit_response(embed=emd, view=None)
                 self.bot.cached[self.ctx.guild.id]['CHANNELS'][self.info['id']]['receiver'] = default
 
