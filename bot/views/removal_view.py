@@ -49,7 +49,8 @@ async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
 
 
 class ChannelMenu(discord.ui.Select):
-    def __init__(self, ctx: Context, menu: list):
+    def __init__(self, bot, ctx: Context, menu: list):
+        self.bot = bot
         self.ctx = ctx
         super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing youtube channels')
 
@@ -75,18 +76,12 @@ class ChannelMenu(discord.ui.Select):
             if avatar_url and avatar_url.startswith('http'):
                 emd.set_thumbnail(url=avatar_url)
             await self.ctx.edit_response(embed=emd, view=None)
-            channel_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='youtube')
-            receiver_data = await db_fetch_object(guild_id=self.ctx.guild.id, key='receivers')
+            data = self.bot.cached[self.ctx.guild.id].get('CHANNELS')
             try:
-                channel_data.pop(channel_id)
+                data.pop(channel_id)
             except KeyError:
                 pass
-            try:
-                receiver_data.pop(channel_id)
-            except KeyError:
-                pass
-            await db_push_object(guild_id=self.ctx.guild.id, item=channel_data, key='youtube')
-            await db_push_object(guild_id=self.ctx.guild.id, item=receiver_data, key='receivers')
+            await self.bot.db.add_field(key=str(self.ctx.guild.id), field=Field('CHANNELS', data), force=True)
 
 
 async def sub_view_remove(bot: Bot, ctx: Context, value: int):
@@ -99,7 +94,7 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
             menu = await create_menu(ctx.client.loop, list(data))
             menu.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
             view = discord.ui.View()
-            view.add_item(ChannelMenu(ctx, menu))
+            view.add_item(ChannelMenu(bot, ctx, menu))
             await ctx.send_followup(
                 embed=discord.Embed(description='> Please select a channel from menu below:'),
                 view=view)
