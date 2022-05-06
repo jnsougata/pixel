@@ -38,7 +38,7 @@ class OptionView(discord.ui.View):
 async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
 
     def get_channel_names():
-        return [aiotube.Channel(id_).name or 'EMPTY' for id_ in channel_ids]
+        return [aiotube.Channel(channel_id).name or 'EMPTY' for channel_id in channel_ids]
 
     channel_names = await loop.run_in_executor(None, get_channel_names)
 

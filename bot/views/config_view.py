@@ -13,9 +13,12 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
 
             def build_list():
                 info = []
-                for key, value in data.items():
-                    yt_channel = aiotube.Channel(key)
-                    info.append(f'{Emo.TEXT} <#{value["receiver"]}> {Emo.YT} [{yt_channel.name}]({yt_channel.url}) ')
+                for key, dict_value in data.items():
+                    try:
+                        yt_channel = aiotube.Channel(key)
+                        info.append(f'{Emo.TEXT} <#{dict_value["receiver"]}> {Emo.YT} [{yt_channel.name}]({yt_channel.url})')
+                    except Exception:
+                        info.append(f'{Emo.TEXT} <#1> {Emo.YT} [null](null)')
                 return info
 
             values = await bot.loop.run_in_executor(None, build_list)
