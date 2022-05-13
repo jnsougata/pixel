@@ -17,12 +17,8 @@ class Listeners(commands.Cog):
     async def on_message(self, message: discord.Message):
         bot_id = self.bot.user.id
         content_map = {
-            f'<@!{bot_id}>': True,
-            f'<@{bot_id}>': True,
-            f'<@!{bot_id}> help': True,
-            f'<@{bot_id}> help': True,
-            f'<@!{bot_id}> setup': True,
-            f'<@{bot_id}> setup': True,
+            f'<@!{bot_id}>': True, f'<@{bot_id}>': True, f'<@!{bot_id}> help': True,
+            f'<@{bot_id}> help': True, f'<@!{bot_id}> setup': True, f'<@{bot_id}> setup': True,
         }
         if content_map.get(message.content.lower()):
             try:
