@@ -70,20 +70,22 @@ class Listeners(commands.Cog):
                     return channel
         intro = any_text_channel()
         if intro:
-            await intro.send(embed=emd)
+            try:
+                await intro.send(embed=emd)
+            except discord.errors.Forbidden:
+                pass
+
         logger = self.bot.get_channel(899864601057976330)
-        await logger.send(f'✅ {guild.name}(ID:{guild.id})'
-                          f'\n**Owner: {guild.owner_id}**'
-                          f'\n**Member Count: {guild.member_count}**')
+        await logger.send(f'`Joined` {guild.name}(ID:{guild.id})'
+                          f'\n`Owner ID` {guild.owner_id} | `Member Count` {guild.member_count}')
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         self.bot.cached.pop(guild.id, None)
         await self.bot.db.delete(str(guild.id))
         logger = self.bot.get_channel(899864601057976330)
-        await logger.send(f'❌ {guild.name}(ID:{guild.id})'
-                          f'\n**Owner: {guild.owner_id}**'
-                          f'\n**Member Count: {guild.member_count}**')
+        await logger.send(f'`Removed` {guild.name}(ID:{guild.id})'
+                          f'\n`Owner ID` {guild.owner_id} | `Member Count` {guild.member_count}')
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -96,7 +98,6 @@ class Listeners(commands.Cog):
             if reception_id and reception_id.isdigit():
                 reception = member.guild.get_channel(int(reception_id))
                 if reception:
-
                     try:
                         bg = io.BytesIO(await self.bot.drive.download(f'covers/{guild_id}_card.png'))
                     except:
