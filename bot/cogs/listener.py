@@ -17,12 +17,8 @@ class Listeners(commands.Cog):
     async def on_message(self, message: discord.Message):
         bot_id = self.bot.user.id
         content_map = {
-            f'<@!{bot_id}>': True,
-            f'<@{bot_id}>': True,
-            f'<@!{bot_id}> help': True,
-            f'<@{bot_id}> help': True,
-            f'<@!{bot_id}> setup': True,
-            f'<@{bot_id}> setup': True,
+            f'<@!{bot_id}>': True, f'<@{bot_id}>': True, f'<@!{bot_id}> help': True,
+            f'<@{bot_id}> help': True, f'<@!{bot_id}> setup': True, f'<@{bot_id}> setup': True,
         }
         if content_map.get(message.content.lower()):
             try:
@@ -34,21 +30,14 @@ class Listeners(commands.Cog):
     async def on_guild_join(self, guild: discord.Guild):
 
         self.bot.cached[guild.id] = {
-            'CUSTOM': None,
-            'CHANNELS': None,
-            'RECEIVER': None,
-            'PINGROLE': None,
-            'RECEPTION': None,
+            'CUSTOM': None, 'CHANNELS': None, 'RECEIVER': None, 'PINGROLE': None, 'RECEPTION': None
         }
 
         await self.bot.db.put_many(
             key=str(guild.id),
             fields=[
-                Field('CUSTOM', None),
-                Field('CHANNELS', None),
-                Field('RECEIVER', None),
-                Field('PINGROLE', None),
-                Field('RECEPTION', None),
+                Field('CUSTOM', None), Field('CHANNELS', None),
+                Field('RECEIVER', None), Field('PINGROLE', None), Field('RECEPTION', None),
             ]
         )
 
@@ -70,20 +59,22 @@ class Listeners(commands.Cog):
                     return channel
         intro = any_text_channel()
         if intro:
-            await intro.send(embed=emd)
+            try:
+                await intro.send(embed=emd)
+            except discord.errors.Forbidden:
+                pass
+
         logger = self.bot.get_channel(899864601057976330)
-        await logger.send(f'✅ {guild.name}(ID:{guild.id})'
-                          f'\n**Owner: {guild.owner_id}**'
-                          f'\n**Member Count: {guild.member_count}**')
+        await logger.send(f'`Joined` {guild.name}(ID:{guild.id})'
+                          f'\n`Owner ID` {guild.owner_id} | `Member Count` {guild.member_count}')
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         self.bot.cached.pop(guild.id, None)
         await self.bot.db.delete(str(guild.id))
         logger = self.bot.get_channel(899864601057976330)
-        await logger.send(f'❌ {guild.name}(ID:{guild.id})'
-                          f'\n**Owner: {guild.owner_id}**'
-                          f'\n**Member Count: {guild.member_count}**')
+        await logger.send(f'`Removed` {guild.name}(ID:{guild.id})'
+                          f'\n`Owner ID` {guild.owner_id} | `Member Count` {guild.member_count}')
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -96,7 +87,6 @@ class Listeners(commands.Cog):
             if reception_id and reception_id.isdigit():
                 reception = member.guild.get_channel(int(reception_id))
                 if reception:
-
                     try:
                         bg = io.BytesIO(await self.bot.drive.download(f'covers/{guild_id}_card.png'))
                     except:
@@ -121,7 +111,7 @@ class Listeners(commands.Cog):
                         position=(660, 645),
                         text=f'You are {member.guild.member_count}th Member',
                     )
-                    file = discord.File(canvas.output, 'hq_card.png')
+                    file = discord.File(canvas.output, 'welcomecard_hq.png')
                     scopes = {
                         '[ping.member]': '',
                         '[member.name]': str(member),
@@ -140,9 +130,9 @@ class Listeners(commands.Cog):
                         message = build_text(plain_text)
                     else:
                         plain_text = '[no.ping]'
-                        message = f'Welcome to **{member.guild.name}**'
+                        message = f'**Welcome to _{member.guild.name}_**'
                     emd = discord.Embed(description=message, color=0x2f3136)
-                    emd.set_image(url="attachment://hq_card.png")
+                    emd.set_image(url="attachment://welcomecard_hq.png")
                     try:
                         if '[ping.member]' in plain_text:
                             await reception.send(content=member.mention, embed=emd, file=file)
