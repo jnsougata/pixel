@@ -38,7 +38,7 @@ class OptionView(discord.ui.View):
 async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
 
     def get_channel_names():
-        return [aiotube.Channel(channel_id).name or 'EMPTY' for channel_id in channel_ids]
+        return [aiotube.Channel(channel_id).name or 'null' for channel_id in channel_ids]
 
     channel_names = await loop.run_in_executor(None, get_channel_names)
 
@@ -63,7 +63,7 @@ class ChannelMenu(discord.ui.Select):
             ch = aiotube.Channel(channel_id)
             info = ch.info
             emd = discord.Embed(
-                title=f'{Emo.WARN} {info["name"]}',
+                title=f'🚮 {info["name"]}',
                 description=f'\n> **Subs:** {info["subscribers"]}'
                             f'\n> **Views:** {info["views"]}'
                             f'\n> **Id:** {info["id"]}',
@@ -92,7 +92,7 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
 
         if data:
             menu = await create_menu(ctx.client.loop, list(data))
-            menu.insert(0, discord.SelectOption(label='\u200b', value='0', emoji=Emo.CROSS))
+            menu.insert(0, discord.SelectOption(label='cancel', value='0', emoji=Emo.CROSS))
             view = discord.ui.View()
             view.add_item(ChannelMenu(bot, ctx, menu))
             await ctx.send_followup(

@@ -18,7 +18,7 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
                         yt_channel = aiotube.Channel(key)
                         info.append(f'{Emo.TEXT} <#{dict_value["receiver"]}> {Emo.YT} [{yt_channel.name}]({yt_channel.url})')
                     except Exception:
-                        info.append(f'{Emo.TEXT} <#1> {Emo.YT} [null](null)')
+                        info.append(f'{Emo.TEXT} <#1> {Emo.YT} [null](https://www.youtube.com/watch?v=iik25wqIuFo)')
                 return info
 
             values = await bot.loop.run_in_executor(None, build_list)

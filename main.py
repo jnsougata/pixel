@@ -38,4 +38,3 @@ class PixeL(app_util.Bot):
 
 pixel = PixeL()
 pixel.run(os.getenv('DISCORD_TOKEN'))
-
