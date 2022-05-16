@@ -11,7 +11,7 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
         data = bot.cached[ctx.guild.id].get('CHANNELS')
         if data:
 
-            def build_channel_list():
+            def make_channel_list():
                 info = []
                 for key, dict_value in data.items():
                     try:
@@ -21,7 +21,7 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
                         info.append(f'{Emo.TEXT} <#1> {Emo.YT} [null](https://www.youtube.com/watch?v=iik25wqIuFo)')
                 return info
 
-            values = await bot.loop.run_in_executor(None, build_channel_list)
+            values = await bot.loop.run_in_executor(None, make_channel_list)
             emd = discord.Embed(description='\n\n'.join(values))
             await ctx.send_followup(embed=emd)
         else:
