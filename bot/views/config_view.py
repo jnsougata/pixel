@@ -11,17 +11,17 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
         data = bot.cached[ctx.guild.id].get('CHANNELS')
         if data:
 
-            def build_list():
+            def build_channel_list():
                 info = []
                 for key, dict_value in data.items():
                     try:
-                        yt_channel = aiotube.Channel(key)
-                        info.append(f'{Emo.TEXT} <#{dict_value["receiver"]}> {Emo.YT} [{yt_channel.name}]({yt_channel.url})')
+                        channel = aiotube.Channel(key)
+                        info.append(f'{Emo.TEXT} <#{dict_value["receiver"]}> {Emo.YT} [{channel.name}]({channel.url})')
                     except Exception:
                         info.append(f'{Emo.TEXT} <#1> {Emo.YT} [null](https://www.youtube.com/watch?v=iik25wqIuFo)')
                 return info
 
-            values = await bot.loop.run_in_executor(None, build_list)
+            values = await bot.loop.run_in_executor(None, build_channel_list)
             emd = discord.Embed(description='\n\n'.join(values))
             await ctx.send_followup(embed=emd)
         else:
