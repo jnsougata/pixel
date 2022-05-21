@@ -13,18 +13,16 @@ from bot.views.welcome_view import sub_view_welcomecard
 async def check(ctx: app_util.Context):
 
     p = ctx.channel.permissions_for(ctx.me)
-
-    if not ctx.guild:
-        await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
-    elif not ctx.author.guild_permissions.manage_guild:
-        await ctx.send_response('> 👀  You are not an **Admin** or **Server Manager**')
-    elif not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
+    if not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
         await ctx.send_response(
             f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
+        return False
     elif not ctx.options:
         await ctx.send_response('> 👀  you must select **at least one option**')
+        return False
     elif len(ctx.options) > 1:
         await ctx.send_response('> 👀  please use only **one option at a time**')
+        return False
     else:
         return True
 
@@ -44,6 +42,7 @@ class Setup(app_util.Cog):
         command=app_util.SlashCommand(
             name='setup',
             description='set configuration for your server',
+            dm_access=False,
             options=[
                 app_util.StrOption(
                     name='youtube',
@@ -54,16 +53,16 @@ class Setup(app_util.Cog):
                     name='receiver',
                     description='text channel to receive youtube videos',
                     channel_types=[
-                        app_util.DiscordChannelType.GUILD_TEXT,
-                        app_util.DiscordChannelType.GUILD_NEWS],
+                        app_util.ChannelType.GUILD_TEXT,
+                        app_util.ChannelType.GUILD_NEWS],
                     required=False),
 
                 app_util.ChannelOption(
                     name='reception',
                     description='text channel to receive welcome cards',
                     channel_types=[
-                        app_util.DiscordChannelType.GUILD_TEXT,
-                        app_util.DiscordChannelType.GUILD_NEWS],
+                        app_util.ChannelType.GUILD_TEXT,
+                        app_util.ChannelType.GUILD_NEWS],
                     required=False),
 
                 app_util.RoleOption(
@@ -86,16 +85,16 @@ class Setup(app_util.Cog):
                     ],
                     required=False),
             ],
-            required_permission=discord.Permissions.manage_guild
         )
     )
-    @app_util.Cog.before_invoke(check_handler=check)
+    @app_util.Cog.default_permission(discord.Permissions.manage_guild)
+    @app_util.Cog.check(check)
     async def setup_command(
             self, ctx: app_util.Context,
             *,
             youtube: str, ping_role: discord.Role, receiver: discord.TextChannel,
-            reception: discord.TextChannel, welcome_card: discord.Attachment, custom_message: int):
-
+            reception: discord.TextChannel, welcome_card: discord.Attachment, custom_message: int
+    ):
         if youtube:
             await ctx.defer()
             await sub_view_youtube(self.bot, ctx, youtube)

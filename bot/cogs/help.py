@@ -25,15 +25,11 @@ class CustomView(discord.ui.View):
 
 async def check(ctx: app_util.Context):
 
-    def check():
-        p = ctx.channel.permissions_for(ctx.me)
-        return p.send_messages and p.embed_links and p.attach_files and p.external_emojis
-
-    if not ctx.guild:
-        await ctx.send_response('🚫 This command can only be used inside a **SERVER**')
-    elif not check():
+    p = ctx.channel.permissions_for(ctx.me)
+    if not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
         await ctx.send_response(
             f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
+        return False
     else:
         return True
 
@@ -46,7 +42,7 @@ class Help(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(name='help', description='information about the features')
     )
-    @app_util.Cog.before_invoke(check_handler=check)
+    @app_util.Cog.check(check)
     async def help_command(self, ctx: app_util.Context):
         view = CustomView(ctx)
         emd = discord.Embed(

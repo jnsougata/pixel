@@ -1,4 +1,4 @@
-pillow==9.1.0
+pillow==9.1.1
 aiohttp==3.8.1
 git+https://github.com/Rapptz/discord.py
 git+https://github.com/jnsougata/app_util
