@@ -16,13 +16,10 @@ async def check(ctx: app_util.Context):
     if not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
         await ctx.send_response(
             f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
-        return False
     elif not ctx.options:
         await ctx.send_response('> 👀  you must select **at least one option**')
-        return False
     elif len(ctx.options) > 1:
         await ctx.send_response('> 👀  please use only **one option at a time**')
-        return False
     else:
         return True
 
