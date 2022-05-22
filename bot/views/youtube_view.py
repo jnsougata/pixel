@@ -67,7 +67,7 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str):
         else:
             total_channels = 0
 
-        if total_channels <= 23:
+        if total_channels <= 9:
             try:
                 channel = aiotube.Channel(url.replace(' ', ''))
                 info = channel.info
@@ -106,7 +106,7 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str):
         else:
             await ctx.send_followup(
                 embed=discord.Embed(
-                    description=f'{Emo.WARN} You have exceeded the number of maximum allowed channels {Emo.WARN}'))
+                    description=f'{Emo.WARN} You have exceeded the number of maximum allowed channels (10) {Emo.WARN}'))
     else:
         emd = discord.Embed(
             title=f'{Emo.WARN} No Receiver Found {Emo.WARN}',
