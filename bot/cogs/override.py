@@ -85,12 +85,17 @@ class ChannelSelectMenu(discord.ui.Select):
             mention = await create_ping(self.ctx.guild, cache)
             receiver = await create_receiver(self.ctx.guild, channel_id, cache)
             if receiver:
-                channel_data = {}
-                if target.livestream:
-                    channel_data['stream'] = {'url': target.livestream.url, 'id': target.livestream.id}
-                if target.recent_uploaded:
-                    channel_data['upload'] = {'url': target.recent_uploaded.url, 'id': target.recent_uploaded.id}
-                channel_data['info'] = target.info
+
+                def build_channel_data():
+                    _data = {}
+                    if target.livestream:
+                        _data['stream'] = {'url': target.livestream.url, 'id': target.livestream.id}
+                    if target.recent_uploaded:
+                        _data['upload'] = {'url': target.recent_uploaded.url, 'id': target.recent_uploaded.id}
+                    _data['info'] = target.info
+                    return _data
+
+                channel_data = await self.bot.loop.run_in_executor(None, build_channel_data)
                 channel_name = channel_data['info']['name']
                 response_embed_description = f'Result for: {Emo.SEARCH} **{channel_name}**\n'
 
