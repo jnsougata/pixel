@@ -47,29 +47,29 @@ class Help(app_util.Cog):
         view = CustomView(ctx)
         emd = discord.Embed(
             title=f'Commands',
-            description=f'\n**` 1 `** **`/setup`**'
-                        f'\n\n> {Emo.YT} adding YouTube Channel for notifications'
-                        f'\n> {Emo.SLASH}`/setup` `youtube` `TYPE CHANNEL URL`'
-                        f'\n\n> {Emo.PING} adding default text channel for notifications'
-                        f'\n> {Emo.SLASH}`/setup` `receiver` `CHOOSE TEXT CHANNEL`'
-                        f'\n\n> {Emo.DEAL} adding a text channel to receive welcome card'
-                        f'\n> {Emo.SLASH}`/setup` `reception` `CHOOSE TEXT CHANNEL`'
-                        f'\n\n> {Emo.BELL} adding a role to ping users with notifications'
-                        f'\n> {Emo.SLASH}`/setup` `ping_role` `CHOOSE A ROLE`'
-                        f'\n\n> {Emo.IMG} adding an image to use as welcome greeting card'
-                        f'\n> {Emo.SLASH}`/setup` `welcome_card` `ATTACH IMAGE FILE`'
-                        f'\n\n> {Emo.CUSTOM} adding a custom message to send with notifications'
-                        f'\n> {Emo.SLASH}`/setup` `custom_message` `CHOOSE MESSAGE OPTION`'
-                        f'\n\n**` 2 `** **`/more`**'
-                        f'\n\n> {Emo.DEL} removing an old settings'
-                        f'\n> {Emo.SLASH}`/more` `remove` `CHOOSE SETTING TO REMOVE`'
-                        f'\n\n> {Emo.DATABASE} overviewing an old settings'
-                        f'\n> {Emo.SLASH}`/more` `overview` `CHOOSE SETTING TO SEE`'
-                        f'\n\n**` 3 `** **`/force` `TYPE CHANNEL URL`**'
-                        f'\n\n> Force checks channel for new upload or livestream'
+            description=f'\n**` 1 `** **` /setup `**\n'
+                        f'\n {Emo.YT} Adding YouTube Channel for notifications'
+                        f'\n```diff\n-❯ /setup youtube: TYPE CHANNEL URL\n```'
+                        f'\n {Emo.PING} Adding default text channel for notifications'
+                        f'\n```diff\n-❯ /setup receiver: CHOOSE TEXT CHANNEL\n```'
+                        f'\n {Emo.DEAL} Adding a text channel to receive welcome card'
+                        f'\n```diff\n-❯ /setup reception: CHOOSE TEXT CHANNEL\n```'
+                        f'\n {Emo.BELL} Adding a role to ping users with notifications'
+                        f'\n```diff\n-❯ /setup ping_role: CHOOSE A ROLE\n```'
+                        f'\n {Emo.IMG} Adding an image to use as welcome greeting card'
+                        f'\n ```diff\n-❯ /setup welcome_card: ATTACH IMAGE FILE\n```'
+                        f'\n {Emo.CUSTOM} Adding a custom message to send with notifications'
+                        f'\n```diff\n-❯ /setup custom_message: CHOOSE MESSAGE TYPE\n```'
+                        f'\n\n**` 2 `** **` /more `**\n'
+                        f'\n {Emo.DEL} Removing an old settings'
+                        f'\n```diff\n-❯ /more remove: CHOOSE SETTING TO REMOVE\n```'
+                        f'\n {Emo.DATABASE} overviewing an old settings'
+                        f'\n```diff\n-❯ /more overview: CHOOSE SETTING TO SEE\n```'
+                        f'\n\n**` 3 `** **` /force ` `TYPE CHANNEL URL`**'
+                        f'\n```diff\n- Force checks all channels for new videos\n```'
                         f'\n\n{Emo.BUG} Having issues? '
                         f'Ask [Development & Support](https://discord.gg/VE5qRFfmG2)',
-            color=0x2f3136,
+            color=0xc62c28,
         )
         await ctx.send_response(embed=emd, view=view)
 
