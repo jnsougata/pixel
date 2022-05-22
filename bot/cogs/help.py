@@ -26,7 +26,6 @@ class Help(app_util.Cog):
     )
     @app_util.Cog.check(check)
     async def help_command(self, ctx: app_util.Context):
-        view = CustomView(ctx)
         emd = discord.Embed(
             title=f'Commands',
             description=f'\n**` 1 `** **` /setup `**\n'
