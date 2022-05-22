@@ -123,7 +123,7 @@ class ChannelSelectMenu(discord.ui.Select):
                         finally:
                             channels[channel_id]['live'] = live_id
                     else:
-                        response_embed_description += f'\n**{Emo.WARN} No new livestream found**'
+                        response_embed_description += f'\n**{Emo.WARN} No new stream found**'
                 else:
                     response_embed_description += f'\n**{Emo.WARN} Channel is not live**'
 
