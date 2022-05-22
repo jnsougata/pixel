@@ -63,9 +63,10 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str):
     if receiver and receiver.isdigit() and ctx.guild.get_channel(int(receiver)):
         old_data = bot.cached[ctx.guild.id].get('CHANNELS')
         if old_data:
-            total_channels = len(list(old_data))
+            total_channels = len(old_data)
         else:
             total_channels = 0
+
         if total_channels <= 23:
             try:
                 channel = aiotube.Channel(url.replace(' ', ''))

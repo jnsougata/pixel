@@ -1,5 +1,4 @@
 import discord
-import traceback
 import app_util
 from bot.extras.emojis import Emo
 from bot.views.msg_view import sub_view_msg
