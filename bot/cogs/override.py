@@ -190,7 +190,7 @@ class Override(app_util.Cog):
             return [
                        discord.SelectOption(label=name, value=id_, emoji=Emo.SEARCH)
                        for name, id_ in zip(channel_names, channel_ids)
-                   ][:10]
+                   ][:24]
 
         menu = await create_menu(self.bot.loop, self.bot.cached[ctx.guild.id].get('CHANNELS'))
         view = discord.ui.View()
