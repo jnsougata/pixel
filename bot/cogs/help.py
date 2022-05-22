@@ -68,11 +68,12 @@ class Help(app_util.Cog):
                         f'\n\n**` 3 `** **` /force `**'
                         f'\n```diff\n■ force checking for new videos'
                         f'\n-❯ /force TYPE CHANNEL URL\n```'
-                        f'\n\n{Emo.BUG} Having issues? '
-                        f'Ask [Development & Support](https://discord.gg/VE5qRFfmG2)',
+                        f'\n{Emo.BUG} Ask [development & support](https://discord.gg/VE5qRFfmG2) '
+                        f' ■ [Invite](https://top.gg/bot/848304171814879273/invite) '
+                        f' ■ [Upvote](https://top.gg/bot/848304171814879273/vote)',
             color=0xc62c28,
         )
-        await ctx.send_response(embed=emd, view=view)
+        await ctx.send_response(embed=emd)
 
 
 async def setup(bot: app_util.Bot):
