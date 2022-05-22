@@ -1,12 +1,10 @@
 import discord
 import app_util
 from bot.extras.emojis import Emo
-from bot.views.msg_view import sub_view_msg
+from bot.views.modal_msg_view import sub_view_msg
 from bot.views.youtube_view import sub_view_youtube
-from bot.views.receiver_view import sub_view_receiver
+from bot.views.welcomer_view import sub_view_welcomer
 from bot.views.pingrole_view import sub_view_pingrole
-from bot.views.reception_view import sub_view_reception
-from bot.views.welcome_view import sub_view_welcomecard
 
 
 async def check(ctx: app_util.Context):
@@ -17,8 +15,6 @@ async def check(ctx: app_util.Context):
             f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
     elif not ctx.options:
         await ctx.send_response('> 👀  you must select **at least one option**')
-    elif len(ctx.options) > 1:
-        await ctx.send_response('> 👀  please use only **one option at a time**')
     else:
         return True
 
@@ -37,49 +33,58 @@ class Setup(app_util.Cog):
     @app_util.Cog.command(
         command=app_util.SlashCommand(
             name='setup',
-            description='set configuration for your server',
+            description='setup the server configurations',
             dm_access=False,
             options=[
-                app_util.StrOption(
-                    name='youtube',
-                    description='type any youtube channel by url or id',
-                    required=False),
-
-                app_util.ChannelOption(
-                    name='receiver',
-                    description='text channel to receive youtube videos',
-                    channel_types=[
-                        app_util.ChannelType.GUILD_TEXT,
-                        app_util.ChannelType.GUILD_NEWS],
-                    required=False),
-
-                app_util.ChannelOption(
-                    name='reception',
-                    description='text channel to receive welcome cards',
-                    channel_types=[
-                        app_util.ChannelType.GUILD_TEXT,
-                        app_util.ChannelType.GUILD_NEWS],
-                    required=False),
-
-                app_util.RoleOption(
-                    name='ping_role',
-                    description='role to ping with youtube notification',
-                    required=False),
-
-                app_util.AttachmentOption(
-                    name='welcome_card',
-                    description='image file to send when new member joins',
-                    required=False),
-
-                app_util.IntOption(
+                app_util.SubCommand(
+                    name='youtube', description='integrates youtube channel to the server',
+                    options=[
+                        app_util.StrOption(
+                            name='channel',
+                            description='url or id of the youtube channel',
+                            required=True),
+                        app_util.ChannelOption(
+                            name='receiver',
+                            description='text channel to receive notifications',
+                            channel_types=[app_util.ChannelType.GUILD_TEXT, app_util.ChannelType.GUILD_NEWS],
+                            required=True),
+                    ]
+                ),
+                app_util.SubCommand(
+                    name='welcomer', description='adds welcome card to the server',
+                    options=[
+                        app_util.ChannelOption(
+                            name='channel',
+                            description='text channel to greet with welcome cards',
+                            channel_types=[app_util.ChannelType.GUILD_TEXT, app_util.ChannelType.GUILD_NEWS],
+                            required=True),
+                        app_util.AttachmentOption(
+                            name='image',
+                            description='image file to send when new member joins', required=False),
+                    ]
+                ),
+                app_util.SubCommand(
+                    name='ping_role', description='adds role to ping with youtube notification',
+                    options=[
+                        app_util.RoleOption(
+                            name='role', description='role to ping with youtube notification', required=True),
+                    ]
+                ),
+                app_util.SubCommand(
                     name='custom_message',
-                    description='custom welcome and notification message',
-                    choices=[
-                        app_util.Choice(name='upload_message', value=1),
-                        app_util.Choice(name='welcome_message', value=0),
-                        app_util.Choice(name='livestream_message', value=2),
-                    ],
-                    required=False),
+                    description='adds custom welcome and notification message',
+                    options=[
+                        app_util.IntOption(
+                            name='option',
+                            description='type of message to add or edit',
+                            choices=[
+                                app_util.Choice(name='upload', value=1),
+                                app_util.Choice(name='welcome', value=0),
+                                app_util.Choice(name='livestream', value=2),
+                            ],
+                            required=True),
+                    ]
+                )
             ],
         )
     )
@@ -88,31 +93,24 @@ class Setup(app_util.Cog):
     async def setup_command(
             self, ctx: app_util.Context,
             *,
-            youtube: str, ping_role: discord.Role, receiver: discord.TextChannel,
-            reception: discord.TextChannel, welcome_card: discord.Attachment, custom_message: int
+            youtube: bool, youtube_channel: str, youtube_receiver: discord.TextChannel,
+            welcomer: bool, welcomer_channel: discord.TextChannel, welcomer_image: discord.Attachment,
+            ping_role: bool, ping_role_role: discord.Role, custom_message: bool, custom_message_option: int
     ):
         if youtube:
             await ctx.defer()
-            await sub_view_youtube(self.bot, ctx, youtube)
-            return
-        if receiver:
-            await ctx.defer()
-            await sub_view_receiver(self.bot, ctx, receiver)
-            return
-        if reception:
-            await ctx.defer()
-            await sub_view_reception(self.bot, ctx, reception)
+            await sub_view_youtube(self.bot, ctx, youtube_channel, youtube_receiver)
             return
         if ping_role:
             await ctx.defer()
-            await sub_view_pingrole(self.bot, ctx, ping_role)
+            await sub_view_pingrole(self.bot, ctx, ping_role_role)
             return
-        if welcome_card:
+        if welcomer:
             await ctx.defer()
-            await sub_view_welcomecard(self.bot, ctx, welcome_card.url)
+            await sub_view_welcomer(self.bot, ctx, welcomer_image, welcomer_channel)
             return
         if custom_message is not None:
-            await sub_view_msg(self.bot, ctx, custom_message)
+            await sub_view_msg(self.bot, ctx, custom_message_option)
             return
 
 

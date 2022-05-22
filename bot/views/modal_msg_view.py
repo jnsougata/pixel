@@ -26,9 +26,10 @@ async def send_form(ctx: app_util.Context, bot: app_util.Bot, *, option_value: i
         label='See Editing Scopes Here',
         style=app_util.ModalTextType.LONG,
         custom_id='scopes',
-        value=prefilled,
         required=False,
         max_length=500,
+        default_text=prefilled,
+
     )
     modal.add_field(
         label='Type Here',
