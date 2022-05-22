@@ -65,9 +65,9 @@ class Listeners(commands.Cog):
                 pass
 
         logger = self.bot.get_channel(899864601057976330)
-        await logger.send(f'```fix\nJoined [{guild.name}](ID:{guild.id})'
-                          f'\nOwner ID: {guild.owner_id}'
-                          f'\nMember Count: {guild.member_count}```')
+        await logger.send(f'```fix\n- Joined [{guild.name}](ID:{guild.id})'
+                          f'\n- Owner ID: {guild.owner_id}'
+                          f'\n- Member Count: {guild.member_count}```')
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -75,8 +75,8 @@ class Listeners(commands.Cog):
         await self.bot.db.delete(str(guild.id))
         logger = self.bot.get_channel(899864601057976330)
         await logger.send(f'```diff\n- Removed [{guild.name}](ID:{guild.id})'
-                          f'\nOwner ID: {guild.owner_id}'
-                          f'\nMember Count: {guild.member_count}```')
+                          f'\n- Owner ID: {guild.owner_id}'
+                          f'\n- Member Count: {guild.member_count}```')
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
