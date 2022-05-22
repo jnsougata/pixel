@@ -15,8 +15,9 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
                 info = []
                 for key, dict_value in data.items():
                     try:
-                        channel = aiotube.Channel(key)
-                        info.append(f'{Emo.TEXT} <#{dict_value["receiver"]}> {Emo.YT} [{channel.name}]({channel.url})')
+                        channel_ = aiotube.Channel(key)
+                        info.append(
+                            f'{Emo.TEXT} <#{dict_value["receiver"]}> {Emo.YT} [{channel_.name}]({channel_.url})')
                     except Exception:
                         info.append(f'{Emo.TEXT} <#1> {Emo.YT} [null](https://www.youtube.com/watch?v=iik25wqIuFo)')
                 return info

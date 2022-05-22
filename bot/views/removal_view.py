@@ -45,7 +45,7 @@ async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
     return [
                discord.SelectOption(label=name, value=id_, emoji=Emo.YT)
                for name, id_ in zip(channel_names, channel_ids)
-           ][:24]
+           ][:10]
 
 
 class ChannelMenu(discord.ui.Select):

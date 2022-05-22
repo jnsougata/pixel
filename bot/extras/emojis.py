@@ -38,3 +38,4 @@ class Emo:
     SLASH = '<:slash:947088718215385118>'
     BUG = '<:botbug:949433101757587486>'
     PIXEL = '<:pixel_emo:949437387992354816>'
+    SEARCH = '<:search:977832819189502032>'

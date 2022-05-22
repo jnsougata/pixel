@@ -14,7 +14,7 @@ def has_perms(channel: discord.TextChannel, ctx: Context):
 
 class ReceiverSelection(discord.ui.Select):
 
-    def __init__(self, bot, ctx, info):
+    def __init__(self, bot: Bot, ctx: Context, info: dict):
         self.bot = bot
         self.ctx = ctx
         self.info = info
