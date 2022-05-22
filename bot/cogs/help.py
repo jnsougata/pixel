@@ -5,24 +5,6 @@ from typing import Any
 from bot.extras.emojis import Emo
 
 
-class CustomView(discord.ui.View):
-    def __init__(self, ctx: app_util.Context):
-        self.ctx = ctx
-
-        invite = discord.ui.Button(label='Invite', style=discord.ButtonStyle.link,
-                                   url='https://top.gg/bot/848304171814879273/invite')
-        upvote = discord.ui.Button(label='Upvote', style=discord.ButtonStyle.link,
-                                   url='https://top.gg/bot/848304171814879273/vote')
-
-        super().__init__()
-        self.value = None
-        self.add_item(invite)
-        self.add_item(upvote)
-
-    async def on_timeout(self) -> None:
-        pass
-
-
 async def check(ctx: app_util.Context):
 
     p = ctx.channel.permissions_for(ctx.me)
