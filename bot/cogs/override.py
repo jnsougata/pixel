@@ -64,7 +64,7 @@ class ChannelSelectMenu(discord.ui.Select):
                 stack = traceback.format_exception(type(error), error, error.__traceback__)
                 tb = ''.join(stack)
                 await channel.send(embed=discord.Embed(
-                    title=f'Exception occurred during scaning',
+                    title=f'Exception occurred during Scanning',
                     description=f'**Guild: {guild.name} | ID: {guild.id}**\n```py\n{tb}\n```'))
 
             async def build_cached_data(guild: discord.Guild):
