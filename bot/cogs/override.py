@@ -119,7 +119,7 @@ class ChannelSelectMenu(discord.ui.Select):
                             else:
                                 await self.log_exception(logger, guild, e)
                         else:
-                            response_embed_description += f'\n**Streaming new live video**\n>URL: {live_url}'
+                            response_embed_description += f'\n{Emo.CHECK} **Streaming new live video**\n> URL: {live_url}'
                         finally:
                             channels[channel_id]['live'] = live_id
                     else:
@@ -147,7 +147,7 @@ class ChannelSelectMenu(discord.ui.Select):
                             else:
                                 await self.log_exception(logger, guild, e)
                         else:
-                            response_embed_description += f'\n**Uploaded a new video**\n>URL: {latest_url}'
+                            response_embed_description += f'\n{Emo.CHECK} **Uploaded a new video**\n> URL: {latest_url}'
                         finally:
                             channels[channel_id]['upload'] = latest_id
                     else:
