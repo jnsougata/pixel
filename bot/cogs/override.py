@@ -18,7 +18,7 @@ class ChannelSelectMenu(discord.ui.Select):
             channel_id = self.values[0]
             target = aiotube.Channel(channel_id)
             await interaction.response.defer()
-            response_embed_description = ''
+            resp_embed_desc = ''
             await self.ctx.edit_response(
                 embed=discord.Embed(description=f'{Emo.SEARCH} Scanning in progress...'), view=None
             )
@@ -97,7 +97,7 @@ class ChannelSelectMenu(discord.ui.Select):
 
                 channel_data = await self.bot.loop.run_in_executor(None, build_channel_data)
                 channel_name = channel_data['info']['name']
-                response_embed_description = f'Result for: {Emo.SEARCH} **{channel_name}**\n'
+                resp_embed_desc = f'Result for: {Emo.SEARCH} **{channel_name}**\n'
 
                 if channel_data.get('stream'):
                     live_url = channel_data['stream']['url']
@@ -119,13 +119,13 @@ class ChannelSelectMenu(discord.ui.Select):
                             else:
                                 await self.log_exception(logger, guild, e)
                         else:
-                            response_embed_description += f'\n{Emo.CHECK} **Streaming new live video**\n> URL: {live_url}'
+                            resp_embed_desc += f'\n{Emo.CHECK} **Streaming new live video**\n> URL: {live_url}'
                         finally:
                             channels[channel_id]['live'] = live_id
                     else:
-                        response_embed_description += f'\n**{Emo.WARN} No new stream found**'
+                        resp_embed_desc += f'\n**{Emo.WARN} No new stream found**'
                 else:
-                    response_embed_description += f'\n**{Emo.WARN} Channel is not live**'
+                    resp_embed_desc += f'\n**{Emo.WARN} Channel is not live**'
 
                 if channel_data.get('upload'):
                     latest_id = channel_data['upload']['id']
@@ -147,19 +147,19 @@ class ChannelSelectMenu(discord.ui.Select):
                             else:
                                 await self.log_exception(logger, guild, e)
                         else:
-                            response_embed_description += f'\n{Emo.CHECK} **Uploaded a new video**\n> URL: {latest_url}'
+                            resp_embed_desc += f'\n{Emo.CHECK} **Uploaded a new video**\n> URL: {latest_url}'
                         finally:
                             channels[channel_id]['upload'] = latest_id
                     else:
-                        response_embed_description += f'\n**{Emo.WARN} No new video uploaded**'
+                        resp_embed_desc += f'\n**{Emo.WARN} No new video uploaded**'
                 else:
-                    response_embed_description += f'\n**{Emo.WARN} Channel has no uploaded videos**'
+                    resp_embed_desc += f'\n**{Emo.WARN} Channel has no uploaded videos**'
                 try:
                     await self.bot.db.add_field(str(self.ctx.guild.id), Field('CHANNELS', channels), force=True)
                 except Exception as e:
                     await log_exception(logger, self.ctx.guild, e)
 
-            await self.ctx.edit_response(embed=discord.Embed(description=response_embed_description))
+            await self.ctx.edit_response(embed=discord.Embed(description=resp_embed_desc))
 
 
 async def check(ctx: app_util.Context):
