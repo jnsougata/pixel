@@ -1,7 +1,7 @@
 import discord
 import app_util
 from bot.extras.emojis import Emo
-from bot.views.modal_msg_view import sub_view_msg
+from bot.views.custom_view import sub_view_msg
 from bot.views.youtube_view import sub_view_youtube
 from bot.views.welcomer_view import sub_view_welcomer
 from bot.views.pingrole_view import sub_view_pingrole
@@ -10,11 +10,9 @@ from bot.views.pingrole_view import sub_view_pingrole
 async def check(ctx: app_util.Context):
 
     p = ctx.channel.permissions_for(ctx.me)
-    if not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
+    if not p.send_messages and p.embed_links and p.external_emojis:
         await ctx.send_response(
-            f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
-    elif not ctx.options:
-        await ctx.send_response('> 👀  you must select **at least one option**')
+            f'> 😓  Please make sure I have permissions to `embed links` `use external emojis`')
     else:
         return True
 

@@ -28,30 +28,23 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
         else:
             await ctx.send_followup('> 👀 you haven\'t subscribed to any channels yet!')
 
-    elif value == 1:
-        data = data = bot.cached[ctx.guild.id].get('RECEIVER')
-        if data and data.isdigit():
-            channel = ctx.guild.get_channel(int(data))
-            emd = discord.Embed(
-                title=f'{Emo.CHECK} Default Receiver',
-                description=f'The current set default receiver channel is '
-                            f'{channel.mention if channel else "`invalid`"}'
-                            f'\nThis channel will be used by default to receive youtube notifications')
-            await ctx.send_followup(embed=emd)
-        else:
-            await ctx.send_followup('> 👀 you haven\'t set any default receiver yet!')
-
     elif value == 2:
-        data = data = bot.cached[ctx.guild.id].get('RECEPTION')
+        data = bot.cached[ctx.guild.id].get('RECEPTION')
         if data and data.isdigit():
             channel = ctx.guild.get_channel(int(data))
-            emd = discord.Embed(
-                title=f'{Emo.CHECK} Reception Channel',
-                description=f'The current set reception channel is {channel.mention if channel else "<#1>"}'
-                            f'\nThis channel will be used to send welcome cards')
-            await ctx.send_followup(embed=emd)
+            if channel:
+                try:
+                    card = await bot.drive.download(f'covers/{ctx.guild.id}_card.png')
+                except:
+                    card = await bot.drive.download('covers/default_card.png')
+                file = discord.File(io.BytesIO(card), filename='card.png')
+                emd = discord.Embed(description=f'{Emo.CHECK} Welcomer bound to <#{data}> with the following card:')
+                emd.set_image(url=f'attachment://card.png')
+                await ctx.send_followup(embed=emd, file=file)
+            else:
+                await ctx.send_followup('> 👀 welcomer is not properly configured!')
         else:
-            await ctx.send_followup('> 👀 you haven\'t set any reception channel yet!')
+            await ctx.send_followup('> 👀 you have not set welcomer yet!')
 
     elif value == 3:
         data = data = bot.cached[ctx.guild.id].get('PINGROLE')
@@ -69,16 +62,6 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
         else:
             await ctx.send_followup('> 👀 you haven\'t set any ping role yet!')
 
-    elif value == 4:
-        try:
-            card = await bot.drive.download(f'covers/{ctx.guild.id}_card.png')
-        except Exception:
-            card = await bot.drive.download(f'covers/default_card.png')
-
-        emd = discord.Embed(title=f'{Emo.CHECK} Welcome Card')
-        emd.set_image(url=f'attachment://card.png')
-        await ctx.send_followup(embed=emd, file=discord.File(io.BytesIO(card), filename='card.png'))
-
     elif value == 5:
         data = data = bot.cached[ctx.guild.id].get('CUSTOM')
         if data:
@@ -86,12 +69,12 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
             scopes = ['welcome', 'upload', 'live']
             messages = [data.get(slot, None) for slot in scopes]
             zipped = zip(emojis, scopes, messages)
-            embeds = [
-                discord.Embed(
-                    title=f'{emoji} {scope.capitalize()} Message',
-                    description=f'```\n{message}\n```')
-                for emoji, scope, message in zipped if message]
+            description = f'{Emo.CHECK} **custom messages**\n'
+            for emoji, scope, message in zipped:
+                if message:
+                    description += f'\n{emoji} {scope.capitalize()} Message\n```fix\n{message}\n```'
 
-            await ctx.send_followup(embeds=embeds)
+            emd = discord.Embed(description=description)
+            await ctx.send_followup(embed=emd)
         else:
-            await ctx.send_followup('> 👀 you haven\'t set any custom messages yet!')
+            await ctx.send_followup('> 👀 you have not set any custom messages yet!')

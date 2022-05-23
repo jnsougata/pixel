@@ -101,14 +101,9 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
         else:
             await ctx.send_followup(embed=discord.Embed(description='> There is no channel to remove.'))
 
-    elif value == 1:
-        bot.cached[ctx.guild.id]['RECEIVER'] = None
-        await ctx.send_followup(embed=discord.Embed(description='> Default notification channel has been removed.'))
-        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEIVER', None), force=True)
-
     elif value == 2:
         bot.cached[ctx.guild.id]['RECEPTION'] = None
-        await ctx.send_followup(embed=discord.Embed(description='> Welcome message channel has been removed.'))
+        await ctx.send_followup(embed=discord.Embed(description='> Welcomer has been removed.'))
         await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', None), force=True)
 
     elif value == 3:
