@@ -49,7 +49,7 @@ async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
 
 
 class ChannelMenu(discord.ui.Select):
-    def __init__(self, bot, ctx: Context, menu: list):
+    def __init__(self, bot: Bot, ctx: Context, menu: list):
         self.bot = bot
         self.ctx = ctx
         super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing youtube channels')
@@ -67,8 +67,7 @@ class ChannelMenu(discord.ui.Select):
                 description=f'\n> **Subs:** {info["subscribers"]}'
                             f'\n> **Views:** {info["views"]}'
                             f'\n> **Id:** {info["id"]}',
-                url=info["url"],
-                color=0xc4302b)
+                url=info["url"], color=0xc4302b)
             banner_url = info['banner']
             avatar_url = info['avatar']
             if banner_url and banner_url.startswith('http'):
@@ -76,12 +75,15 @@ class ChannelMenu(discord.ui.Select):
             if avatar_url and avatar_url.startswith('http'):
                 emd.set_thumbnail(url=avatar_url)
             await self.ctx.edit_response(embed=emd, view=None)
-            data = self.bot.cached[self.ctx.guild.id].get('CHANNELS')
             try:
-                data.pop(channel_id)
+                self.bot.cached[self.ctx.guild.id].get('CHANNELS').pop(channel_id)
             except KeyError:
                 pass
-            await self.bot.db.add_field(key=str(self.ctx.guild.id), field=Field('CHANNELS', data), force=True)
+            await self.bot.db.add_field(
+                key=str(self.ctx.guild.id),
+                field=Field('CHANNELS', self.bot.cached[self.ctx.guild.id].get('CHANNELS')),
+                force=True
+            )
 
 
 async def sub_view_remove(bot: Bot, ctx: Context, value: int):
@@ -96,8 +98,7 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
             view = discord.ui.View()
             view.add_item(ChannelMenu(bot, ctx, menu))
             await ctx.send_followup(
-                embed=discord.Embed(description='> Please select a channel from menu below:'),
-                view=view)
+                embed=discord.Embed(description='> Please select a channel from menu below:'), view=view)
         else:
             await ctx.send_followup(embed=discord.Embed(description='> There is no channel to remove.'))
 
