@@ -45,7 +45,7 @@ async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
     return [
                discord.SelectOption(label=name, value=id_, emoji=Emo.YT)
                for name, id_ in zip(channel_names, channel_ids)
-           ][:10]
+           ][:24]
 
 
 class ChannelMenu(discord.ui.Select):
@@ -111,16 +111,6 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
         await ctx.send_followup(embed=discord.Embed(description='> Ping role has been removed.'))
         await bot.db.add_field(key=str(ctx.guild.id), field=Field('PINGROLE', None), force=True)
 
-    elif value == 4:
-
-        def delete_card():
-            try:
-                drive.delete(f'covers/{ctx.guild.id}_card.png')
-            except:
-                pass
-        await bot.loop.run_in_executor(None, delete_card)
-        await ctx.send_followup(embed=discord.Embed(description='> Welcome Card has been removed.'))
-
     elif value == 5:
 
         data = bot.cached[ctx.guild.id].get('CUSTOM')
@@ -148,4 +138,4 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
                 await ctx.edit_response(
                     embed=discord.Embed(description='> Custom Live message has been removed.'), view=None)
         else:
-            await ctx.send_followup('> 👀 you haven\'t set any custom messages yet!')
+            await ctx.send_followup('> 👀 you have not set any custom messages yet!')
