@@ -56,6 +56,7 @@ class More(extlib.cog):
         ]
     )
     async def remove_command(self, ctx: extlib.Context, option: int):
+        await ctx.defer()
         await sub_view_remove(self.bot, ctx, option)
 
     @more_command.subcommand(
