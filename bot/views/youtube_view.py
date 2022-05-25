@@ -105,6 +105,7 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str, receiver: discord.T
                     embed=discord.Embed(
                         description=f'{Emo.WARN} you are requesting too often, try again in a few seconds'))
             else:
+                await asyncio.sleep(1.5)
                 upload = channel.recent_uploaded
                 upload_id = upload.id if upload else None
                 if old_data:
