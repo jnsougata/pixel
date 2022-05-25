@@ -75,6 +75,7 @@ class More(extlib.cog):
         ]
     )
     async def overview_command(self, ctx: extlib.Context, option: int):
+        await ctx.defer()
         await sub_view_config(self.bot, ctx, option)
 
 
