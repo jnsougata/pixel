@@ -1,10 +1,10 @@
 import discord
 import asyncio
 import aiotube
-import app_util
+import extlib
 from asyncdeta import Field
 from bot.extras.emojis import *
-from app_util import Context, Bot
+from extlib import Context, Bot
 
 
 def has_perms(channel: discord.TextChannel, ctx: Context):
@@ -47,7 +47,6 @@ class ReceiverSelection(discord.ui.Select):
                     url=self.info['url']
                 )
                 await self.ctx.edit_response(embed=emd, view=None)
-
 
             await self.bot.db.add_field(
                 key=str(self.ctx.guild.id),

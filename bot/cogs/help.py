@@ -1,11 +1,11 @@
 import discord
-import app_util
+import extlib
 import traceback
 from typing import Any
 from bot.extras.emojis import Emo
 
 
-async def check(ctx: app_util.Context):
+async def check(ctx: extlib.Context):
 
     p = ctx.channel.permissions_for(ctx.me)
     if not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
@@ -16,16 +16,14 @@ async def check(ctx: app_util.Context):
         return True
 
 
-class Help(app_util.Cog):
+class Help(extlib.cog):
 
-    def __init__(self, bot: app_util.Bot):
+    def __init__(self, bot: extlib.Bot):
         self.bot = bot
 
-    @app_util.Cog.command(
-        command=app_util.SlashCommand(name='help', description='information about the features')
-    )
-    @app_util.Cog.check(check)
-    async def help_command(self, ctx: app_util.Context):
+    @extlib.cog.command(name='help', description='information about the features', category=extlib.CommandType.SLASH)
+    @extlib.cog.check(check)
+    async def help_command(self, ctx: extlib.Context):
         emd = discord.Embed(
             title=f'Commands',
             description=f'\n**` 1 `** **` /setup `**\n'
@@ -53,5 +51,5 @@ class Help(app_util.Cog):
         await ctx.send_response(embed=emd)
 
 
-async def setup(bot: app_util.Bot):
+async def setup(bot: extlib.Bot):
     await bot.add_application_cog(Help(bot))

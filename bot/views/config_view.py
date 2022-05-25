@@ -2,7 +2,7 @@ import io
 import aiotube
 import discord
 from bot.extras.emojis import Emo
-from app_util import Context, Bot
+from extlib import Context, Bot
 
 
 async def sub_view_config(bot: Bot, ctx: Context, value: int):

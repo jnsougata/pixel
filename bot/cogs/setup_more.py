@@ -1,11 +1,11 @@
 import discord
-import app_util
+import extlib
 from bot.extras.emojis import Emo
 from bot.views.config_view import sub_view_config
 from bot.views.removal_view import sub_view_remove
 
 
-async def check(ctx: app_util.Context):
+async def check(ctx: extlib.Context):
 
     p = ctx.channel.permissions_for(ctx.me)
     if not p.send_messages and p.embed_links and p.external_emojis:
@@ -15,69 +15,67 @@ async def check(ctx: app_util.Context):
         return True
 
 
-class More(app_util.Cog):
-    def __init__(self, bot: app_util.Bot):
+class More(extlib.cog):
+    def __init__(self, bot: extlib.Bot):
         self.bot = bot
 
-    @app_util.Cog.command(
-        command=app_util.SlashCommand(
-            name='ping',
-            description='shows the avg latency of the bot',
-        ),
-        guild_id=877399405056102431
+    @extlib.cog.command(
+        name='ping',
+        description='shows the avg latency of the bot',
+        guild_id=877399405056102431,
+        category=extlib.CommandType.SLASH
     )
-    async def ping_command(self, ctx: app_util.Context):
+    async def ping_command(self, ctx: extlib.Context):
         await ctx.send_response(f'**Pong:** {round(self.bot.latency * 1000)}ms')
 
-    @app_util.Cog.command(
-        command=app_util.SlashCommand(
-            name='more',
-            description='remove or view previously set options',
-            dm_access=False,
-            options=[
-                app_util.SubCommand(
-                    name='remove', description='removes old configuration',
-                    options=[
-                        app_util.IntOption(
-                            name='option', description='removes a specific option',
-                            choices=[
-                                app_util.Choice(name='youtube', value=0),
-                                app_util.Choice(name='welcomer', value=2),
-                                app_util.Choice(name='ping_role', value=3),
-                                app_util.Choice(name='welcome_card', value=4),
-                                app_util.Choice(name='custom_message', value=5)
-                            ],
-                            required=True),
-                    ]
-                ),
-                app_util.SubCommand(
-                    name='overview', description='shows any current settings',
-                    options=[
-                        app_util.IntOption(
-                            name='option', description='overview of existing configuration',
-                            choices=[
-                                app_util.Choice(name='youtube', value=0),
-                                app_util.Choice(name='welcomer', value=2),
-                                app_util.Choice(name='ping_role', value=3),
-                                app_util.Choice(name='custom_message', value=5)
-                            ],
-                            required=True)
-                    ]
-                ),
-            ],
-        ),
+    @extlib.cog.command(
+        name='more',
+        description='remove or view previously set options',
+        dm_access=False,
+        category=extlib.CommandType.SLASH
     )
-    @app_util.Cog.default_permission(discord.Permissions.manage_guild)
-    @app_util.Cog.check(check)
-    async def more_command(self, ctx: app_util.Context, *, remove_option: int, overview_option: int):
-        await ctx.defer()
-        if remove_option is not None:
-            await sub_view_remove(self.bot, ctx, remove_option)
-            return
-        if overview_option is not None:
-            await sub_view_config(self.bot, ctx, overview_option)
-            return
+    @extlib.cog.default_permission(discord.Permissions.manage_guild)
+    @extlib.cog.check(check)
+    async def more_command(self, ctx: extlib.Context, *, remove_option: int, overview_option: int):
+        ...
+
+    @more_command.subcommand(
+        name='remove',
+        description='removes old configuration',
+        options=[
+            extlib.IntOption(
+                name='option', description='removes a specific option',
+                choices=[
+                    extlib.Choice(name='youtube', value=0),
+                    extlib.Choice(name='welcomer', value=2),
+                    extlib.Choice(name='ping_role', value=3),
+                    extlib.Choice(name='welcome_card', value=4),
+                    extlib.Choice(name='custom_message', value=5)
+                ],
+                required=True),
+        ]
+    )
+    async def remove_command(self, ctx: extlib.Context, option: int):
+        await sub_view_remove(self.bot, ctx, option)
+
+    @more_command.subcommand(
+        name='overview',
+        description='shows any current settings',
+        options=[
+            extlib.IntOption(
+                name='option', description='overview of existing configuration',
+                choices=[
+                    extlib.Choice(name='youtube', value=0),
+                    extlib.Choice(name='welcomer', value=2),
+                    extlib.Choice(name='ping_role', value=3),
+                    extlib.Choice(name='custom_message', value=5)
+                ],
+                required=True)
+        ]
+    )
+    async def overview_command(self, ctx: extlib.Context, option: int):
+        await sub_view_config(self.bot, ctx, option)
 
 
-async def setup(bot: app_util.Bot):
+async def setup(bot: extlib.Bot):
     await bot.add_application_cog(More(bot))

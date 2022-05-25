@@ -1,14 +1,14 @@
 import aiotube
 import asyncio
 import discord
-import app_util
+import extlib
 import traceback
 from asyncdeta import Field
 from bot.extras.emojis import Emo
 
 
 class ChannelSelectMenu(discord.ui.Select):
-    def __init__(self, bot: app_util.Bot, ctx: app_util.Context, menu: list):
+    def __init__(self, bot: extlib.Bot, ctx: extlib.Context, menu: list):
         self.bot = bot
         self.ctx = ctx
         super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing youtube channels')
@@ -162,7 +162,7 @@ class ChannelSelectMenu(discord.ui.Select):
             await self.ctx.edit_response(embed=discord.Embed(description=resp_embed_desc))
 
 
-async def check(ctx: app_util.Context):
+async def check(ctx: extlib.Context):
 
     p = ctx.channel.permissions_for(ctx.me)
     if not p.send_messages and p.embed_links and p.external_emojis:
@@ -172,14 +172,14 @@ async def check(ctx: app_util.Context):
         return True
 
 
-class Override(app_util.Cog):
-    def __init__(self, bot: app_util.Bot):
+class Override(extlib.cog):
+    def __init__(self, bot: extlib.Bot):
         self.bot = bot
 
-    @app_util.Cog.default_permission(discord.Permissions.manage_guild)
-    @app_util.Cog.check(check)
-    @app_util.Cog.command(command=app_util.SlashCommand(name='force', description='forces to check for new videos'))
-    async def force_check(self, ctx: app_util.Context):
+    @extlib.cog.default_permission(discord.Permissions.manage_guild)
+    @extlib.cog.check(check)
+    @extlib.cog.command(name='force', description='forces to check for new videos', category=extlib.CommandType.SLASH)
+    async def force_check(self, ctx: extlib.Context):
 
         async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
             def get_channel_names():
@@ -200,5 +200,5 @@ class Override(app_util.Cog):
             view=view)
 
 
-async def setup(bot: app_util.Bot):
+async def setup(bot: extlib.Bot):
     await bot.add_application_cog(Override(bot))

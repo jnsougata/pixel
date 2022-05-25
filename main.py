@@ -1,13 +1,13 @@
 import os
 import discord
-import app_util
+import extlib
 from asyncdeta import Deta
 
 intent = discord.Intents().default()
 intent.members = True
 
 
-class PixeL(app_util.Bot):
+class PixeL(extlib.Bot):
 
     __dirs__ = os.listdir('bot/cogs')
 

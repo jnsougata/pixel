@@ -1,5 +1,5 @@
 import discord
-import app_util
+import extlib
 from bot.extras.emojis import Emo
 from bot.views.custom_view import sub_view_msg
 from bot.views.youtube_view import sub_view_youtube
@@ -7,7 +7,7 @@ from bot.views.welcomer_view import sub_view_welcomer
 from bot.views.pingrole_view import sub_view_pingrole
 
 
-async def check(ctx: app_util.Context):
+async def check(ctx: extlib.Context):
 
     p = ctx.channel.permissions_for(ctx.me)
     if not p.send_messages and p.embed_links and p.external_emojis:
@@ -17,100 +17,88 @@ async def check(ctx: app_util.Context):
         return True
 
 
-class Setup(app_util.Cog):
-    def __init__(self, bot: app_util.Bot):
+class Setup(extlib.cog):
+    def __init__(self, bot: extlib.Bot):
         self.bot = bot
 
-    @app_util.Cog.command(
-        command=app_util.SlashCommand(name='ping', description='shows the avg latency of the bot'),
-        guild_id=877399405056102431
+    @extlib.cog.command(
+        name='setup',
+        description='setup the server configurations',
+        dm_access=False,
+        category=extlib.CommandType.SLASH
     )
-    async def ping_command(self, ctx: app_util.Context):
-        await ctx.send_response(f'**Pong:** {round(self.bot.latency * 1000)}ms')
+    @extlib.cog.default_permission(discord.Permissions.manage_guild)
+    @extlib.cog.check(check)
+    async def setup_command(self, ctx: extlib.Context):
+        pass
 
-    @app_util.Cog.command(
-        command=app_util.SlashCommand(
-            name='setup',
-            description='setup the server configurations',
-            dm_access=False,
-            options=[
-                app_util.SubCommand(
-                    name='youtube', description='integrates youtube channel to the server',
-                    options=[
-                        app_util.StrOption(
-                            name='channel',
-                            description='url or id of the youtube channel',
-                            required=True),
-                        app_util.ChannelOption(
-                            name='receiver',
-                            description='text channel to receive notifications',
-                            channel_types=[app_util.ChannelType.GUILD_TEXT, app_util.ChannelType.GUILD_NEWS],
-                            required=True),
-                    ]
-                ),
-                app_util.SubCommand(
-                    name='welcomer', description='adds welcome card to the server',
-                    options=[
-                        app_util.ChannelOption(
-                            name='channel',
-                            description='text channel to greet with welcome cards',
-                            channel_types=[app_util.ChannelType.GUILD_TEXT, app_util.ChannelType.GUILD_NEWS],
-                            required=True),
-                        app_util.AttachmentOption(
-                            name='image',
-                            description='image file to send when new member joins', required=False),
-                    ]
-                ),
-                app_util.SubCommand(
-                    name='ping_role', description='adds role to ping with youtube notification',
-                    options=[
-                        app_util.RoleOption(
-                            name='role', description='role to ping with youtube notification', required=True),
-                    ]
-                ),
-                app_util.SubCommand(
-                    name='custom_message',
-                    description='adds custom welcome and notification message',
-                    options=[
-                        app_util.IntOption(
-                            name='option',
-                            description='type of message to add or edit',
-                            choices=[
-                                app_util.Choice(name='upload', value=1),
-                                app_util.Choice(name='welcome', value=0),
-                                app_util.Choice(name='livestream', value=2),
-                            ],
-                            required=True),
-                    ]
-                )
-            ],
-        )
+    @setup_command.subcommand(
+        name='youtube',
+        description='integrates youtube channel to the server',
+        options=[
+            extlib.StrOption(
+                name='channel',
+                description='url or id of the youtube channel',
+                required=True),
+            extlib.ChannelOption(
+                name='receiver',
+                description='text channel to receive notifications',
+                channel_types=[extlib.ChannelType.GUILD_TEXT, extlib.ChannelType.GUILD_NEWS],
+                required=True),
+        ]
     )
-    @app_util.Cog.default_permission(discord.Permissions.manage_guild)
-    @app_util.Cog.check(check)
-    async def setup_command(
-            self, ctx: app_util.Context,
-            *,
-            youtube: bool, youtube_channel: str, youtube_receiver: discord.TextChannel,
-            welcomer: bool, welcomer_channel: discord.TextChannel, welcomer_image: discord.Attachment,
-            ping_role: bool, ping_role_role: discord.Role, custom_message: bool, custom_message_option: int
-    ):
-        if youtube:
-            await ctx.defer()
-            await sub_view_youtube(self.bot, ctx, youtube_channel, youtube_receiver)
-            return
-        if ping_role:
-            await ctx.defer()
-            await sub_view_pingrole(self.bot, ctx, ping_role_role)
-            return
-        if welcomer:
-            await ctx.defer()
-            await sub_view_welcomer(self.bot, ctx, welcomer_image, welcomer_channel)
-            return
-        if custom_message is not None:
-            await sub_view_msg(self.bot, ctx, custom_message_option)
-            return
+    async def youtube_command(self, ctx: extlib.Context, channel: str, receiver: discord.TextChannel):
+        await ctx.defer()
+        await sub_view_youtube(self.bot, ctx, channel, receiver)
+
+    @setup_command.subcommand(
+        name='welcomer',
+        description='adds welcome card to the server',
+        options=[
+            extlib.ChannelOption(
+                name='channel',
+                description='text channel to greet with welcome cards',
+                channel_types=[extlib.ChannelType.GUILD_TEXT, extlib.ChannelType.GUILD_NEWS],
+                required=True),
+            extlib.AttachmentOption(
+                name='image',
+                description='image file to send when new member joins', required=False),
+        ]
+    )
+    async def welcomer_command(self, ctx: extlib.Context, channel: discord.TextChannel, image: discord.Attachment):
+        await ctx.defer()
+        await sub_view_welcomer(self.bot, ctx, image, channel)
+
+    @setup_command.subcommand(
+        name='ping_role',
+        description='adds role to ping with youtube notification',
+        options=[
+            extlib.RoleOption(
+                name='role', description='role to ping with youtube notification', required=True),
+        ]
+    )
+    async def ping_role_command(self, ctx: extlib.Context, role: discord.Role):
+        await ctx.defer()
+        await sub_view_pingrole(self.bot, ctx, role)
+
+    @setup_command.subcommand(
+        name='custom_message',
+        description='adds custom welcome and notification message',
+        options=[
+            extlib.IntOption(
+                name='option',
+                description='type of message to add or edit',
+                choices=[
+                    extlib.Choice(name='upload', value=1),
+                    extlib.Choice(name='welcome', value=0),
+                    extlib.Choice(name='livestream', value=2),
+                ],
+                required=True),
+        ]
+    )
+    async def custom_message_command(self, ctx: extlib.Context, option: int):
+        await sub_view_msg(self.bot, ctx, option)
 
 
-async def setup(bot: app_util.Bot):
+async def setup(bot: extlib.Bot):
     await bot.add_application_cog(Setup(bot))
