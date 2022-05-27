@@ -1,7 +1,7 @@
+import extlib
 import aiotube
 import asyncio
 import discord
-import extlib
 import traceback
 from asyncdeta import Field
 from bot.extras.emojis import Emo
