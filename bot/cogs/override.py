@@ -180,24 +180,28 @@ class Override(extlib.cog):
     @extlib.cog.check(check)
     @extlib.cog.command(name='force', description='forces to check for new videos', category=extlib.CommandType.SLASH)
     async def force_check(self, ctx: extlib.Context):
+        all_channels = self.bot.cached[ctx.guild.id].get('CHANNELS')
 
-        async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
-            def get_channel_names():
-                return [aiotube.Channel(channel_id).name or 'null' for channel_id in channel_ids]
+        if all_channels:
+            async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
+                def get_channel_names():
+                    return [aiotube.Channel(channel_id).name or 'null' for channel_id in channel_ids]
 
-            channel_names = await loop.run_in_executor(None, get_channel_names)
+                channel_names = await loop.run_in_executor(None, get_channel_names)
 
-            return [
-                       discord.SelectOption(label=name, value=id_, emoji=Emo.SEARCH)
-                       for name, id_ in zip(channel_names, channel_ids)
-                   ][:24]
+                return [
+                           discord.SelectOption(label=name, value=id_, emoji=Emo.SEARCH)
+                           for name, id_ in zip(channel_names, channel_ids)
+                       ][:24]
 
-        menu = await create_menu(self.bot.loop, self.bot.cached[ctx.guild.id].get('CHANNELS'))
-        view = discord.ui.View()
-        view.add_item(ChannelSelectMenu(self.bot, ctx, menu))
-        await ctx.send_response(
-            embed=discord.Embed(description=f'> {Emo.YT} Select YouTube Channel to SCAN'),
-            view=view)
+            menu = await create_menu(self.bot.loop, list(all_channels.keys()))
+            view = discord.ui.View()
+            view.add_item(ChannelSelectMenu(self.bot, ctx, menu))
+            await ctx.send_response(
+                embed=discord.Embed(description=f'> {Emo.YT} Select YouTube Channel to SCAN'),
+                view=view)
+        else:
+            await ctx.send_response(embed=discord.Embed(description=f'> {Emo.WARN} no channel has been added yet'))
 
 
 async def setup(bot: extlib.Bot):
