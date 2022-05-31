@@ -63,10 +63,13 @@ class Setup(extlib.cog):
                 name='channel',
                 description='text channel to greet with welcome cards',
                 channel_types=[extlib.ChannelType.GUILD_TEXT, extlib.ChannelType.GUILD_NEWS],
-                required=True),
+                required=True
+            ),
             extlib.AttachmentOption(
                 name='image',
-                description='image file to send when new member joins', required=False),
+                description='image file to send when new member joins',
+                required=False
+            ),
         ]
     )
     async def welcomer_command(self, ctx: extlib.Context, channel: discord.TextChannel, image: discord.Attachment):
