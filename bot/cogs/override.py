@@ -164,6 +164,10 @@ class ChannelSelectMenu(discord.ui.Select):
 
 async def check(ctx: extlib.Context):
 
+    if not ctx.channel:
+        await ctx.send_response('> 😓  command can not be used inside `threads`')
+        return False
+
     p = ctx.channel.permissions_for(ctx.me)
     if not p.send_messages and p.embed_links and p.external_emojis:
         await ctx.send_response(
