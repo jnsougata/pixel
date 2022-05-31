@@ -185,7 +185,7 @@ class Override(extlib.cog):
         if all_channels:
             async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
                 def get_channel_names():
-                    return [aiotube.Channel(channel_id).name or 'null' for channel_id in channel_ids]
+                    return [aiotube.Channel(channel_id).name for channel_id in channel_ids if channel_id]
 
                 channel_names = await loop.run_in_executor(None, get_channel_names)
 
