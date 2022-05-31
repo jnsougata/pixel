@@ -7,7 +7,7 @@ from extlib import Context, Bot
 
 async def sub_view_config(bot: Bot, ctx: Context, value: int):
 
-    if value == 0:
+    if value == 1:
         data = bot.cached[ctx.guild.id].get('CHANNELS')
         if data:
 
@@ -62,7 +62,7 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
         else:
             await ctx.send_followup('> 👀 you haven\'t set any ping role yet!')
 
-    elif value == 5:
+    elif value == 4:
         data = data = bot.cached[ctx.guild.id].get('CUSTOM')
         if data:
             emojis = [Emo.DEAL, Emo.YT, Emo.LIVE]

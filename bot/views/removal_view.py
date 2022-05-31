@@ -88,7 +88,7 @@ class ChannelMenu(discord.ui.Select):
 
 async def sub_view_remove(bot: Bot, ctx: Context, value: int):
 
-    if value == 0:
+    if value == 1:
 
         data = bot.cached[ctx.guild.id].get('CHANNELS')
 
@@ -112,7 +112,7 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
         await ctx.send_followup(embed=discord.Embed(description='> Ping role has been removed.'))
         await bot.db.add_field(key=str(ctx.guild.id), field=Field('PINGROLE', None), force=True)
 
-    elif value == 5:
+    elif value == 4:
 
         data = bot.cached[ctx.guild.id].get('CUSTOM')
 

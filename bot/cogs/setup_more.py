@@ -40,8 +40,8 @@ class More(extlib.cog):
     )
     @extlib.cog.default_permission(discord.Permissions.manage_guild)
     @extlib.cog.check(check)
-    async def more_command(self, ctx: extlib.Context, *, remove_option: int, overview_option: int):
-        ...
+    async def more_command(self, ctx: extlib.Context):
+        pass
 
     @more_command.subcommand(
         name='remove',
@@ -50,11 +50,10 @@ class More(extlib.cog):
             extlib.IntOption(
                 name='option', description='removes a specific option',
                 choices=[
-                    extlib.Choice(name='youtube', value=0),
+                    extlib.Choice(name='youtube', value=1),
                     extlib.Choice(name='welcomer', value=2),
                     extlib.Choice(name='ping_role', value=3),
-                    extlib.Choice(name='welcome_card', value=4),
-                    extlib.Choice(name='custom_message', value=5)
+                    extlib.Choice(name='custom_message', value=4),
                 ],
                 required=True),
         ]
@@ -70,10 +69,10 @@ class More(extlib.cog):
             extlib.IntOption(
                 name='option', description='overview of existing configuration',
                 choices=[
-                    extlib.Choice(name='youtube', value=0),
+                    extlib.Choice(name='youtube', value=1),
                     extlib.Choice(name='welcomer', value=2),
                     extlib.Choice(name='ping_role', value=3),
-                    extlib.Choice(name='custom_message', value=5)
+                    extlib.Choice(name='custom_message', value=4)
                 ],
                 required=True)
         ]
