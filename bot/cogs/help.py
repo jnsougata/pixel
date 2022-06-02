@@ -5,28 +5,12 @@ from typing import Any
 from bot.extras.emojis import Emo
 
 
-async def check(ctx: extlib.Context):
-
-    if not ctx.channel:
-        await ctx.send_response('> 😓  command can not be used inside `threads`')
-        return False
-
-    p = ctx.channel.permissions_for(ctx.me)
-    if not p.send_messages and p.embed_links and p.attach_files and p.external_emojis:
-        await ctx.send_response(
-            f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis` `attachments`')
-        return False
-    else:
-        return True
-
-
 class Help(extlib.cog):
 
     def __init__(self, bot: extlib.Bot):
         self.bot = bot
 
     @extlib.cog.command(name='help', description='information about the features', category=extlib.CommandType.SLASH)
-    @extlib.cog.check(check)
     async def help_command(self, ctx: extlib.Context):
         emd = discord.Embed(
             title=f'Commands',

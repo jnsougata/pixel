@@ -162,26 +162,11 @@ class ChannelSelectMenu(discord.ui.Select):
             await self.ctx.edit_response(embed=discord.Embed(description=resp_embed_desc))
 
 
-async def check(ctx: extlib.Context):
-
-    if not ctx.channel:
-        await ctx.send_response('> 😓  command can not be used inside `threads`')
-        return False
-
-    p = ctx.channel.permissions_for(ctx.me)
-    if not p.send_messages and p.embed_links and p.external_emojis:
-        await ctx.send_response(
-            f'> 😓  Please make sure I have permissions to send `embeds` `custom emojis`')
-    else:
-        return True
-
-
 class Override(extlib.cog):
     def __init__(self, bot: extlib.Bot):
         self.bot = bot
 
     @extlib.cog.default_permission(discord.Permissions.manage_guild)
-    @extlib.cog.check(check)
     @extlib.cog.command(name='force', description='forces to check for new videos', category=extlib.CommandType.SLASH)
     async def force_check(self, ctx: extlib.Context):
         all_channels = self.bot.cached[ctx.guild.id].get('CHANNELS')
