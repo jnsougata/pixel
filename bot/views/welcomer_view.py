@@ -30,7 +30,6 @@ async def sub_view_welcomer(bot: Bot, ctx: Context, image: discord.Attachment, r
         else:
             return True
 
-
     if reception and image:
         if await check_reception_perms():
             await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', str(reception.id)), force=True)
@@ -40,6 +39,8 @@ async def sub_view_welcomer(bot: Bot, ctx: Context, image: discord.Attachment, r
             )
             emd.set_image(url=image.url)
             await ctx.send_followup(embed=emd)
+
+            bot.cached[ctx.guild.id]['RECEPTION'] = str(reception.id)
 
             async with aiohttp.ClientSession() as session:
                 async with session.get(image.url) as resp:
@@ -53,3 +54,5 @@ async def sub_view_welcomer(bot: Bot, ctx: Context, image: discord.Attachment, r
                 description=f'Current set reception channel is {reception.mention}'
                             f'\nThis channel will be used to send welcome cards')
             await ctx.send_followup(embed=emd)
+
+            bot.cached[ctx.guild.id]['RECEPTION'] = str(reception.id)
