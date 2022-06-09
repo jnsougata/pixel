@@ -25,7 +25,7 @@ async def send_form(ctx: extlib.Context, bot: extlib.Bot, *, option_value: int, 
     modal = extlib.Modal(title=f'{event.capitalize()} Message')
     modal.add_field(
         label='See Editing Scopes Here',
-        style=extlib.ModalTextType.LONG,
+        style=extlib.TextFieldLength.LONG,
         custom_id='scopes',
         required=False,
         max_length=500,
@@ -34,7 +34,7 @@ async def send_form(ctx: extlib.Context, bot: extlib.Bot, *, option_value: int, 
     )
     modal.add_field(
         label='Type Here',
-        style=extlib.ModalTextType.LONG,
+        style=extlib.TextFieldLength.LONG,
         custom_id='message',
         hint='Type your custom message using the above scopes',
         required=True,
