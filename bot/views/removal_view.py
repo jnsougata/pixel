@@ -38,14 +38,19 @@ class OptionView(discord.ui.View):
 async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
 
     def get_channel_names():
-        return [aiotube.Channel(channel_id).name or 'null' for channel_id in channel_ids]
+        container = []
+        for channel_id in channel_ids:
+            try:
+                channel = aiotube.Channel(channel_id)
+                container.append(channel.name)
+            except Exception:
+                container.append('Invalid Channel')
+        return container
 
     channel_names = await loop.run_in_executor(None, get_channel_names)
 
-    return [
-               discord.SelectOption(label=name, value=id_, emoji=Emo.YT)
-               for name, id_ in zip(channel_names, channel_ids)
-           ][:24]
+    return [discord.SelectOption(label=name, value=ch_id, emoji=Emo.YT)
+            for name, ch_id in zip(channel_names, channel_ids)][:24]
 
 
 class ChannelMenu(discord.ui.Select):
