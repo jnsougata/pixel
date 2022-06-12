@@ -49,7 +49,7 @@ async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
 
     channel_names = await loop.run_in_executor(None, get_channel_names)
 
-    return [discord.SelectOption(label=name, value=ch_id, emoji=Emo.YT)
+    return [discord.SelectOption(label=name or 'Invalid Name', value=ch_id, emoji=Emo.YT)
             for name, ch_id in zip(channel_names, channel_ids)][:24]
 
 
