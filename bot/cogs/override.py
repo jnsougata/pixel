@@ -180,7 +180,7 @@ class Override(extlib.cog):
 
                 return [
                            discord.SelectOption(label=name, value=id_, emoji=Emo.SEARCH)
-                           for name, id_ in zip(channel_names, channel_ids)
+                           for name, id_ in zip(channel_names, channel_ids) if id_
                        ][:24]
 
             menu = await create_menu(self.bot.loop, list(all_channels.keys()))
