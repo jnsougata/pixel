@@ -172,16 +172,24 @@ class Override(extlib.cog):
         all_channels = self.bot.cached[ctx.guild.id].get('CHANNELS')
 
         if all_channels:
+
             async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
+
                 def get_channel_names():
-                    return [aiotube.Channel(channel_id).name for channel_id in channel_ids if channel_id]
+                    container = []
+                    for channel_id in channel_ids:
+                        try:
+                            channel = aiotube.Channel(channel_id)
+                            container.append(channel.name)
+                        except:
+                            container.append('Invalid Channel')
+
+                    return container
 
                 channel_names = await loop.run_in_executor(None, get_channel_names)
 
-                return [
-                           discord.SelectOption(label=name, value=id_, emoji=Emo.SEARCH)
-                           for name, id_ in zip(channel_names, channel_ids) if id_
-                       ][:24]
+                return [discord.SelectOption(label=name, value=str(id_ch), emoji=Emo.SEARCH)
+                        for name, id_ch in zip(channel_names, channel_ids)][:24]
 
             menu = await create_menu(self.bot.loop, list(all_channels.keys()))
             view = discord.ui.View()
