@@ -44,13 +44,17 @@ async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
                 channel = aiotube.Channel(channel_id)
                 container.append(channel.name)
             except Exception:
-                container.append('Invalid Channel')
+                container.append(None)
         return container
 
     channel_names = await loop.run_in_executor(None, get_channel_names)
 
-    return [discord.SelectOption(label=name or 'Invalid Name', value=ch_id, emoji=Emo.YT)
-            for name, ch_id in zip(channel_names, channel_ids)][:24]
+    options = []
+    for ch_name, ch_id in zip(channel_names, channel_ids):
+        if ch_name and ch_id:
+            options.append(discord.SelectOption(label=ch_name, value=ch_id, emoji=Emo.YT))
+
+    return options[:24]
 
 
 class ChannelMenu(discord.ui.Select):
