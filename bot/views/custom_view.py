@@ -1,5 +1,5 @@
+import disfix
 import discord
-import extlib
 from asyncdeta import Field
 from bot.extras.emojis import *
 
@@ -20,12 +20,12 @@ For channel name use: [name]'''
 value_list = [for_welcome, for_upload, for_live]
 
 
-async def send_form(ctx: extlib.Context, bot: extlib.Bot, *, option_value: int, event: str, data: dict):
+async def send_form(ctx: disfix.Context, bot: disfix.Bot, *, option_value: int, event: str, data: dict):
     prefilled = value_list[option_value]
-    modal = extlib.Modal(title=f'{event.capitalize()} Message')
+    modal = disfix.Modal(title=f'{event.capitalize()} Message')
     modal.add_field(
         label='See Editing Scopes Here',
-        style=extlib.TextFieldLength.LONG,
+        style=disfix.TextFieldLength.LONG,
         custom_id='scopes',
         required=False,
         max_length=500,
@@ -34,7 +34,7 @@ async def send_form(ctx: extlib.Context, bot: extlib.Bot, *, option_value: int, 
     )
     modal.add_field(
         label='Type Here',
-        style=extlib.TextFieldLength.LONG,
+        style=disfix.TextFieldLength.LONG,
         custom_id='message',
         hint='Type your custom message using the above scopes',
         required=True,
@@ -44,7 +44,7 @@ async def send_form(ctx: extlib.Context, bot: extlib.Bot, *, option_value: int, 
     await ctx.send_modal(modal)
 
     @modal.callback(bot)
-    async def on_submit(mcx: extlib.Modal, scopes: str, message: str):
+    async def on_submit(mcx: disfix.Modal, scopes: str, message: str):
         embed = discord.Embed(
             title=f'{Emo.CHECK} {event.capitalize()} Message Updated',
             description=f'**Edited:**\n```{message}```'
@@ -55,7 +55,7 @@ async def send_form(ctx: extlib.Context, bot: extlib.Bot, *, option_value: int, 
         await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
 
 
-async def sub_view_msg(bot: extlib.Bot, ctx: extlib.Context, value: int):
+async def sub_view_msg(bot: disfix.Bot, ctx: disfix.Context, value: int):
 
     old_data = bot.cached[ctx.guild.id].get('CUSTOM')
     data = old_data if old_data else {}

@@ -90,9 +90,9 @@ class Listeners(commands.Cog):
                 reception = member.guild.get_channel(int(reception_id))
                 if reception:
                     try:
-                        bg = io.BytesIO(await self.bot.drive.download(f'covers/{guild_id}_card.png'))
+                        bg = io.BytesIO(await self.bot.drive.get(f'covers/{guild_id}_card.png'))
                     except:
-                        bg = io.BytesIO(await self.bot.drive.download('covers/default_card.png'))
+                        bg = io.BytesIO(await self.bot.drive.get('covers/default_card.png'))
                     avatar = member.display_avatar.with_format('png')
                     avatar_io = io.BytesIO(await avatar.read())
                     round_layer = Io.draw(size=(1500, 1500), color='#FFFFFF')
@@ -113,7 +113,7 @@ class Listeners(commands.Cog):
                         position=(660, 645),
                         text=f'You are {member.guild.member_count}th Member',
                     )
-                    file = discord.File(canvas.output, 'welcomecard_hq.png')
+                    file = discord.File(canvas.output, 'card_hq.png')
                     scopes = {
                         '[ping.member]': '',
                         '[member.name]': str(member),
@@ -134,7 +134,7 @@ class Listeners(commands.Cog):
                         plain_text = '[no.ping]'
                         message = f'**Welcome to _{member.guild.name}_**'
                     emd = discord.Embed(description=message, color=0x2f3136)
-                    emd.set_image(url="attachment://welcomecard_hq.png")
+                    emd.set_image(url="attachment://card_hq.png")
                     try:
                         if '[ping.member]' in plain_text:
                             await reception.send(content=member.mention, embed=emd, file=file)

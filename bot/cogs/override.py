@@ -1,4 +1,4 @@
-import extlib
+import disfix
 import aiotube
 import asyncio
 import discord
@@ -8,7 +8,7 @@ from bot.extras.emojis import Emo
 
 
 class ChannelSelectMenu(discord.ui.Select):
-    def __init__(self, bot: extlib.Bot, ctx: extlib.Context, menu: list):
+    def __init__(self, bot: disfix.Bot, ctx: disfix.Context, menu: list):
         self.bot = bot
         self.ctx = ctx
         super().__init__(min_values=1, max_values=1, options=menu, placeholder='existing youtube channels')
@@ -162,13 +162,13 @@ class ChannelSelectMenu(discord.ui.Select):
             await self.ctx.edit_response(embed=discord.Embed(description=resp_embed_desc))
 
 
-class Override(extlib.cog):
-    def __init__(self, bot: extlib.Bot):
+class Override(disfix.cog):
+    def __init__(self, bot: disfix.Bot):
         self.bot = bot
 
-    @extlib.cog.default_permission(discord.Permissions.manage_guild)
-    @extlib.cog.command(name='force', description='forces to check for new videos', category=extlib.CommandType.SLASH)
-    async def force_check(self, ctx: extlib.Context):
+    @disfix.cog.default_permission(discord.Permissions.manage_guild)
+    @disfix.cog.command(name='force', description='forces to check for new videos', category=disfix.CommandType.SLASH)
+    async def force_check(self, ctx: disfix.Context):
         all_channels = self.bot.cached[ctx.guild.id].get('CHANNELS')
 
         if all_channels:
@@ -201,5 +201,5 @@ class Override(extlib.cog):
             await ctx.send_response(embed=discord.Embed(description=f'> {Emo.WARN} no channel has been added yet'))
 
 
-async def setup(bot: extlib.Bot):
+async def setup(bot: disfix.Bot):
     await bot.add_application_cog(Override(bot))

@@ -1,17 +1,17 @@
 import discord
-import extlib
+import disfix
 import traceback
 from typing import Any
 from bot.extras.emojis import Emo
 
 
-class ErrorHandler(extlib.cog):
+class ErrorHandler(disfix.cog):
 
-    def __init__(self, bot: extlib.Bot):
+    def __init__(self, bot: disfix.Bot):
         self.bot = bot
 
-    @extlib.cog.listener
-    async def on_app_command_error(self, ctx: extlib.Context, error: Exception):
+    @disfix.cog.listener
+    async def on_app_command_error(self, ctx: disfix.Context, error: Exception):
 
         button = discord.ui.Button(
             label='DEV SERVER',
@@ -58,5 +58,5 @@ class ErrorHandler(extlib.cog):
             print(f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```')
 
 
-async def setup(bot: extlib.Bot):
+async def setup(bot: disfix.Bot):
     await bot.add_application_cog(ErrorHandler(bot))

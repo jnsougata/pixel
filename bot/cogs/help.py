@@ -1,17 +1,17 @@
 import discord
-import extlib
+import disfix
 import traceback
 from typing import Any
 from bot.extras.emojis import Emo
 
 
-class Help(extlib.cog):
+class Help(disfix.cog):
 
-    def __init__(self, bot: extlib.Bot):
+    def __init__(self, bot: disfix.Bot):
         self.bot = bot
 
-    @extlib.cog.command(name='help', description='information about the features', category=extlib.CommandType.SLASH)
-    async def help_command(self, ctx: extlib.Context):
+    @disfix.cog.command(name='help', description='information about the features', category=disfix.CommandType.SLASH)
+    async def help_command(self, ctx: disfix.Context):
         emd = discord.Embed(
             title=f'Commands',
             description=f'\n**` 1 `** **` /setup `**\n'
@@ -39,5 +39,5 @@ class Help(extlib.cog):
         await ctx.send_response(embed=emd)
 
 
-async def setup(bot: extlib.Bot):
+async def setup(bot: disfix.Bot):
     await bot.add_application_cog(Help(bot))

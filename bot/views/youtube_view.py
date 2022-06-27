@@ -1,10 +1,9 @@
 import discord
 import asyncio
 import aiotube
-import extlib
 from asyncdeta import Field
 from bot.extras.emojis import *
-from extlib import Context, Bot
+from disfix import Context, Bot
 
 
 def has_perms(channel: discord.TextChannel, ctx: Context):

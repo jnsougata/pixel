@@ -1,8 +1,8 @@
 import io
 import aiotube
 import discord
+from disfix import Context, Bot
 from bot.extras.emojis import Emo
-from extlib import Context, Bot
 
 
 async def sub_view_config(bot: Bot, ctx: Context, value: int):
@@ -34,10 +34,10 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
             channel = ctx.guild.get_channel(int(data))
             if channel:
                 try:
-                    card = await bot.drive.download(f'covers/{ctx.guild.id}_card.png')
+                    card = await bot.drive.get(f'covers/{ctx.guild.id}_card.png')
                 except:
-                    card = await bot.drive.download('covers/default_card.png')
-                file = discord.File(io.BytesIO(card), filename='card.png')
+                    card = await bot.drive.get('covers/default_card.png')
+                file = discord.File(card, filename='card.png')
                 emd = discord.Embed(description=f'{Emo.CHECK} Welcomer bound to <#{data}> with the following card:')
                 emd.set_image(url=f'attachment://card.png')
                 await ctx.send_followup(embed=emd, file=file)

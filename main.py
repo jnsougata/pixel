@@ -1,13 +1,13 @@
 import os
 import discord
-import extlib
+import disfix
 from asyncdeta import Deta
 
 intent = discord.Intents().default()
 intent.members = True
 
 
-class PixeL(extlib.Bot):
+class PixeL(disfix.Bot):
 
     __dirs__ = os.listdir('bot/cogs')
 
@@ -36,5 +36,6 @@ class PixeL(extlib.Bot):
         self.cached = {int(field.pop('key')): field for field in fields}
 
 
-pixel = PixeL()
-pixel.run(os.getenv('DISCORD_TOKEN'))
+if __name__ == '__main__':
+    pixel = PixeL()
+    pixel.run(os.getenv('DISCORD_TOKEN'))
