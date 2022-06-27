@@ -90,9 +90,9 @@ class Listeners(commands.Cog):
                 reception = member.guild.get_channel(int(reception_id))
                 if reception:
                     try:
-                        bg = io.BytesIO(await self.bot.drive.get(f'covers/{guild_id}_card.png'))
+                        bg = await self.bot.drive.get(f'covers/{guild_id}_card.png')
                     except:
-                        bg = io.BytesIO(await self.bot.drive.get('covers/default_card.png'))
+                        bg = await self.bot.drive.get('covers/default_card.png')
                     avatar = member.display_avatar.with_format('png')
                     avatar_io = io.BytesIO(await avatar.read())
                     round_layer = Io.draw(size=(1500, 1500), color='#FFFFFF')
