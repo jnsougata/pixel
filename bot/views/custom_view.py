@@ -4,18 +4,24 @@ from asyncdeta import Field
 from bot.extras.emojis import *
 
 
-for_welcome = '''For member name use: [member.name]
-For server name use: [guild.name]
-To notify user use: [ping.member]
-To mention user silently use: [member.mention]'''
+for_welcome = (
+    '[guild.name] will be replaced with name of the Guild'
+    '\n[member.name] will be replaced with name of the Member'
+    '\n[member.mention] will mention the member inside the embed'
+    '\n[ping.member] will ping the member with their welcome card'
+)
 
-for_upload = '''To ping role use: [ping]
-For upload url use: [url]
-For channel name use: [name]'''
+for_upload = (
+    '[ping] will be replaced with Role Ping'
+    '\n[url] will be replaced with the video URL'
+    '\n[name] will be replaced with the channel NAME'
+)
 
-for_live = '''To ping role use: [ping]
-For livestream url use: [url]
-For channel name use: [name]'''
+for_live = (
+    '[ping] will be replaced with Role Ping'
+    '\n[url] will be replaced with the stream URL'
+    '\n[name] will be replaced with the channel NAME'
+)
 
 value_list = [for_welcome, for_upload, for_live]
 
