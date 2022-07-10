@@ -4,8 +4,8 @@ import discord
 from asyncdeta import Field
 from discord.ext import commands
 from bot.extras.emojis import Emo
+from bot.extras.card import Canvas
 from PIL import UnidentifiedImageError
-from bot.extras.card import Io, Canvas
 
 
 class Listeners(commands.Cog):

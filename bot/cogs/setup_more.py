@@ -19,6 +19,26 @@ class More(disfix.cog):
         await ctx.send_response(f'**Pong:** {round(self.bot.latency * 1000)}ms')
 
     @disfix.cog.command(
+        name='simulate',
+        description='simulates a message dispatch event',
+        guild_id=877399405056102431,
+        category=disfix.CommandType.SLASH,
+        options=[
+            disfix.StrOption(
+                name='event',
+                description='name of the event to simulate',
+                required=True
+            )
+        ]
+    )
+    async def simulate_command(self, ctx: disfix.Context, event: str):
+        await ctx.send_response(f'**Simulating:** {event}')
+        if event.upper() == 'MEMBER_JOIN':
+            self.bot.dispatch(event, ctx.author)
+        else:
+            await ctx.send_followup(f'**Unknown event:** {event}')
+
+    @disfix.cog.command(
         name='more',
         description='remove or view previously set options',
         dm_access=False,
