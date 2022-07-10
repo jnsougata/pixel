@@ -104,8 +104,8 @@ class Utils(disfix.cog):
     @disfix.cog.command(
         name='simulate',
         description='simulates notifications',
-        guild_id=877399405056102431,
         category=disfix.CommandType.SLASH,
+        dm_access=False,
         options=[
             disfix.IntOption(
                 name='scope',
@@ -119,6 +119,7 @@ class Utils(disfix.cog):
             )
         ]
     )
+    @disfix.cog.default_permission(discord.Permissions.manage_guild)
     async def simulate_command(self, ctx: disfix.Context, scope: int):
         if scope == 1:
             await ctx.send_response(f'**Simulating:** welcome card')
