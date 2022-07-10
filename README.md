@@ -1,7 +1,7 @@
 
 # PixeL
 <a href="https://top.gg/bot/848304171814879273">
-  <img src="https://top.gg/api/widget/servers/848304171814879273.svg?noavatar=true">
+  <img src="https://top.gg/api/widget/servers/848304171814879273.svg?noavatar=true" alt="">
 </a>
 <details>
 <summary>✨ Features ✨</summary>
