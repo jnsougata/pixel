@@ -45,7 +45,14 @@ class Canvas:
             buff.seek(0)
             self.output = buff
 
-    def add_image(self, *, fp, resize: Tuple = None, crop: Tuple = None, position: Tuple = None):
+    def add_image(
+            self,
+            *,
+            fp,
+            resize: Tuple = None,
+            crop: Tuple = None,
+            position: Tuple = None
+    ):
         img = Image.open(fp)
         canvas = Image.open(self.output)
         if resize and not crop:
@@ -71,7 +78,14 @@ class Canvas:
         buff.seek(0)
         self.output = buff
 
-    def add_round_image(self, *, fp, resize: Tuple = None, crop: Tuple = None, position: Tuple = None):
+    def add_round_image(
+            self,
+            *,
+            fp,
+            resize: Tuple = None,
+            crop: Tuple = None,
+            position: Tuple = None
+    ):
         canvas = Image.open(self.output)
         img = Image.open(fp)
         if resize is not None and crop is None:
