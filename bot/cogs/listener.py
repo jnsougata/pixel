@@ -95,7 +95,7 @@ class Listeners(commands.Cog):
                         bg = await self.bot.drive.get('covers/default_card.png')
                     avatar = member.display_avatar.with_format('png')
                     avatar_io = io.BytesIO(await avatar.read())
-                    round_layer = Io.draw(size=(1500, 1500), color='#FFFFFF')
+                    round_layer = Canvas.draw(size=(1500, 1500), color='#FFFFFF')
                     canvas = Canvas(size=(1860, 846), color='black')
 
                     try:
