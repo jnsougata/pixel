@@ -2,7 +2,6 @@ import io
 import PIL
 import asyncio
 import aiohttp
-import traceback
 from typing import Tuple
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
