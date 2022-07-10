@@ -106,10 +106,10 @@ class Listeners(commands.Cog):
 
                     canvas.add_round_image(fp=round_layer, resize=(420, 420), position=(720, 105))
                     canvas.add_round_image(fp=avatar_io, resize=(390, 390), position=(735, 120))
-                    canvas.add_text(text=f'{member}', auto_align=True, size=90, position=(660, 540))
+                    canvas.add_text(text=f'{member}', align=True, size=90, position=(660, 540))
                     canvas.add_text(
                         size=90,
-                        auto_align=True,
+                        align=True,
                         position=(660, 645),
                         text=f'You are {member.guild.member_count}th Member',
                     )

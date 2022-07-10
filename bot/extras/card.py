@@ -29,21 +29,17 @@ class Canvas:
         self.output = buff
 
     def set_background(self, fp, blur: bool = False):
+        buff = io.BytesIO()
         canvas = Image.open(self.output)
         size = canvas.size
-        bg = Image.open(fp).convert('RGB')
-        _bg = bg.resize(size)
+        bg = Image.open(fp).convert('RGB').resize(size)
         if blur:
-            buff = io.BytesIO()
-            _bg_blur = _bg.filter(ImageFilter.BLUR)
-            _bg_blur.save(buff, 'png')
-            buff.seek(0)
-            self.output = buff
+            blurred = bg.filter(ImageFilter.BLUR)
+            blurred.save(buff, 'png')
         else:
-            buff = io.BytesIO()
-            _bg.save(buff, 'png')
-            buff.seek(0)
-            self.output = buff
+            bg.save(buff, 'png')
+        buff.seek(0)
+        self.output = buff
 
     def add_image(
             self,
@@ -56,19 +52,18 @@ class Canvas:
         img = Image.open(fp)
         canvas = Image.open(self.output)
         if resize and not crop:
-            auto_align = ((self.width - resize[0]) // 2, (self.height - resize[1]) // 2)
-            offset = auto_align if not position else position
             img_ = img.resize(resize, resample=0)
+            auto = ((self.width - resize[0]) // 2, (self.height - resize[1]) // 2)
+            offset = auto if not position else position
         elif crop and not resize:
             img_ = img.crop(crop)
             dim = img_.size
-            auto_align = ((self.width - dim[0]) // 2, (self.height - dim[1]) // 2)
-            offset = auto_align if not position else position
+            auto = ((self.width - dim[0]) // 2, (self.height - dim[1]) // 2)
+            offset = auto if not position else position
         elif crop is None and resize is None:
             size = img.size
-            auto_align = ((self.width - size[0]) // 2, (self.height - size[1]) // 2)
-            manual_align = (position[0], position[1])
-            offset = auto_align if position is None else manual_align
+            auto = ((self.width - size[0]) // 2, (self.height - size[1]) // 2)
+            offset = auto if not position else position
         else:
             raise Exception('Use either Resize or Crop')
 
@@ -116,7 +111,7 @@ class Canvas:
             self,
             text: str,
             *,
-            auto_align: bool,
+            align: bool,
             size: float = None,
             color: str = None,
             position: Tuple = None
@@ -129,7 +124,7 @@ class Canvas:
         font = ImageFont.truetype(font='bot/extras/sans.ttf', size=size)
         text_width, text_height = draw.textsize(text, font=font)
 
-        def align(auto: bool, pos: Tuple):
+        def aligner(auto: bool, pos: Tuple):
             if auto and not pos:
                 return (self.width - text_width) // 2, (self.height - text_height) // 2
             elif auto and pos:
@@ -139,7 +134,7 @@ class Canvas:
             elif not auto and pos:
                 return pos
 
-        draw.text(align(auto_align, position), text, fill=color, font=font)
+        draw.text(aligner(align, position), text, fill=color, font=font)
         buff = io.BytesIO()
         canvas.save(buff, 'png')
         buff.seek(0)
