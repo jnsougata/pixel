@@ -1,6 +1,6 @@
 pillow==9.1.1
 aiohttp==3.8.1
+git+https://github.com/jnsougata/async-deta
 git+https://github.com/jnsougata/disfix
 git+https://github.com/jnsougata/aiotube
 git+https://github.com/Rapptz/discord.py
-git+https://github.com/jnsougata/async-deta
