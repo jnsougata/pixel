@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import aiotube
+import aiotube.errors
 from asyncdeta import Field
 from bot.extras.emojis import *
 from disfix import Context, Bot
@@ -96,13 +97,16 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str, receiver: discord.T
             try:
                 channel = aiotube.Channel(url.replace(' ', ''))
                 info = channel.info
-            except (aiotube.errors.InvalidURL, aiotube.errors.BadURL, aiotube.errors.AIOError):
+            except (aiotube.errors.InvalidURL, aiotube.errors.AIOError):
                 await ctx.send_followup(
                     embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
             except aiotube.errors.TooManyRequests:
                 await ctx.send_followup(
                     embed=discord.Embed(
                         description=f'{Emo.WARN} you are requesting too often, try again in a few seconds'))
+            except Exception as e:
+                await ctx.send_followup(
+                    embed=discord.Embed(description=f'{Emo.WARN} Unusual error. Your url is probably invalid'))
             else:
                 await asyncio.sleep(1.5)
                 upload = channel.recent_uploaded
