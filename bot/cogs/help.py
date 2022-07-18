@@ -1,17 +1,17 @@
 import discord
-import disfix
+import neocord
 import traceback
 from typing import Any
 from bot.extras.emojis import Emo
 
 
-class Help(disfix.cog):
+class Help(neocord.cog):
 
-    def __init__(self, bot: disfix.Bot):
+    def __init__(self, bot: neocord.Bot):
         self.bot = bot
 
-    @disfix.cog.command(name='help', description='information about the features', category=disfix.CommandType.SLASH)
-    async def help_command(self, ctx: disfix.Context):
+    @neocord.cog.command(name='help', description='information about the features', category=neocord.CommandType.SLASH)
+    async def help_command(self, ctx: neocord.Context):
         emd = discord.Embed(
             title=f'Commands',
             description=f'\n**` 1 `** **` /setup `**\n'
@@ -39,5 +39,5 @@ class Help(disfix.cog):
         await ctx.send_response(embed=emd)
 
 
-async def setup(bot: disfix.Bot):
+async def setup(bot: neocord.Bot):
     await bot.add_application_cog(Help(bot))

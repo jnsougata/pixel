@@ -4,7 +4,7 @@ import aiotube
 import discord
 from asyncdeta import Field
 from bot.extras.emojis import Emo
-from disfix import Context, Bot
+from neocord import Context, Bot
 
 
 class OptionView(discord.ui.View):

@@ -1,17 +1,17 @@
 import discord
-import disfix
+import neocord
 import traceback
 from typing import Any
 from bot.extras.emojis import Emo
 
 
-class ErrorHandler(disfix.cog):
+class ErrorHandler(neocord.cog):
 
-    def __init__(self, bot: disfix.Bot):
+    def __init__(self, bot: neocord.Bot):
         self.bot = bot
 
-    @disfix.cog.listener
-    async def on_app_command_error(self, ctx: disfix.Context, error: Exception):
+    @neocord.cog.listener
+    async def on_app_command_error(self, ctx: neocord.Context, error: Exception):
 
         button = discord.ui.Button(
             label='DEV SERVER',
@@ -58,5 +58,5 @@ class ErrorHandler(disfix.cog):
             print(f'**Guild: {ctx.guild.name} | ID: {ctx.guild.id}**\n```py\n{tb}\n```')
 
 
-async def setup(bot: disfix.Bot):
+async def setup(bot: neocord.Bot):
     await bot.add_application_cog(ErrorHandler(bot))

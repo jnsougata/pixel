@@ -1,13 +1,13 @@
 import os
 import discord
-import disfix
+import neocord
 from asyncdeta import Deta
 
 intent = discord.Intents().default()
 intent.members = True
 
 
-class PixeL(disfix.Bot):
+class PixeL(neocord.Bot):
 
     __dirs__ = os.listdir('bot/cogs')
 

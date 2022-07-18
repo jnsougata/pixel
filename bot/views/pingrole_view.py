@@ -2,7 +2,7 @@ import asyncio
 import discord
 from asyncdeta import Field
 from bot.extras.emojis import *
-from disfix import Context, Bot
+from neocord import Context, Bot
 
 
 async def sub_view_pingrole(bot: Bot, ctx: Context, role: discord.Role):

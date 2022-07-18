@@ -1,10 +1,10 @@
-import disfix
+import neocord
 import discord
 import aiotube
 from bot.extras.emojis import Emo
 
 
-async def youtube_simulate(bot: disfix.Bot, ctx: disfix.Context, event_type: str):
+async def youtube_simulate(bot: neocord.Bot, ctx: neocord.Context, event_type: str):
     # auxiliary functions
     async def create_ping(guild: discord.guild, _cache: dict):
         role_id = _cache[guild.id].get('PINGROLE')
@@ -88,39 +88,39 @@ async def youtube_simulate(bot: disfix.Bot, ctx: disfix.Context, event_type: str
         await ctx.edit_response(f'{Emo.WARN} Can not simulate. No receiver found {Emo.WARN}', embed=None, view=None)
 
 
-class Utils(disfix.cog):
-    def __init__(self, bot: disfix.Bot):
+class Utils(neocord.cog):
+    def __init__(self, bot: neocord.Bot):
         self.bot = bot
 
-    @disfix.cog.command(
+    @neocord.cog.command(
         name='ping',
         description='shows the avg latency of the bot',
         guild_id=877399405056102431,
-        category=disfix.CommandType.SLASH
+        category=neocord.CommandType.SLASH
     )
-    async def ping_command(self, ctx: disfix.Context):
+    async def ping_command(self, ctx: neocord.Context):
         await ctx.send_response(f'**Pong:** {round(self.bot.latency * 1000)}ms')
 
-    @disfix.cog.command(
+    @neocord.cog.command(
         name='simulate',
         description='simulates notifications',
-        category=disfix.CommandType.SLASH,
+        category=neocord.CommandType.SLASH,
         dm_access=False,
         options=[
-            disfix.IntOption(
+            neocord.IntOption(
                 name='scope',
                 description='scope to simulate',
                 required=True,
                 choices=[
-                    disfix.Choice(name='welcome card', value=1),
-                    disfix.Choice(name='youtube upload', value=2),
-                    disfix.Choice(name='youtube livestream', value=3),
+                    neocord.Choice(name='welcome card', value=1),
+                    neocord.Choice(name='youtube upload', value=2),
+                    neocord.Choice(name='youtube livestream', value=3),
                 ]
             )
         ]
     )
-    @disfix.cog.default_permission(discord.Permissions.manage_guild)
-    async def simulate_command(self, ctx: disfix.Context, scope: int):
+    @neocord.cog.default_permission(discord.Permissions.manage_guild)
+    async def simulate_command(self, ctx: neocord.Context, scope: int):
         if scope == 1:
             await ctx.send_response(f'**Simulating:** welcome card')
             self.bot.dispatch('member_join', ctx.author)
@@ -132,5 +132,5 @@ class Utils(disfix.cog):
             await youtube_simulate(self.bot, ctx, 'live')
 
 
-async def setup(bot: disfix.Bot):
+async def setup(bot: neocord.Bot):
     await bot.add_application_cog(Utils(bot))

@@ -4,7 +4,7 @@ import aiotube
 import aiotube.errors
 from asyncdeta import Field
 from bot.extras.emojis import *
-from disfix import Context, Bot
+from neocord import Context, Bot
 
 
 def has_perms(channel: discord.TextChannel, ctx: Context):
