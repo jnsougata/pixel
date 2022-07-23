@@ -92,25 +92,16 @@ class Utils(neocord.cog):
     def __init__(self, bot: neocord.Bot):
         self.bot = bot
 
-    @neocord.cog.command(
-        name='ping',
-        description='shows the avg latency of the bot',
-        guild_id=877399405056102431,
-        category=neocord.CommandType.SLASH
-    )
-    async def ping_command(self, ctx: neocord.Context):
+    @neocord.cog.command(name='ping', description='shows the avg latency of the bot')
+    async def ping(self, ctx: neocord.Context):
         await ctx.send_response(f'**Pong:** {round(self.bot.latency * 1000)}ms')
 
+    @neocord.cog.default_permission(discord.Permissions.manage_guild)
     @neocord.cog.command(
-        name='simulate',
-        description='simulates notifications',
-        category=neocord.CommandType.SLASH,
-        dm_access=False,
+        name='simulate', description='simulates notifications',
         options=[
             neocord.IntOption(
-                name='scope',
-                description='scope to simulate',
-                required=True,
+                name='scope', description='scope to simulate', required=True,
                 choices=[
                     neocord.Choice(name='welcome card', value=1),
                     neocord.Choice(name='youtube upload', value=2),
@@ -118,9 +109,9 @@ class Utils(neocord.cog):
                 ]
             )
         ]
+
     )
-    @neocord.cog.default_permission(discord.Permissions.manage_guild)
-    async def simulate_command(self, ctx: neocord.Context, scope: int):
+    async def simulate(self, ctx: neocord.Context, scope: int):
         if scope == 1:
             await ctx.send_response(f'**Simulating:** welcome card')
             self.bot.dispatch('member_join', ctx.author)

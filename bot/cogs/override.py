@@ -167,7 +167,7 @@ class Override(neocord.cog):
         self.bot = bot
 
     @neocord.cog.default_permission(discord.Permissions.manage_guild)
-    @neocord.cog.command(name='force', description='forces to check for new videos', category=neocord.CommandType.SLASH)
+    @neocord.cog.command(name='force', description='forces to check for new videos')
     async def force_check(self, ctx: neocord.Context):
         all_channels = self.bot.cached[ctx.guild.id].get('CHANNELS')
 

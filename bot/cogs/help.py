@@ -10,7 +10,7 @@ class Help(neocord.cog):
     def __init__(self, bot: neocord.Bot):
         self.bot = bot
 
-    @neocord.cog.command(name='help', description='information about the features', category=neocord.CommandType.SLASH)
+    @neocord.cog.command(name='help', description='information about the features')
     async def help_command(self, ctx: neocord.Context):
         emd = discord.Embed(
             title=f'Commands',
