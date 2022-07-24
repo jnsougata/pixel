@@ -5,7 +5,6 @@ from bot.extras.emojis import Emo
 
 
 async def youtube_simulate(bot: neocord.Bot, ctx: neocord.Context, event_type: str):
-    # auxiliary functions
     async def create_ping(guild: discord.guild, _cache: dict):
         role_id = _cache[guild.id].get('PINGROLE')
         if role_id and role_id.isdigit():
@@ -103,13 +102,12 @@ class Utils(neocord.cog):
             neocord.IntOption(
                 name='scope', description='scope to simulate', required=True,
                 choices=[
-                    neocord.Choice(name='welcome card', value=1),
-                    neocord.Choice(name='youtube upload', value=2),
-                    neocord.Choice(name='youtube livestream', value=3),
+                    neocord.Choice('welcome card', 1),
+                    neocord.Choice('youtube upload', 2),
+                    neocord.Choice('youtube livestream', 3)
                 ]
             )
         ]
-
     )
     async def simulate(self, ctx: neocord.Context, scope: int):
         if scope == 1:
