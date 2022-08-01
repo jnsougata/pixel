@@ -4,8 +4,8 @@ import discord
 from asyncdeta import Field
 from discord.ext import commands
 from bot.extras.emojis import Emo
-from bot.extras.card import Canvas
 from PIL import UnidentifiedImageError
+from imgen import Canvas
 
 
 class Listeners(commands.Cog):
@@ -95,25 +95,20 @@ class Listeners(commands.Cog):
                         bg = await self.bot.drive.get('covers/default_card.png')
                     avatar = member.display_avatar.with_format('png')
                     avatar_io = io.BytesIO(await avatar.read())
-                    round_layer = Canvas.draw(size=(1500, 1500), color='#FFFFFF')
-                    canvas = Canvas(size=(1860, 846), color='black')
-
+                    canvas = Canvas(1860, 846)
+                    canvas.load_fonts('bot/extras/ballad.ttf')
                     try:
-                        canvas.set_background(fp=bg, blur=True)
+                        canvas.background(path=bg, blur_level=5)
                     except UnidentifiedImageError:
-                        bg = io.BytesIO(await self.bot.drive.download('covers/default_card.png'))
-                        canvas.set_background(fp=bg, blur=True)
-
-                    canvas.add_round_image(fp=round_layer, resize=(420, 420), position=(720, 105))
-                    canvas.add_round_image(fp=avatar_io, resize=(390, 390), position=(735, 120))
-                    canvas.add_text(text=f'{member}', align=True, size=90, position=(660, 540))
-                    canvas.add_text(
-                        size=90,
-                        align=True,
-                        position=(660, 645),
-                        text=f'You are {member.guild.member_count}th Member',
-                    )
-                    file = discord.File(canvas.output, 'card_hq.png')
+                        bg = await self.bot.drive.get('covers/default_card.png')
+                        canvas.background(path=bg, blur_level=5)
+                    white = Canvas(1500, 1500, member.top_role.color.value).read()
+                    canvas.round_image(path=white, resize_x=420, resize_y=420, position_left=720, position_top=105)
+                    canvas.round_image(path=avatar_io, resize_x=390, resize_y=390, position_left=735, position_top=120)
+                    canvas.text(text=str(member), font_size=50, position_top=540, font_color="#FFFFFF")
+                    canvas.text(text=f'You are {member.guild.member_count}th Member',
+                                font_size=60, position_top=650, font_color=member.color.value)
+                    file = discord.File(canvas.read(), 'card_hq.png')
                     scopes = {
                         '[ping.member]': '',
                         '[member.name]': str(member),
