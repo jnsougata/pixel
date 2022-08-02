@@ -128,7 +128,7 @@ class Listeners(commands.Cog):
                         message = build_text(plain_text)
                     else:
                         plain_text = '[no.ping]'
-                        message = f'**Welcome to _{member.guild.name}_**'
+                        message = f'**Welcome to {member.guild.name}**'
                     emd = discord.Embed(description=message, color=0x2f3136)
                     emd.set_image(url="attachment://card_hq.png")
                     try:
