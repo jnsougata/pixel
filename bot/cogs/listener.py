@@ -102,12 +102,13 @@ class Listeners(commands.Cog):
                     except UnidentifiedImageError:
                         bg = await self.bot.drive.get('covers/default_card.png')
                         canvas.background(path=bg, blur_level=5)
-                    white = Canvas(1500, 1500, member.top_role.color.value).read()
-                    canvas.round_image(path=white, resize_x=420, resize_y=420, position_left=720, position_top=105)
+                    accent_color = canvas.get_accent(avatar_io)
+                    accent = Canvas(1500, 1500, accent_color).read()
+                    canvas.round_image(path=accent, resize_x=420, resize_y=420, position_left=720, position_top=105)
                     canvas.round_image(path=avatar_io, resize_x=390, resize_y=390, position_left=735, position_top=120)
                     canvas.text(text=str(member), font_size=50, position_top=540, font_color="#FFFFFF")
                     canvas.text(text=f'You are {member.guild.member_count}th Member',
-                                font_size=60, position_top=650, font_color=member.color.value)
+                                font_size=60, position_top=650, font_color=accent_color)
                     file = discord.File(canvas.read(), 'card_hq.png')
                     scopes = {
                         '[ping.member]': '',
