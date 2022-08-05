@@ -109,7 +109,7 @@ class Listeners(commands.Cog):
                     canvas.text(text=str(member), font_size=50, position_top=540, font_color="#FFFFFF")
                     canvas.text(
                         text=f'You are {member.guild.member_count}th Member',
-                        font_size=60, position_top=650, font_color='white', shadow=8, shadow_color=accent_color)
+                        font_size=60, position_top=650, font_color='white')
                     file = discord.File(canvas.read(), 'card_hq.png')
                     scopes = {
                         '[ping.member]': '',
