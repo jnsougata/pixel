@@ -1,7 +1,7 @@
 import os
 import discord
 import neocord
-from asyncdeta import Deta
+from deta import Deta
 
 intent = discord.Intents().default()
 intent.members = True

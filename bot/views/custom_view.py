@@ -1,6 +1,6 @@
 import neocord
 import discord
-from asyncdeta import Field
+from deta import Field
 from bot.extras.emojis import *
 
 

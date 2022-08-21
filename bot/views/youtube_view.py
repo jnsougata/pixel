@@ -2,7 +2,7 @@ import discord
 import asyncio
 import aiotube
 import aiotube.errors
-from asyncdeta import Field
+from deta import Field
 from bot.extras.emojis import *
 from neocord import Context, Bot
 

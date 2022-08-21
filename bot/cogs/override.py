@@ -3,7 +3,7 @@ import aiotube
 import asyncio
 import discord
 import traceback
-from asyncdeta import Field
+from deta import Field
 from bot.extras.emojis import Emo
 
 
