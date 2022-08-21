@@ -3,5 +3,5 @@ aiohttp==3.8.1
 git+https://github.com/jnsougata/deta
 git+https://github.com/jnsougata/imgen
 git+https://github.com/jnsougata/aiotube
-git+https://github.com/Rapptz/discord.py
 git+https://github.com/jnsougata/neocord
+git+https://github.com/Rapptz/discord.py
