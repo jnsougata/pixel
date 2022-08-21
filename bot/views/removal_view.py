@@ -83,6 +83,7 @@ class ChannelMenu(discord.ui.Select):
                 emd.set_image(url=banner_url)
             if avatar_url and avatar_url.startswith('http'):
                 emd.set_thumbnail(url=avatar_url)
+            await interaction.response.defer()
             await self.ctx.edit_response(embed=emd, view=None)
             try:
                 self.bot.cached[self.ctx.guild.id].get('CHANNELS').pop(channel_id)
