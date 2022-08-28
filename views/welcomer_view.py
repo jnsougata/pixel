@@ -1,8 +1,7 @@
 import discord
-import asyncio
 import aiohttp
 from deta import Field
-from bot.extras.emojis import *
+from extras.emojis import *
 from neocord import Context, Bot
 
 

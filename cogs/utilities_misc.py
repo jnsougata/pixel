@@ -1,7 +1,6 @@
 import neocord
 import discord
-import aiotube
-from bot.extras.emojis import Emo
+from extras.emojis import Emo
 
 
 async def youtube_simulate(bot: neocord.Bot, ctx: neocord.Context, event_type: str):

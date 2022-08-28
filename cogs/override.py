@@ -4,7 +4,7 @@ import asyncio
 import discord
 import traceback
 from deta import Field
-from bot.extras.emojis import Emo
+from extras.emojis import Emo
 
 
 class ChannelSelectMenu(discord.ui.Select):

@@ -1,10 +1,9 @@
 import io
-import asyncio
 import discord
 from imgen import Canvas
 from deta import Field
 from discord.ext import commands
-from bot.extras.emojis import Emo
+from extras.emojis import Emo
 from PIL import UnidentifiedImageError
 
 

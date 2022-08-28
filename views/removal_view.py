@@ -1,9 +1,8 @@
-import io
 import asyncio
 import aiotube
 import discord
 from deta import Field
-from bot.extras.emojis import Emo
+from extras.emojis import Emo
 from neocord import Context, Bot
 
 

@@ -1,7 +1,5 @@
 import discord
 import neocord
-from typing import Any
-from bot.extras.emojis import Emo
 
 
 class Help(neocord.cog):

@@ -1,10 +1,9 @@
 import neocord
 import discord
-from bot.extras.emojis import Emo
-from bot.views.custom_view import sub_view_msg
-from bot.views.youtube_view import sub_view_youtube
-from bot.views.welcomer_view import sub_view_welcomer
-from bot.views.pingrole_view import sub_view_pingrole
+from views.custom_view import sub_view_msg
+from views.youtube_view import sub_view_youtube
+from views.welcomer_view import sub_view_welcomer
+from views.pingrole_view import sub_view_pingrole
 
 
 class Setup(neocord.cog):

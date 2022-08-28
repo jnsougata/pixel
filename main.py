@@ -9,11 +9,11 @@ intent.members = True
 
 class PixeL(neocord.Bot):
 
-    __dirs__ = os.listdir('bot/cogs')
+    __dirs__ = os.listdir('cogs')
 
     def __init__(self):
         super().__init__(intents=intent, help_command=None, command_prefix='/', chunk_guilds_at_startup=False)
-        self.init_ext = ['bot.cogs.' + file[:-3] for file in self.__dirs__ if file.endswith('.py')]
+        self.init_ext = ['cogs.' + file[:-3] for file in self.__dirs__ if file.endswith('.py')]
         self.db = None
         self.drive = None
         self.cached = None
@@ -37,5 +37,4 @@ class PixeL(neocord.Bot):
 
 
 if __name__ == '__main__':
-    pixel = PixeL()
-    pixel.run(os.getenv('DISCORD_TOKEN'))
+    PixeL().run(os.getenv('DISCORD_TOKEN'))

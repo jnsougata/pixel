@@ -1,8 +1,7 @@
-import io
 import aiotube
 import discord
 from neocord import Context, Bot
-from bot.extras.emojis import Emo
+from extras.emojis import Emo
 
 
 async def sub_view_config(bot: Bot, ctx: Context, value: int):

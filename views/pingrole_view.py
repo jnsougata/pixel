@@ -1,7 +1,6 @@
-import asyncio
 import discord
 from deta import Field
-from bot.extras.emojis import *
+from extras.emojis import *
 from neocord import Context, Bot
 
 

@@ -1,8 +1,7 @@
 import neocord
 import discord
-from bot.extras.emojis import Emo
-from bot.views.config_view import sub_view_config
-from bot.views.removal_view import sub_view_remove
+from views.config_view import sub_view_config
+from views.removal_view import sub_view_remove
 
 
 class More(neocord.cog):
