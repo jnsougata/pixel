@@ -12,52 +12,9 @@ def has_perms(channel: discord.TextChannel, ctx: Context):
     return bot_can.send_messages and bot_can.embed_links and bot_can.use_external_emojis
 
 
-class ReceiverSelection(discord.ui.Select):
-
-    def __init__(self, bot: Bot, ctx: Context, info: dict):
-        self.bot = bot
-        self.ctx = ctx
-        self.info = info
-        channels = ctx.guild.text_channels
-        eligible = [channel for channel in channels if has_perms(channel, ctx)][:24]
-        options = [
-            discord.SelectOption(label=channel.name, value=str(channel.id), emoji=Emo.TEXT) for channel in eligible]
-        options.insert(0, discord.SelectOption(label='default', value='0', emoji=Emo.TEXT))
-        super().__init__(
-            placeholder='select a text channel to set as receiver',
-            min_values=1, max_values=1, options=options,
-        )
-
-    async def callback(self, interaction: discord.Interaction):
-        if interaction.user == self.ctx.author:
-            if int(self.values[0]) != 0:
-                emd = discord.Embed(
-                    description=f'{Emo.YT} **[{self.info["name"]}]({self.info["url"]})**'
-                                f'\n\n> {Emo.CHECK} YouTube channel added successfully'
-                                f'\n> Bound to <#{self.values[0]}> for receiving notifications',
-                    url=self.info['url'])
-                await self.ctx.edit_response(embed=emd, view=None)
-                self.bot.cached[self.ctx.guild.id]['CHANNELS'][self.info['id']]['receiver'] = str(self.values[0])
-            else:
-                default = self.bot.cached[self.ctx.guild.id]['RECEIVER']
-                emd = discord.Embed(
-                    description=f'{Emo.YT} **[{self.info["name"]}]({self.info["url"]})**'
-                                f'\n\n> {Emo.CHECK} YouTube channel added successfully'
-                                f'\n> Bound to <#{default}> for receiving notifications',
-                    url=self.info['url']
-                )
-                await self.ctx.edit_response(embed=emd, view=None)
-
-            await self.bot.db.add_field(
-                key=str(self.ctx.guild.id),
-                field=Field(name='CHANNELS', value=self.bot.cached[self.ctx.guild.id]['CHANNELS']),
-                force=True
-            )
-
-
 async def sub_view_youtube(bot: Bot, ctx: Context, url: str, receiver: discord.TextChannel):
 
-    async def check_reception_perms():
+    async def check_receiver_perms():
         bot_can = receiver.permissions_for(ctx.me)
         if not bot_can.send_messages:
             embed = discord.Embed(
@@ -86,7 +43,7 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str, receiver: discord.T
         else:
             return True
 
-    if await check_reception_perms():
+    if await check_receiver_perms():
         old_data = bot.cached[ctx.guild.id].get('CHANNELS')
         if old_data:
             total_channels = len(old_data)
@@ -95,7 +52,7 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str, receiver: discord.T
 
         if total_channels <= 9:
             try:
-                channel = aiotube.Channel(url.replace(' ', ''))
+                channel = aiotube.Channel(url)
                 info = channel.info
             except (aiotube.errors.InvalidURL, aiotube.errors.AIOError):
                 await ctx.send_followup(
