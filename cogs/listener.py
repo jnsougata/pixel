@@ -95,7 +95,7 @@ class Listeners(commands.Cog):
                     avatar = member.display_avatar.with_format('png')
                     avatar_io = io.BytesIO(await avatar.read())
                     canvas = Canvas(1860, 846)
-                    canvas.load_fonts('bot/extras/ballad.ttf')
+                    canvas.load_fonts('extras/ballad.ttf')
                     try:
                         canvas.background(path=bg, blur_level=5)
                     except UnidentifiedImageError:
