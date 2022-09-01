@@ -44,7 +44,7 @@ async def sub_view_welcomer(bot: Bot, ctx: Context, image: discord.Attachment, r
             async with aiohttp.ClientSession() as session:
                 async with session.get(image.url) as resp:
                     chunks = await resp.read()
-                    await bot.drive.upload(file_name=f'covers/{ctx.guild.id}_card.png', content=chunks)
+                    await bot.drive.upload(chunks, f'covers/{ctx.guild.id}_card.png')
     elif reception:
         if await check_reception_perms():
             await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', str(reception.id)), force=True)
