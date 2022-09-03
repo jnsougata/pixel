@@ -170,7 +170,7 @@ class Override(neocord.cog):
     @neocord.cog.command(name='force', description='forces to check for new videos')
     async def force_check(self, ctx: neocord.Context):
         all_channels = self.bot.cached[ctx.guild.id].get('CHANNELS')
-
+        await ctx.defer()
         if all_channels:
 
             async def create_menu(loop: asyncio.AbstractEventLoop, channel_ids: list):
@@ -194,11 +194,11 @@ class Override(neocord.cog):
             menu = await create_menu(self.bot.loop, list(all_channels.keys()))
             view = discord.ui.View()
             view.add_item(ChannelSelectMenu(self.bot, ctx, menu))
-            await ctx.send_response(
+            await ctx.send_followup(
                 embed=discord.Embed(description=f'> {Emo.YT} Select YouTube Channel to SCAN'),
                 view=view)
         else:
-            await ctx.send_response(embed=discord.Embed(description=f'> {Emo.WARN} no channel has been added yet'))
+            await ctx.send_followup(embed=discord.Embed(description=f'> {Emo.WARN} no channel has been added yet'))
 
 
 async def setup(bot: neocord.Bot):
