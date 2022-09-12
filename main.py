@@ -25,8 +25,8 @@ class PixeL(neocord.Bot):
         self.session = self.http._HTTPClient__session
         deta = Deta(os.getenv('DETA_TOKEN'))
         await deta.connect(session=self.session, loop=self.loop)
-        self.db = deta.base('01PIXEL')
-        self.drive = deta.drive('PixeL_@11223344')
+        self.db = deta.base(os.getenv('BASE_NAME'))
+        self.drive = deta.drive('DRIVE_NAME')
         await self.build_cache()
         for ext in self.init_ext:
             await self.load_extension(ext)
