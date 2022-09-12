@@ -1,7 +1,7 @@
 import asyncio
 import discord
 from deta import Field
-from extras.emojis import Emo
+from extras.emoji import Emo
 from neocord import Context, Bot
 from extras.utils import fetch_channel_info, create_menu
 

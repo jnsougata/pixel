@@ -1,7 +1,7 @@
 import discord
 import neocord
 import traceback
-from extras.emojis import Emo
+from extras.emoji import Emo
 
 
 class ErrorHandler(neocord.cog):

@@ -1,7 +1,7 @@
 import neocord
 import discord
 from deta import Field
-from extras.emojis import *
+from extras.emoji import *
 
 
 for_welcome = (

@@ -2,7 +2,7 @@ import aiohttp
 import asyncio
 import discord
 from neocord import Bot
-from extras.emojis import Emo
+from extras.emoji import Emo
 
 
 ROOT_API_URL = 'https://aiotube.deta.dev'

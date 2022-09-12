@@ -1,6 +1,6 @@
 import discord
 import asyncio
-from extras.emojis import Emo
+from extras.emoji import Emo
 from neocord import Context, Bot
 from extras.utils import fetch_channel_info
 

@@ -1,7 +1,7 @@
 import discord
 import aiohttp
 from deta import Field
-from extras.emojis import *
+from extras.emoji import *
 from neocord import Context, Bot
 
 

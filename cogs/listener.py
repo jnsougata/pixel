@@ -1,9 +1,9 @@
 import io
 import discord
-from imgen import Canvas
 from deta import Field
+from imgen import Canvas
+from extras.emoji import Emo
 from discord.ext import commands
-from extras.emojis import Emo
 from PIL import UnidentifiedImageError
 
 

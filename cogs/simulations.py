@@ -1,6 +1,6 @@
 import neocord
 import discord
-from extras.emojis import Emo
+from extras.emoji import Emo
 
 
 async def create_ping(guild: discord.guild, cache: dict):

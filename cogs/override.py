@@ -3,7 +3,7 @@ import asyncio
 import discord
 import traceback
 from deta import Field
-from extras.emojis import Emo
+from extras.emoji import Emo
 from extras.utils import create_menu, fetch_latest_uploaded, fetch_current_livestream, fetch_channel_info
 
 
