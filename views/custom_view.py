@@ -36,7 +36,6 @@ async def send_form(ctx: neocord.Context, bot: neocord.Bot, *, option_value: int
         required=False,
         max_length=500,
         default_text=prefilled,
-
     )
     modal.add_field(
         label='Type Here',
@@ -62,9 +61,7 @@ async def send_form(ctx: neocord.Context, bot: neocord.Bot, *, option_value: int
 
 
 async def sub_view_msg(bot: neocord.Bot, ctx: neocord.Context, value: int):
-
-    old_data = bot.cached[ctx.guild.id].get('CUSTOM')
-    data = old_data if old_data else {}
+    data = bot.cached[ctx.guild.id].get('CUSTOM') or {}
     if value == 0:
         await send_form(ctx, bot, option_value=value, event='welcome', data=data)
     elif value == 1:
