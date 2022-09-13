@@ -40,7 +40,7 @@ async def sub_view_config(bot: Bot, ctx: Context, value: int):
         except:
             card = await bot.drive.get('covers/default_card.png')
         file = discord.File(card, filename='card.png')
-        emd = discord.Embed(description=f'{Emo.CHECK} Welcomer bound to <#{data}> with the following image:')
+        emd = discord.Embed(description=f'{Emo.CHECK} Welcomer is bound to <#{data}> with the following Image')
         emd.set_image(url=f'attachment://card.png')
         await ctx.send_followup(embed=emd, file=file)
 
