@@ -2,15 +2,27 @@ import io
 import discord
 from deta import Field
 from imgen import Canvas
+from deta.base import _Base
+from deta.drive import _Drive
 from extras.emoji import Emo
 from discord.ext import commands
 from PIL import UnidentifiedImageError
+from typing import Dict, Any
 
 
 class Listeners(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.db: _Base = bot.db
+        self.drive: _Drive = bot.drive
+        self.cached: Dict[int, Dict[str, Any]] = bot.cached
+
+    @staticmethod
+    def build_text(text: str):
+        for key, value in scopes.items():
+            text = text.replace(key, value)
+        return text
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -28,16 +40,21 @@ class Listeners(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
 
-        self.bot.cached[guild.id] = {
-            'CUSTOM': None, 'CHANNELS': None, 'RECEIVER': None, 'PINGROLE': None, 'RECEPTION': None
+        self.cached[guild.id] = {
+            'CUSTOM': None,
+            'CHANNELS': None,
+            'RECEIVER': None,
+            'PINGROLE': None,
+            'RECEPTION': None
         }
 
-        await self.bot.db.put_many(
-            key=str(guild.id),
-            fields=[
-                Field('CUSTOM', None), Field('CHANNELS', None),
-                Field('RECEIVER', None), Field('PINGROLE', None), Field('RECEPTION', None),
-            ]
+        await self.db.put(
+            str(guild.id),
+            Field('CUSTOM'),
+            Field('CHANNELS'),
+            Field('RECEIVER'),
+            Field('PINGROLE'),
+            Field('RECEPTION')
         )
 
         invite = 'https://top.gg/bot/848304171814879273/invite'
@@ -57,12 +74,12 @@ class Listeners(commands.Cog):
                 if channel.permissions_for(guild.me).send_messages:
                     return channel
         intro = any_text_channel()
-        if intro:
-            try:
-                await intro.send(embed=emd)
-            except discord.errors.Forbidden:
-                pass
-
+        if not intro:
+            return
+        try:
+            await intro.send(embed=emd)
+        except discord.errors.Forbidden:
+            pass
         logger = self.bot.get_channel(899864601057976330)
         await logger.send(f'```fix\n- Joined [{guild.name}](ID:{guild.id})'
                           f'\n- Owner ID: {guild.owner_id}'
@@ -79,65 +96,63 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
+        if member.bot:
+            return
+        guild_id = member.guild.id
+        cached = self.cached.get(guild_id)
+        if not cached:
+            return
+        reception_id = cached['RECEPTION']
+        if not (reception_id and reception_id.isdigit()):
+            return
+        reception = member.guild.get_channel(int(reception_id))
+        if not reception:
+            return
+        try:
+            bg = await self.drive.get(f'covers/{guild_id}_card.png')
+        except Exception:
+            bg = await self.drive.get('covers/default_card.png')
+        avatar = member.display_avatar.with_format('png')
+        avatar_io = io.BytesIO(await avatar.read())
+        canvas = Canvas(1860, 846)
+        canvas.load_fonts('extras/ballad.ttf')
+        try:
+            canvas.background(path=bg, blur_level=2)
+        except UnidentifiedImageError:
+            bg = await self.drive.get('covers/default_card.png')
+            canvas.background(path=bg, blur_level=2)
+        accent_color = canvas.get_accent(avatar_io)
+        accent = Canvas(1500, 1500, accent_color).read()
+        canvas.round_image(path=accent, resize_x=420, resize_y=420, position_left=720, position_top=105)
+        canvas.round_image(path=avatar_io, resize_x=390, resize_y=390, position_left=735, position_top=120)
+        canvas.text(text=str(member), font_size=50, position_top=540, font_color="#FFFFFF")
+        canvas.text(
+            text=f'You are {member.guild.member_count}th Member',
+            font_size=60, position_top=650, font_color='white')
+        file = discord.File(canvas.read(), 'welcome.png')
+        scopes = {
+            '[ping.member]': '',
+            '[member.name]': str(member),
+            '[guild.name]': member.guild.name,
+            '[member.mention]': member.mention,
+        }
 
-        if not member.bot:
-            guild_id = member.guild.id
-            cached = self.bot.cached.get(guild_id)
-            reception_id = cached.get('RECEPTION') if cached else None
-
-            if reception_id and reception_id.isdigit():
-                reception = member.guild.get_channel(int(reception_id))
-                if reception:
-                    try:
-                        bg = await self.bot.drive.get(f'covers/{guild_id}_card.png')
-                    except:
-                        bg = await self.bot.drive.get('covers/default_card.png')
-                    avatar = member.display_avatar.with_format('png')
-                    avatar_io = io.BytesIO(await avatar.read())
-                    canvas = Canvas(1860, 846)
-                    canvas.load_fonts('extras/ballad.ttf')
-                    try:
-                        canvas.background(path=bg, blur_level=5)
-                    except UnidentifiedImageError:
-                        bg = await self.bot.drive.get('covers/default_card.png')
-                        canvas.background(path=bg, blur_level=5)
-                    accent_color = canvas.get_accent(avatar_io)
-                    accent = Canvas(1500, 1500, accent_color).read()
-                    canvas.round_image(path=accent, resize_x=420, resize_y=420, position_left=720, position_top=105)
-                    canvas.round_image(path=avatar_io, resize_x=390, resize_y=390, position_left=735, position_top=120)
-                    canvas.text(text=str(member), font_size=50, position_top=540, font_color="#FFFFFF")
-                    canvas.text(
-                        text=f'You are {member.guild.member_count}th Member',
-                        font_size=60, position_top=650, font_color='white')
-                    file = discord.File(canvas.read(), 'card_hq.png')
-                    scopes = {
-                        '[ping.member]': '',
-                        '[member.name]': str(member),
-                        '[guild.name]': member.guild.name,
-                        '[member.mention]': member.mention,
-                    }
-
-                    def build_text(text: str):
-                        for key, value in scopes.items():
-                            text = text.replace(key, value)
-                        return text
-
-                    custom_text = self.bot.cached[guild_id].get('CUSTOM')
-                    if custom_text and custom_text.get('welcome'):
-                        plain_text = custom_text['welcome']
-                        message = build_text(plain_text)
-                    else:
-                        plain_text = '[no.ping]'
-                        message = f'**Welcome to {member.guild.name}**'
-                    emd = discord.Embed(description=message, color=0x2f3136)
-                    emd.set_image(url="attachment://card_hq.png")
-                    try:
-                        if '[ping.member]' in plain_text:
-                            await reception.send(content=member.mention, embed=emd, file=file)
-                        else:
-                            await reception.send(embed=emd, file=file)
-                    except (discord.errors.Forbidden, discord.errors.HTTPException):
-                        pass
+        custom_text = self.bot.cached[guild_id].get('CUSTOM')
+        if custom_text and custom_text.get('welcome'):
+            plain_text = custom_text['welcome']
+            message = self.build_text(plain_text)
+        else:
+            plain_text = '[no.ping]'
+            message = f'**Welcome to {member.guild.name}**'
+        emd = discord.Embed(description=message, color=0x2f3136)
+        emd.set_image(url="attachment://welcome.png")
+        try:
+            if '[ping.member]' in plain_text:
+                await reception.send(content=member.mention, embed=emd, file=file)
+            else:
+                await reception.send(embed=emd, file=file)
+        except (discord.errors.Forbidden, discord.errors.HTTPException):
+            pass
 
 
 async def setup(bot):

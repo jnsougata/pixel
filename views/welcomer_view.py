@@ -33,7 +33,7 @@ async def sub_view_welcomer(bot: Bot, ctx: Context, image: discord.Attachment, r
     if reception and image:
         if not await check_reception_perms(ctx, reception):
             return
-        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', str(reception.id)), force=True)
+        await bot.db.add_field(str(ctx.guild.id), Field('RECEPTION', str(reception.id)))
         emd = discord.Embed(
             title=f'{Emo.CHECK} Welcome Card Updated',
             description=f'Bound to <#{reception.id}>',
@@ -47,7 +47,7 @@ async def sub_view_welcomer(bot: Bot, ctx: Context, image: discord.Attachment, r
     elif reception:
         if not await check_reception_perms(ctx, reception):
             return
-        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', str(reception.id)), force=True)
+        await bot.db.add_field(str(ctx.guild.id), Field('RECEPTION', str(reception.id)))
         emd = discord.Embed(
             title=f'{Emo.CHECK} Reception Updated',
             description=f'Current set reception channel is {reception.mention}'

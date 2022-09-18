@@ -58,11 +58,12 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str, receiver: discord.T
         'upload': uploaded.get('id') or 'empty',
         'receiver': str(receiver.id)
     }
+    channel_id = info['id']
     if data:
-        data[info['id']] = content
+        data[channel_id] = content
     else:
-        data = {info['id']: content}
-    await bot.db.add_field(key=str(ctx.guild.id), field=Field(name='CHANNELS', value=data), force=True)
+        bot.cached[ctx.guild.id]['CHANNELS'] = {channel_id: content}
+    await bot.db.add_field(str(ctx.guild.id), Field('CHANNELS', bot.cached[ctx.guild.id]['CHANNELS']))
     emd = discord.Embed(
         description=f'{Emo.YT} **[{info["name"]}]({info["url"]})**'
                     f'\n\n> **Subs:** {info["subscribers"]}\n> **Views:** {info["views"]}'

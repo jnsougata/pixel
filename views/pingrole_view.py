@@ -16,5 +16,5 @@ async def sub_view_pingrole(bot: Bot, ctx: Context, role: discord.Role):
                         f'\nThis will be used to ping members with youtube notifications'))
 
     bot.cached[ctx.guild.id]['PINGROLE'] = str(role.id)
-    await bot.db.add_field(key=str(ctx.guild.id), field=Field('PINGROLE', str(role.id)), force=True)
+    await bot.db.add_field(str(ctx.guild.id), Field('PINGROLE', str(role.id)))
 

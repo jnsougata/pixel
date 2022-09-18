@@ -66,7 +66,7 @@ async def youtube_simulate(bot: neocord.Bot, ctx: neocord.Context, event_type: s
         except Exception as e:
             await ctx.edit_response(f'{Emo.WARN} Failed to send livestream message.', embed=None, view=None)
         else:
-            await ctx.edit_response(f'`YouTube Livestream simulated at` {receiver.mention}', embed=None, view=None)
+            await ctx.edit_response(f'**YouTube Livestream simulated at {receiver.mention}**', embed=None, view=None)
 
     if event_type == "upload":
         latest_url = "https://www.youtube.com/watch?v=iik25wqIuFo"
@@ -82,7 +82,7 @@ async def youtube_simulate(bot: neocord.Bot, ctx: neocord.Context, event_type: s
         except Exception as e:
             await ctx.edit_response(f'{Emo.WARN} Failed to send upload message.', embed=None, view=None)
         else:
-            await ctx.edit_response(f'`YouTube Upload Simulated at` {receiver.mention}', embed=None, view=None)
+            await ctx.edit_response(f'**YouTube Upload Simulated at {receiver.mention}**', embed=None, view=None)
 
 
 class Utils(neocord.cog):

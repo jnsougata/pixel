@@ -57,7 +57,7 @@ async def send_form(ctx: neocord.Context, bot: neocord.Bot, *, option_value: int
         await mcx.send_response(embed=embed)
         data[event] = message
         bot.cached[ctx.guild.id]['CUSTOM'] = data
-        await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
+        await bot.db.add_field(str(ctx.guild.id), Field('CUSTOM', data))
 
 
 async def sub_view_msg(bot: neocord.Bot, ctx: neocord.Context, value: int):

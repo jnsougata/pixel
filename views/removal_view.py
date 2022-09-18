@@ -71,9 +71,8 @@ class ChannelMenu(discord.ui.Select):
             pass
         else:
             await self.bot.db.add_field(
-                key=str(self.ctx.guild.id),
-                field=Field('CHANNELS', self.bot.cached[self.ctx.guild.id].get('CHANNELS')),
-                force=True
+                self.ctx.guild.id,
+                Field('CHANNELS', self.bot.cached[self.ctx.guild.id].get('CHANNELS')),
             )
 
 
@@ -93,12 +92,12 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
     elif value == 2:
         bot.cached[ctx.guild.id]['RECEPTION'] = None
         await ctx.send_followup(embed=discord.Embed(description='> Welcomer has been removed.'))
-        await bot.db.add_field(key=str(ctx.guild.id), field=Field('RECEPTION', None), force=True)
+        await bot.db.add_field(str(ctx.guild.id), Field('RECEPTION', None))
 
     elif value == 3:
         bot.cached[ctx.guild.id]['PINGROLE'] = None
         await ctx.send_followup(embed=discord.Embed(description='> Ping role has been removed.'))
-        await bot.db.add_field(key=str(ctx.guild.id), field=Field('PINGROLE', None), force=True)
+        await bot.db.add_field(str(ctx.guild.id), Field('PINGROLE', None))
 
     elif value == 4:
         data = bot.cached[ctx.guild.id].get('CUSTOM')
@@ -111,18 +110,18 @@ async def sub_view_remove(bot: Bot, ctx: Context, value: int):
 
         if view.value == 1:
             data['welcome'] = None
-            await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
+            await bot.db.add_field(str(ctx.guild.id), Field('CUSTOM', data))
             await ctx.edit_response(
                 embed=discord.Embed(description='> Custom Welcome message has been removed.'), view=None)
 
         elif view.value == 2:
             data['upload'] = None
-            await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
+            await bot.db.add_field(str(ctx.guild.id), Field('CUSTOM', data))
             await ctx.edit_response(
                 embed=discord.Embed(description='> Custom Upload message has been removed.'), view=None)
 
         elif view.value == 3:
             data['live'] = None
-            await bot.db.add_field(key=str(ctx.guild.id), field=Field('CUSTOM', data), force=True)
+            await bot.db.add_field(str(ctx.guild.id), Field('CUSTOM', data))
             await ctx.edit_response(
                 embed=discord.Embed(description='> Custom Live message has been removed.'), view=None)

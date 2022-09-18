@@ -23,8 +23,7 @@ class PixeL(neocord.Bot):
 
     async def setup_hook(self) -> None:
         self.session = self.http._HTTPClient__session
-        deta = Deta()
-        await deta.connect(session=self.session, loop=self.loop)
+        deta = Deta(session=self.session, loop=self.loop)
         self.db = deta.base(os.getenv('BASE_NAME'))
         self.drive = deta.drive(os.getenv('DRIVE_NAME'))
         await self.build_cache()
@@ -32,7 +31,7 @@ class PixeL(neocord.Bot):
             await self.load_extension(ext)
 
     async def build_cache(self):
-        fields = await self.db.everything()
+        fields = await self.db.records()
         self.cached = {int(field.pop('key')): field for field in fields}
 
 
