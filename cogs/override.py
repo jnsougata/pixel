@@ -75,7 +75,7 @@ class ChannelSelectMenu(discord.ui.Select):
             embed=discord.Embed(description=f'{Emo.SEARCH} Scanning in progress...'), view=None
         )
         logger = self.bot.get_channel(938059433794240523)
-        data = await self.bot.db.fetch(str(interaction.guild.id)) or {}
+        data = await self.bot.db.get(str(interaction.guild.id)) or {}
         if not data.get('CHANNELS'):
             return await self.ctx.edit_response('No channels found.', embed=None, view=None)
         if not data['CHANNELS'][channel_id].get('receiver'):
@@ -146,7 +146,7 @@ class ChannelSelectMenu(discord.ui.Select):
         else:
             description += f'\n**{Emo.WARN} Channel has no uploaded videos**'
         try:
-            await self.bot.db.add_field(str(self.ctx.guild.id), Field('CHANNELS', channels), force=True)
+            await self.bot.db.add_field(str(self.ctx.guild.id), Field('CHANNELS', channels))
         except Exception as e:
             await log_exception(logger, self.ctx.guild, e)
         await self.ctx.edit_response(embed=discord.Embed(description=description))
