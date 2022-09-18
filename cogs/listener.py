@@ -19,7 +19,7 @@ class Listeners(commands.Cog):
         self.cached: Dict[int, Dict[str, Any]] = bot.cached
 
     @staticmethod
-    def build_text(text: str):
+    def build_text(text: str, scopes: dict):
         for key, value in scopes.items():
             text = text.replace(key, value)
         return text
@@ -140,7 +140,7 @@ class Listeners(commands.Cog):
         custom_text = self.bot.cached[guild_id].get('CUSTOM')
         if custom_text and custom_text.get('welcome'):
             plain_text = custom_text['welcome']
-            message = self.build_text(plain_text)
+            message = self.build_text(plain_text, scopes)
         else:
             plain_text = '[no.ping]'
             message = f'**Welcome to {member.guild.name}**'
