@@ -76,7 +76,7 @@ async def process(
         entire_cache: dict,
         receiver: discord.TextChannel,
 ) -> str:
-    logger = bot.get_channel(902228501120290866)
+    logger = bot.get_channel(int(os.getenv('LOG_CHANNEL')))
     channel_name = scanned_data.get('name')
     description = f'{Emo.SEARCH} **{channel_name}**\n'
     current_id = scanned_data[event]['id']
