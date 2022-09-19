@@ -1,10 +1,16 @@
+import os
 import neocord
 import asyncio
 import discord
 import traceback
 from deta import Field
 from extras.emoji import Emo
-from extras.utils import create_menu, fetch_latest_uploaded, fetch_current_livestream, fetch_channel_info
+from extras.utils import (
+    create_menu,
+    fetch_latest_uploaded,
+    fetch_current_livestream,
+    fetch_channel_info
+)
 
 
 async def log_exception(channel: discord.TextChannel, guild: discord.Guild, error: Exception):
@@ -51,12 +57,79 @@ async def build_channel_data(bot: neocord.Bot, channel_id: str):
     _, info = await fetch_channel_info(channel_id, bot.session)
     _, latest_uploaded = await fetch_latest_uploaded(channel_id, bot.session)
     _, current_stream = await fetch_current_livestream(channel_id, bot.session)
-    data = {"info": info}
+    data = info
     if current_stream:
-        data['stream'] = {'url': current_stream["url"], 'id': current_stream["id"]}
+        data['live'] = {'url': current_stream["url"], 'id': current_stream["id"]}
     if latest_uploaded:
         data['upload'] = {'url': latest_uploaded["url"], 'id': latest_uploaded["id"]}
     return data
+
+
+async def process(
+        bot: neocord.Bot,
+        *,
+        event: str,
+        channel_id: str,
+        scanned_data: dict,
+        channel_data: dict,
+        guild: discord.Guild,
+        entire_cache: dict,
+        receiver: discord.TextChannel,
+) -> str:
+    logger = bot.get_channel(902228501120290866)
+    channel_name = scanned_data.get('name')
+    description = f'{Emo.SEARCH} **{channel_name}**\n'
+    current_id = scanned_data[event]['id']
+    stored_id = channel_data[channel_id][event]
+    if not scanned_data.get(event):
+        if event == "live":
+            description += f'\n**{Emo.WARN} Channel is not live now**'
+            return description
+        elif event == "upload":
+            description += f'\n**{Emo.WARN} Channel did not upload anything**'
+            return description
+
+    if not (current_id != stored_id):
+        if event == "live":
+            description += f'\n**{Emo.WARN} No new stream found**'
+            return description
+        elif event == "upload":
+            description += f'\n**{Emo.WARN} No new upload found**'
+            return description
+
+    url = scanned_data[event]['url']
+    channel_data[channel_id][event] = current_id
+    try:
+        await bot.db.add_field(str(guild.id), Field('CHANNELS', channel_data))
+    except Exception as e:
+        await log_exception(logger, guild, e)
+    else:
+        content = await custom_message(event, guild, channel_name, url, entire_cache)
+        mention = await create_ping(guild, entire_cache) or ''
+        if not content:
+            if event == 'live':
+                content = f'> {Emo.LIVE} **{channel_name}** is live now \n> {mention} {url}'
+            else:
+                content = f'> {Emo.YT} **{channel_name}** uploaded a new video\n> {mention} {url}'
+        try:
+            await receiver.send(content)
+        except Exception as e:
+            if not (isinstance(e, discord.errors.Forbidden) or isinstance(e, discord.errors.NotFound)):
+                await log_exception(logger, guild, e)
+        else:
+            if event == 'live':
+                description += (
+                    f'\n**{Emo.LIVE} Channel is live now**'
+                    f'\nNotification sent to: {receiver.mention}'
+                    f'\n> {event.capitalize()} URL: {url}'
+                )
+            else:
+                description += (
+                    f'\n**{Emo.YT} Channel uploaded a new video**'
+                    f'\nNotification sent to: {receiver.mention}'
+                    f'> {event.capitalize()} URL: {url}'
+                )
+            return description
 
 
 class ChannelSelectMenu(discord.ui.Select):
@@ -74,85 +147,44 @@ class ChannelSelectMenu(discord.ui.Select):
         await self.ctx.edit_response(
             embed=discord.Embed(description=f'{Emo.SEARCH} Scanning in progress...'), view=None
         )
-        logger = self.bot.get_channel(938059433794240523)
+
         data = await self.bot.db.get(str(interaction.guild.id)) or {}
         if not data.get('CHANNELS'):
             return await self.ctx.edit_response('No channels found.', embed=None, view=None)
         if not data['CHANNELS'][channel_id].get('receiver'):
             return await self.ctx.edit_response('No receiver found.', embed=None, view=None)
+
         channels = data['CHANNELS']
         saved_values = channels[channel_id]
-        mention = await create_ping(self.ctx.guild, data)
-        receiver = await create_receiver(self.ctx.guild, channel_id, data)
-        if not receiver:
-            return await self.ctx.edit_response('No receiver found.', embed=None, view=None)
         channel_data = await build_channel_data(self.bot, channel_id)
-        channel_name = channel_data['info']['name']
-        description = f'Result for: {Emo.SEARCH} **{channel_name}**\n'
+        receiver = await create_receiver(self.ctx.guild, channel_id, data)
 
-        if channel_data.get('stream'):
-            old_live_id = saved_values['live']
-            live_id = channel_data['stream']['id']
-            live_url = channel_data['stream']['url']
-            if old_live_id != live_id:
-                message = await custom_message('live', self.ctx.guild, channel_name, live_url, data)
-                if message:
-                    c = message
-                elif mention:
-                    c = f'> {Emo.LIVE} **{channel_name}** is live now \n> {mention} {live_url}'
-                else:
-                    c = f'> {Emo.LIVE} **{channel_name}** is live now \n> {live_url}'
-                try:
-                    await receiver.send(c)
-                except Exception as e:
-                    if isinstance(e, discord.errors.Forbidden):
-                        pass
-                    else:
-                        await self.log_exception(logger, guild, e)
-                else:
-                    description += f'\n{Emo.CHECK} **Streaming new live video**\n> URL: {live_url}\n'
-                finally:
-                    channels[channel_id]['live'] = live_id
-            else:
-                description += f'\n**{Emo.WARN} No new stream found**'
-        else:
-            description += f'\n**{Emo.WARN} Channel is not live**'
+        message = await process(
+            self.bot,
+            event="live",
+            channel_id=channel_id,
+            scanned_data=channel_data,
+            channel_data=channels,
+            guild=interaction.guild,
+            entire_cache=data,
+            receiver=receiver
+        )
+        await self.ctx.send_followup(embed=discord.Embed(description=message), ephemeral=True)
 
-        if channel_data.get('upload'):
-            old_latest_id = saved_values['upload']
-            latest_id = channel_data['upload']['id']
-            latest_url = channel_data['upload']['url']
-            if latest_id != old_latest_id:
-                message = await custom_message('upload', self.ctx.guild, channel_name, latest_url, data)
-                if message:
-                    c = message
-                elif mention:
-                    c = f'> {Emo.YT} **{channel_name}** uploaded a new video \n> {mention} {latest_url}'
-                else:
-                    c = f'> {Emo.YT} **{channel_name}** uploaded a new video \n> {latest_url}'
-                try:
-                    await receiver.send(c)
-                except Exception as e:
-                    if isinstance(e, discord.errors.Forbidden):
-                        pass
-                    else:
-                        await self.log_exception(logger, guild, e)
-                else:
-                    description += f'\n{Emo.CHECK} **Uploaded a new video**\n> URL: {latest_url}\n'
-                finally:
-                    channels[channel_id]['upload'] = latest_id
-            else:
-                description += f'\n**{Emo.WARN} No new video uploaded**'
-        else:
-            description += f'\n**{Emo.WARN} Channel has no uploaded videos**'
-        try:
-            await self.bot.db.add_field(str(self.ctx.guild.id), Field('CHANNELS', channels))
-        except Exception as e:
-            await log_exception(logger, self.ctx.guild, e)
-        await self.ctx.edit_response(embed=discord.Embed(description=description))
+        message = await process(
+            self.bot,
+            event="upload",
+            channel_id=channel_id,
+            scanned_data=channel_data,
+            channel_data=channels,
+            guild=interaction.guild,
+            entire_cache=data,
+            receiver=receiver
+        )
+        await self.ctx.send_followup(embed=discord.Embed(description=message), ephemeral=True)
 
 
-class Override(neocord.cog):
+class Force(neocord.cog):
     def __init__(self, bot: neocord.Bot):
         self.bot = bot
 
@@ -167,9 +199,9 @@ class Override(neocord.cog):
         menu = await create_menu(self.bot, list(channels))
         view = discord.ui.View()
         view.add_item(ChannelSelectMenu(self.bot, ctx, menu))
-        await ctx.send_followup(
-            embed=discord.Embed(description=f'> {Emo.YT} Select YouTube Channel to SCAN'), view=view)
+        embed = discord.Embed(description=f'> {Emo.YT} Select YouTube Channel to SCAN')
+        await ctx.send_followup(embed=embed, view=view)
 
 
 async def setup(bot: neocord.Bot):
-    await bot.add_application_cog(Override(bot))
+    await bot.add_application_cog(Force(bot))
