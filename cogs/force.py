@@ -169,7 +169,7 @@ class ChannelSelectMenu(discord.ui.Select):
             entire_cache=data,
             receiver=receiver
         )
-        await self.ctx.send_followup(embed=discord.Embed(description=message), ephemeral=True)
+        await self.ctx.send_followup(embed=discord.Embed(description=message))
 
         message = await process(
             self.bot,
@@ -181,7 +181,7 @@ class ChannelSelectMenu(discord.ui.Select):
             entire_cache=data,
             receiver=receiver
         )
-        await self.ctx.send_followup(embed=discord.Embed(description=message), ephemeral=True)
+        await self.ctx.send_followup(embed=discord.Embed(description=message))
 
 
 class Force(neocord.cog):
