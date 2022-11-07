@@ -59,9 +59,11 @@ async def build_channel_data(bot: neocord.Bot, channel_id: str):
     _, current_stream = await fetch_current_livestream(channel_id, bot.session)
     data = info
     if current_stream:
-        data['live'] = {'url': current_stream["url"], 'id': current_stream["id"]}
+        video_id = current_stream['id']
+        data['live'] = {'url': f'https://www.youtube.com/watch?v={video_id}', 'id': video_id}
     if latest_uploaded:
-        data['upload'] = {'url': latest_uploaded["url"], 'id': latest_uploaded["id"]}
+        video_id = latest_uploaded['id']
+        data['upload'] = {'url': f'https://www.youtube.com/watch?v={video_id}', 'id': video_id}
     return data
 
 
