@@ -81,7 +81,6 @@ async def process(
     logger = bot.get_channel(int(os.getenv('LOG_CHANNEL')))
     channel_name = scanned_data.get('name')
     description = f'{Emo.SEARCH} **{channel_name}**\n'
-    current_id = scanned_data[event]['id']
     stored_id = channel_data[channel_id][event]
     if not scanned_data.get(event):
         if event == "live":
@@ -90,6 +89,8 @@ async def process(
         elif event == "upload":
             description += f'\n**{Emo.WARN} Channel did not upload anything**'
             return description
+            
+    current_id = scanned_data[event]['id']
 
     if not (current_id != stored_id):
         if event == "live":
