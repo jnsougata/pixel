@@ -21,7 +21,7 @@ class Owner(neocord.cog):
     async def remove_command(self, ctx: neocord.Context, cmd_id: int, guild_id: int = None):
         if ctx.author.id != 516649677001719819:
             return await ctx.send_message("You are not allowed to use this command...")
-        command = await self.bot.fetch_command(id, guild_id)
+        command = await self.bot.fetch_command(cmd_id, guild_id)
         if command is None:
             await ctx.send_message("Command not found...")
             return
