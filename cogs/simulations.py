@@ -105,7 +105,8 @@ class Utils(neocord.cog):
                     neocord.Choice('youtube livestream', 3)
                 ]
             )
-        ]
+        ],
+        dm_access=False
     )
     async def simulate(self, ctx: neocord.Context, scope: int):
         if scope == 1:

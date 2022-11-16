@@ -192,7 +192,7 @@ class Force(neocord.cog):
         self.bot = bot
 
     @neocord.cog.default_permission(discord.Permissions.manage_guild)
-    @neocord.cog.command(name='force', description='forces to check for new videos')
+    @neocord.cog.command(name='force', description='forces to check for new videos', dm_access=False)
     async def force_check(self, ctx: neocord.Context):
         channels = self.bot.cached[ctx.guild.id].get('CHANNELS')
         await ctx.defer()
