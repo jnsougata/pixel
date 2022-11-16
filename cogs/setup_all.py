@@ -49,9 +49,8 @@ class Setup(neocord.cog):
         neocord.IntOption(
             name='option', description='type of message to add or edit', required=True,
             choices=[
-                neocord.Choice('upload', 1),
                 neocord.Choice('welcome', 0),
-                neocord.Choice('livestream', 2),
+                neocord.Choice('youtube', 1),
             ]
         )
     ])

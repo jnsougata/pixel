@@ -11,19 +11,13 @@ for_welcome = (
     '\n[ping.member] will ping the member with their welcome card'
 )
 
-for_upload = (
+for_youtube = (
     '[ping] will be replaced with Role Ping'
-    '\n[url] will be replaced with the video URL'
-    '\n[name] will be replaced with the channel NAME'
+    '\n[url] will be replaced with the Video URL'
+    '\n[name] will be replaced with the Channel NAME'
 )
 
-for_live = (
-    '[ping] will be replaced with Role Ping'
-    '\n[url] will be replaced with the stream URL'
-    '\n[name] will be replaced with the channel NAME'
-)
-
-value_list = [for_welcome, for_upload, for_live]
+value_list = [for_welcome, for_youtube]
 
 
 async def send_form(ctx: neocord.Context, bot: neocord.Bot, *, option_value: int, event: str, data: dict):
@@ -65,6 +59,4 @@ async def sub_view_msg(bot: neocord.Bot, ctx: neocord.Context, value: int):
     if value == 0:
         await send_form(ctx, bot, option_value=value, event='welcome', data=data)
     elif value == 1:
-        await send_form(ctx, bot, option_value=value, event='upload', data=data)
-    elif value == 2:
-        await send_form(ctx, bot, option_value=value, event='live', data=data)
+        await send_form(ctx, bot, option_value=value, event='youtube', data=data)
