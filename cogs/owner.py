@@ -7,7 +7,7 @@ class Owner(neocord.cog):
     def __init__(self, bot: neocord.Bot):
         self.bot = bot
 
-    @neocord.cog.default_permission(discord.Permissions.manage_guild)
+    @neocord.cog.default_permission(discord.Permissions.administrator)
     @neocord.cog.command(
         name='remove', 
         description='removes a command',
@@ -27,8 +27,19 @@ class Owner(neocord.cog):
             return
         await command.delete()
         await ctx.send_message("Command removed successfully...")
+    
+    @neocord.cog.default_permission(discord.Permissions.administrator)
+    @neocord.cog.command(
+        name='ls', 
+        description='lists all commands',
+        dm_access=False,
+        guild_id=834662394068336670
+    )
+    async def ls_command(self, ctx: neocord.Context, cmd_id: int, guild_id: int = None):
+        commands = self.bot.application_commands
+        descriptions = "\n".join([f'{command.name} - {command.id} - {command.guild_id}' for command in commands])
+        await ctx.send_message(discord.Embed(description=f'```{descriptions}```'))
         
-
 
 async def setup(bot: neocord.Bot):
     await bot.add_application_cog(Owner(bot))
