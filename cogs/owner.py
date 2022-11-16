@@ -13,12 +13,12 @@ class Owner(neocord.cog):
         description='removes a command',
         dm_access=False,
         options=[
-            neocord.IntOption(name="cmd_id" , description="id of the command to remove", required=True),
-            neocord.IntOption(name="guild_id" , description="id of the guild to remove the command from", required=False)
+            neocord.StrOption(name="cmd_id" , description="id of the command to remove", required=True),
+            neocord.StrOption(name="guild_id" , description="id of the guild to remove the command from", required=False)
         ],
         guild_id=834662394068336670
     )
-    async def remove_command(self, ctx: neocord.Context, cmd_id: int, guild_id: int = None):
+    async def remove_command(self, ctx: neocord.Context, cmd_id: str, guild_id: str = None):
         if ctx.author.id != 516649677001719819:
             return await ctx.send_response("You are not allowed to use this command...")
         command = await self.bot.fetch_command(cmd_id, guild_id)
