@@ -1,5 +1,5 @@
 import discord
-import asyncio
+from datetime import datetime
 from deta import Field
 from extras.emoji import *
 from neocord import Context, Bot
@@ -54,9 +54,8 @@ async def sub_view_youtube(bot: Bot, ctx: Context, url: str, receiver: discord.T
             embed=discord.Embed(description=f'{Emo.WARN} Invalid YouTube Channel ID or URL'))
     _, uploaded = await fetch_latest_uploaded(form_id(url), bot.session)
     content = {
-        'live': 'empty',
-        'upload': uploaded.get('id') or 'empty',
-        'receiver': str(receiver.id)
+        'receiver': str(receiver.id),
+        'last_published': str(int(datetime.utcnow().timestamp())),
     }
     channel_id = info['id']
     if data:
