@@ -1,3 +1,4 @@
+import re
 import aiohttp
 import asyncio
 import discord
@@ -8,15 +9,17 @@ from extras.emoji import Emo
 ROOT_API_URL = 'https://aiotube.deta.dev'
 
 
-def form_id(url: str):
-    if '/channel/' in url:
-        return url.split('/')[-1]
-    elif '/c/' in url:
-        return url.split('/')[-1]
-    elif '/user/' in url:
-        return url.split('/')[-1]
-    else:
+def form_id(url: str) -> str:
+    pattern = re.compile("UC(.+)|c/(.+)|@(.+)")
+    results = pattern.findall(url)
+    if not results:
         return url
+    elif results[0][0]:
+        return 'UC' + results[0][0]
+    elif results[0][1]:
+        return results[0][1]
+    elif results[0][2]:
+        return '@' + results[0][2]
 
 
 async def fetch_channel_info(channel_id: str, session: aiohttp.ClientSession):
