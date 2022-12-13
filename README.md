@@ -31,7 +31,7 @@
 
 `/help` `/subscribe` `/welcomer` `/pingrole` `/dialogue` `/remove`
 
-This command have been implemented in serverless function. Check the [source code](https://github.com/jnsougata/pixel-serverless)
+We've migrated the commands to serverless functions. Check the [source code](https://github.com/jnsougata/pixel-serverless)
 
 📕**About**
 
