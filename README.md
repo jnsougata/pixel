@@ -29,7 +29,9 @@
 
 ♨️ **Commands**
 
-`/help` `/setup` `/more` `/force` `/simulate`
+`/help` `/subscribe` `/welcomer` `/pingrole` `/dialogue` `/remove`
+
+This command have been implemented in serverless function. Check the [source code](https://github.com/jnsougata/pixel-serverless)
 
 📕**About**
 

@@ -11,7 +11,7 @@ class PixeL(neocord.Bot):
 
     def __init__(self):
         super().__init__(intents=intent, help_command=None, command_prefix='/', chunk_guilds_at_startup=False)
-        self.init_ext = ['cogs.' + file[:-3] for file in os.listdir('cogs') if file.endswith('.py')]
+        self.init_ext = ['cogs.listener']  # rest commands have been mover to serverless functions
         self.db = None
         self.drive = None
         self.cached = None
