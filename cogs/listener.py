@@ -1,21 +1,22 @@
 import io
 import discord
-from deta import Field
+from deta import Record
 from imgen import Canvas
-from deta.base import _Base
-from deta.drive import _Drive
+from deta.base import Base
+from deta.drive import Drive
 from extras.emoji import Emo
+from typing import Dict, Any
 from discord.ext import commands
 from PIL import UnidentifiedImageError
-from typing import Dict, Any
+
 
 
 class Listeners(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.db: _Base = bot.db
-        self.drive: _Drive = bot.drive
+        self.db: Base = bot.db
+        self.drive: Drive = bot.drive
         self.cached: Dict[int, Dict[str, Any]] = bot.cached
 
     @staticmethod
@@ -49,12 +50,16 @@ class Listeners(commands.Cog):
         }
 
         await self.db.put(
-            str(guild.id),
-            Field('CUSTOM'),
-            Field('CHANNELS'),
-            Field('RECEIVER'),
-            Field('PINGROLE'),
-            Field('RECEPTION')
+            Record(
+                {
+                    'CUSTOM': None,
+                    'CHANNELS': None,
+                    'RECEIVER': None,
+                    'PINGROLE': None,
+                    'RECEPTION': None
+                },
+                key = str(guild.id)
+            )
         )
 
         invite = 'https://top.gg/bot/848304171814879273/invite'
@@ -109,18 +114,20 @@ class Listeners(commands.Cog):
         if not reception:
             return
         try:
-            bg = await self.drive.get(f'covers/{guild_id}_card.png')
+            saved_image = await self.drive.get(f'covers/{guild_id}_card.png')
         except Exception:
-            bg = await self.drive.get('covers/default_card.png')
+            saved_image = await self.drive.get('covers/default_card.png')
         avatar = member.display_avatar.with_format('png')
         avatar_io = io.BytesIO(await avatar.read())
         canvas = Canvas(1860, 846)
         canvas.load_fonts('extras/ballad.ttf')
+        background = await saved_image.read()
         try:
-            canvas.background(path=bg, blur_level=2)
+            canvas.background(path=background, blur_level=2)
         except UnidentifiedImageError:
-            bg = await self.drive.get('covers/default_card.png')
-            canvas.background(path=bg, blur_level=2)
+            saved_image = await self.drive.get('covers/default_card.png')
+            background = await saved_image.read()
+            canvas.background(path=background, blur_level=2)
         accent_color = canvas.get_accent(avatar_io)
         accent = Canvas(1500, 1500, accent_color).read()
         canvas.round_image(path=accent, resize_x=420, resize_y=420, position_left=720, position_top=105)
