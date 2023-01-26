@@ -1,13 +1,13 @@
 import os
 import discord
-import neocord
 from deta import Deta
+from discord.ext import commands
 
 intent = discord.Intents().default()
 intent.members = True
 
 
-class PixeL(neocord.Bot):
+class PixeL(commands.Bot):
 
     def __init__(self):
         super().__init__(intents=intent, help_command=None, command_prefix='/', chunk_guilds_at_startup=False)
