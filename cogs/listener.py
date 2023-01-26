@@ -17,7 +17,6 @@ class Listeners(commands.Cog):
         self.bot = bot
         self.db: Base = bot.db
         self.drive: Drive = bot.drive
-        self.cached: Dict[int, Dict[str, Any]] = bot.cached
 
     @staticmethod
     def build_text(text: str, scopes: dict):
@@ -40,15 +39,6 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):
-
-        self.cached[guild.id] = {
-            'CUSTOM': None,
-            'CHANNELS': None,
-            'RECEIVER': None,
-            'PINGROLE': None,
-            'RECEPTION': None
-        }
-
         await self.db.put(
             Record(
                 {
@@ -61,7 +51,6 @@ class Listeners(commands.Cog):
                 key = str(guild.id)
             )
         )
-
         invite = 'https://top.gg/bot/848304171814879273/invite'
         support = 'https://discord.gg/G9fk5HHkZ5'
         emd = discord.Embed(
@@ -92,7 +81,6 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        self.bot.cached.pop(guild.id, None)
         await self.bot.db.delete(str(guild.id))
         logger = self.bot.get_channel(899864601057976330)
         await logger.send(f'```diff\n- Removed [{guild.name}](ID:{guild.id})'
@@ -104,10 +92,8 @@ class Listeners(commands.Cog):
         if member.bot:
             return
         guild_id = member.guild.id
-        cached = self.cached.get(guild_id)
-        if not cached:
-            return
-        reception_id = cached['RECEPTION']
+        record = self.db.get(str(guild_id))[0]
+        reception_id = record.get('RECEPTION')
         if not (reception_id and reception_id.isdigit()):
             return
         reception = member.guild.get_channel(int(reception_id))
@@ -143,8 +129,7 @@ class Listeners(commands.Cog):
             '[guild.name]': member.guild.name,
             '[member.mention]': member.mention,
         }
-
-        custom_text = self.bot.cached[guild_id].get('CUSTOM')
+        custom_text = record.get('CUSTOM')
         if custom_text and custom_text.get('welcome'):
             plain_text = custom_text['welcome']
             message = self.build_text(plain_text, scopes)

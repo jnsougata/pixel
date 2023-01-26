@@ -10,11 +10,14 @@ intent.members = True
 class PixeL(commands.Bot):
 
     def __init__(self):
-        super().__init__(intents=intent, help_command=None, command_prefix='/', chunk_guilds_at_startup=False)
-        self.init_ext = ['cogs.listener']  # rest commands have been mover to serverless functions
+        super().__init__(
+            intents=intent, 
+            help_command=None, 
+            command_prefix='/', 
+            chunk_guilds_at_startup=False
+        )
         self.db = None
         self.drive = None
-        self.cached = None
         self.session = None
 
     async def on_ready(self):
@@ -26,13 +29,7 @@ class PixeL(commands.Bot):
         deta = Deta(session=self.session, loop=self.loop)
         self.db = deta.base(os.getenv('BASE_NAME'))
         self.drive = deta.drive(os.getenv('DRIVE_NAME'))
-        await self.build_cache()
-        for ext in self.init_ext:
-            await self.load_extension(ext)
-
-    async def build_cache(self):
-        fields = await self.db.get()
-        self.cached = {int(field.pop('key')): field for field in fields}
+        await self.load_extension('cogs.listener')
 
 
 if __name__ == '__main__':
