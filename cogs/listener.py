@@ -124,7 +124,7 @@ class Listeners(commands.Cog):
         background = await saved_image.read()
         try:
             canvas.background(path=background, blur_level=2)
-        except UnidentifiedImageError:
+        except (UnidentifiedImageError, ValueError):
             saved_image = await self.drive.get('default_card.png', folder="covers")
             background = await saved_image.read()
             canvas.background(path=background, blur_level=2)
