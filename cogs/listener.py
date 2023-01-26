@@ -92,7 +92,7 @@ class Listeners(commands.Cog):
         if member.bot:
             return
         guild_id = member.guild.id
-        record = self.db.get(str(guild_id))[0]
+        record = await self.db.get(str(guild_id))[0]
         reception_id = record.get('RECEPTION')
         if not (reception_id and reception_id.isdigit()):
             return
