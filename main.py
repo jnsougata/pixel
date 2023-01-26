@@ -31,7 +31,7 @@ class PixeL(commands.Bot):
             await self.load_extension(ext)
 
     async def build_cache(self):
-        fields = await self.db.records()
+        fields = await self.db.get()
         self.cached = {int(field.pop('key')): field for field in fields}
 
 
