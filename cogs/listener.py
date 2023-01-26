@@ -114,9 +114,9 @@ class Listeners(commands.Cog):
         if not reception:
             return
         try:
-            saved_image = await self.drive.get(f'covers/{guild_id}_card.png')
+            saved_image = await self.drive.get(f'{guild_id}_card.png', folder="covers")
         except Exception:
-            saved_image = await self.drive.get('covers/default_card.png')
+            saved_image = await self.drive.get('default_card.png', folder="covers")
         avatar = member.display_avatar.with_format('png')
         avatar_io = io.BytesIO(await avatar.read())
         canvas = Canvas(1860, 846)
@@ -125,7 +125,7 @@ class Listeners(commands.Cog):
         try:
             canvas.background(path=background, blur_level=2)
         except UnidentifiedImageError:
-            saved_image = await self.drive.get('covers/default_card.png')
+            saved_image = await self.drive.get('default_card.png', folder="covers")
             background = await saved_image.read()
             canvas.background(path=background, blur_level=2)
         accent_color = canvas.get_accent(avatar_io)
