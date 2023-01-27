@@ -5,10 +5,8 @@ from imgen import Canvas
 from deta.base import Base
 from deta.drive import Drive
 from extras.emoji import Emo
-from typing import Dict, Any
 from discord.ext import commands
 from PIL import UnidentifiedImageError
-
 
 
 class Listeners(commands.Cog):
@@ -48,7 +46,7 @@ class Listeners(commands.Cog):
                     'PINGROLE': None,
                     'RECEPTION': None
                 },
-                key = str(guild.id)
+                key=str(guild.id)
             )
         )
         invite = 'https://top.gg/bot/848304171814879273/invite'
@@ -81,7 +79,7 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        await self.bot.db.delete(str(guild.id))
+        await self.db.delete(str(guild.id))
         logger = self.bot.get_channel(899864601057976330)
         await logger.send(f'```diff\n- Removed [{guild.name}](ID:{guild.id})'
                           f'\n- Owner ID: {guild.owner_id}'
@@ -107,12 +105,12 @@ class Listeners(commands.Cog):
         avatar_io = io.BytesIO(await avatar.read())
         canvas = Canvas(1860, 846)
         canvas.load_fonts('extras/ballad.ttf')
-        background = await saved_image.read()
+        background = io.BytesIO(await saved_image.read())
         try:
             canvas.background(path=background, blur_level=2)
         except (UnidentifiedImageError, ValueError):
             saved_image = await self.drive.get('default_card.png', folder="covers")
-            background = await saved_image.read()
+            background = io.BytesIO(await saved_image.read())
             canvas.background(path=background, blur_level=2)
         accent_color = canvas.get_accent(avatar_io)
         accent = Canvas(1500, 1500, accent_color).read()
