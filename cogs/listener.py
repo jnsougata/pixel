@@ -1,10 +1,12 @@
 import io
+
+import deta
 import discord
 from deta import Record
-from imgen import Canvas
 from deta.base import Base
 from deta.drive import Drive
-from extras.emoji import Emo
+from utils.emoji import Emo
+from utils.canvas import Canvas
 from discord.ext import commands
 from PIL import UnidentifiedImageError
 
@@ -13,8 +15,8 @@ class Listeners(commands.Cog):
 
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.db: Base = bot.db
-        self.drive: Drive = bot.drive
+        self.db: Base = bot.db  # type: ignore
+        self.drive: Drive = bot.drive  # type: ignore
 
     @staticmethod
     def build_text(text: str, scopes: dict):
@@ -54,7 +56,6 @@ class Listeners(commands.Cog):
         emd = discord.Embed(
             description=f'{Emo.MIC} Sup folks! I\'m **{guild.me}**'
                         f'\n\nTo get started, send `/help`'
-                        f'\n\nUse command `/setup` for everything'
                         f'\n\n**Important Links**'
                         f'\n[Invite]({invite}) - Add the bot to another server'
                         f'\n[Support Server]({support}) - Get some bot support here!',
@@ -90,36 +91,36 @@ class Listeners(commands.Cog):
         if member.bot:
             return
         guild_id = member.guild.id
-        record = (await self.db.get(str(guild_id)))[0]
+        try:
+            record = await self.db.get(str(guild_id))
+        except deta.NotFound:
+            return
         reception_id = record.get('RECEPTION')
         if not (reception_id and reception_id.isdigit()):
             return
         reception = member.guild.get_channel(int(reception_id))
         if not reception:
             return
+        canvas = Canvas(1860, 846)
+        canvas.load_fonts('utils/ballad.ttf')
         try:
-            saved_image = await self.drive.get(f'{guild_id}_card.png', folder="covers")
-        except Exception:
-            saved_image = await self.drive.get('default_card.png', folder="covers")
+            stream = await self.drive.get(f'covers/{guild_id}_card.png')
+            background = io.BytesIO(await stream.read())
+            canvas.set_background(path=background, blur_level=2)
+        except (deta.NotFound, UnidentifiedImageError, ValueError):
+            saved_image = await self.drive.get('covers/default_card.png')
+            background = io.BytesIO(await saved_image.read())
+            canvas.set_background(path=background, blur_level=2)
+
         avatar = member.display_avatar.with_format('png')
         avatar_io = io.BytesIO(await avatar.read())
-        canvas = Canvas(1860, 846)
-        canvas.load_fonts('extras/ballad.ttf')
-        background = io.BytesIO(await saved_image.read())
-        try:
-            canvas.background(path=background, blur_level=2)
-        except (UnidentifiedImageError, ValueError):
-            saved_image = await self.drive.get('default_card.png', folder="covers")
-            background = io.BytesIO(await saved_image.read())
-            canvas.background(path=background, blur_level=2)
         accent_color = canvas.get_accent(avatar_io)
         accent = Canvas(1500, 1500, accent_color).read()
-        canvas.round_image(path=accent, resize_x=420, resize_y=420, position_left=720, position_top=105)
-        canvas.round_image(path=avatar_io, resize_x=390, resize_y=390, position_left=735, position_top=120)
-        canvas.text(text=str(member), font_size=50, position_top=540, font_color="#FFFFFF")
-        canvas.text(
-            text=f'You are {member.guild.member_count}th Member',
-            font_size=60, position_top=650, font_color='white')
+        canvas.draw_round_image(path=accent, resize_x=420, resize_y=420, position_left=720, position_top=105)
+        canvas.draw_round_image(path=avatar_io, resize_x=390, resize_y=390, position_left=735, position_top=120)
+        canvas.draw_text(text=str(member), font_size=50, top=540, font_color="#FFFFFF")
+        canvas.draw_text(
+            text=f'You are {member.guild.member_count}th Member', font_size=60, top=650, font_color='white')
         file = discord.File(canvas.read(), 'welcome.png')
         scopes = {
             '[ping.member]': '',
