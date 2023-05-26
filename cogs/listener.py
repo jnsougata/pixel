@@ -1,5 +1,4 @@
 import io
-
 import deta
 import discord
 from deta import Record
@@ -73,18 +72,22 @@ class Listeners(commands.Cog):
             await intro.send(embed=emd)
         except discord.errors.Forbidden:
             pass
-        logger = self.bot.get_channel(899864601057976330)
-        await logger.send(f'```fix\n- Joined [{guild.name}](ID:{guild.id})'
-                          f'\n- Owner ID: {guild.owner_id}'
-                          f'\n- Member Count: {guild.member_count}```')
+        logger = self.bot.get_channel(self.bot.log_channel_id)  # type: ignore
+        await logger.send(
+            f'```fix\n- Joined [{guild.name}](ID:{guild.id})'
+            f'\n- Owner ID: {guild.owner_id}'
+            f'\n- Member Count: {guild.member_count}```'
+        )
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
         await self.db.delete(str(guild.id))
-        logger = self.bot.get_channel(899864601057976330)
-        await logger.send(f'```diff\n- Removed [{guild.name}](ID:{guild.id})'
-                          f'\n- Owner ID: {guild.owner_id}'
-                          f'\n- Member Count: {guild.member_count}```')
+        logger = self.bot.get_channel(self.bot.log_channel_id)  # type: ignore
+        await logger.send(
+            f'```diff\n- Removed [{guild.name}](ID:{guild.id})'
+            f'\n- Owner ID: {guild.owner_id}'
+            f'\n- Member Count: {guild.member_count}```'
+        )
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):

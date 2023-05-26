@@ -15,6 +15,7 @@ class PixeL(commands.Bot):
         super().__init__(intents=intent, help_command=None, command_prefix='/', chunk_guilds_at_startup=False)
         self.db = None
         self.drive = None
+        self.log_channel_id = int(os.getenv('LOG_CHANNEL_ID'))
 
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
