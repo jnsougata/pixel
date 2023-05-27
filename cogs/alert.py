@@ -20,7 +20,7 @@ class Notifier(commands.Cog):
         self.error_logger = None
         self.base: base.Base = bot.db  # noqa
         self.api_root = os.getenv('API_ROOT')
-        self.session = aiohttp.ClientSession(loop=self.bot.loop)
+        self.session: Optional[aiohttp.ClientSession] = None
         self.feed_checker.start()
     
     @staticmethod
@@ -181,6 +181,12 @@ class Notifier(commands.Cog):
         if not self.api_root:
             logging.warning(' {API_ROOT} is not set in env. Can not proceed further.')
             self.feed_checker.stop()
+            return
+        self.session = aiohttp.ClientSession()
+
+    @feed_checker.after_loop
+    async def after_stop(self):
+        await self.session.close()
  
 
 async def setup(bot: commands.Bot):
