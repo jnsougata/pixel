@@ -173,11 +173,11 @@ class Notifier(commands.Cog):
     @feed_checker.before_loop
     async def before_start(self):
         await self.bot.wait_until_ready()
-        chan_id = os.getenv('LOG_CHANNEL')
+        chan_id = os.getenv('LOG_CHANNEL_ID')
         if chan_id and chan_id.isdigit():
             self.error_logger = self.bot.get_channel(int(chan_id))
         else:
-            logging.warning(' {LOG_CHANNEL} is not set in env. In-server logging will not work.')
+            logging.warning(' {LOG_CHANNEL_ID} is not set in env. In-server logging will not work.')
         if not self.api_root:
             logging.warning(' {API_ROOT} is not set in env. Can not proceed further.')
             self.feed_checker.stop()
