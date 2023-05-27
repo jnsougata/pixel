@@ -114,16 +114,12 @@ class Listeners(commands.Cog):
             saved_image = await self.drive.get('covers/default_card.png')
             background = io.BytesIO(await saved_image.read())
             canvas.set_background(path=background, blur_level=2)
-
         avatar = member.display_avatar.with_format('png')
-        avatar_io = io.BytesIO(await avatar.read())
-        accent_color = canvas.get_accent(avatar_io)
-        try:
-            accent = Canvas(1500, 1500, accent_color).read()
-            canvas.draw_round_image(path=accent, resize_x=420, resize_y=420, position_left=720, position_top=105)
-        except:  # noqa (temporary)
-            pass
-        canvas.draw_round_image(path=avatar_io, resize_x=390, resize_y=390, position_left=735, position_top=120)
+        avatar_buff = io.BytesIO(await avatar.read())
+        accent_color = canvas.get_accent(avatar_buff)
+        accent_background = Canvas(1500, 1500, accent_color).read()
+        canvas.draw_round_image(path=accent_background, resize_x=420, resize_y=420, position_left=720, position_top=105)
+        canvas.draw_round_image(path=avatar_buff, resize_x=390, resize_y=390, position_left=735, position_top=120)
         canvas.draw_text(text=str(member), font_size=50, top=540, font_color="#FFFFFF")
         canvas.draw_text(
             text=f'You are {member.guild.member_count}th Member', font_size=60, top=650, font_color='white')
