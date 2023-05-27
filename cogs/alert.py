@@ -18,7 +18,7 @@ class Notifier(commands.Cog):
         self.bot = bot
         self.retry_bucket = []
         self.error_logger = None
-        self.base: base.Base = bot.base  # noqa
+        self.base: base.Base = bot.db  # noqa
         self.api_root = os.getenv('API_ROOT')
         self.session = aiohttp.ClientSession(loop=self.bot.loop)
         self.feed_checker.start()
