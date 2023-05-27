@@ -1,5 +1,6 @@
 import os
 import discord
+import logging
 from deta import Deta
 from discord.ext import commands
 
@@ -30,4 +31,5 @@ class PixeL(commands.Bot):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     PixeL().run(os.getenv('DISCORD_TOKEN'))
