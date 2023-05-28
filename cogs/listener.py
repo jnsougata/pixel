@@ -111,8 +111,8 @@ class Listeners(commands.Cog):
             background = io.BytesIO(await stream.read())
             canvas.set_background(path=background, blur_level=2)
         except (deta.NotFound, UnidentifiedImageError, ValueError):
-            saved_image = await self.drive.get('covers/default_card.png')
-            background = io.BytesIO(await saved_image.read())
+            stream = await self.drive.get('covers/default_card.png')
+            background = io.BytesIO(await stream.read())
             canvas.set_background(path=background, blur_level=2)
         avatar = member.display_avatar.with_format('png')
         avatar_buff = io.BytesIO(await avatar.read())
@@ -132,15 +132,15 @@ class Listeners(commands.Cog):
         }
         custom_text = record.get('CUSTOM')
         if custom_text and custom_text.get('welcome'):
-            plain_text = custom_text['welcome']
-            message = self.build_text(plain_text, scopes)
+            text = custom_text['welcome']
+            message = self.build_text(text, scopes)
         else:
-            plain_text = '[no.ping]'
+            text = '[no.ping]'
             message = f'**Welcome to {member.guild.name}**'
         emd = discord.Embed(description=message, color=0x2f3136)
         emd.set_image(url="attachment://welcome.png")
         try:
-            if '[ping.member]' in plain_text:
+            if '[ping.member]' in text:
                 await reception.send(content=member.mention, embed=emd, file=file)
             else:
                 await reception.send(embed=emd, file=file)
