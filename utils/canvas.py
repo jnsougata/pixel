@@ -203,8 +203,7 @@ class Canvas:
         self.ctx.save(path)
 
     @staticmethod
-    def get_accent(path: Path) -> Color:
-        img = Image.open(path).convert('RGBA')
+    def get_accent(img: Image) -> Color:
         r, g, b, _ = img.resize((1, 1), resample=0).getpixel((0, 0))
         return f'#{r:02x}{g:02x}{b:02x}'
 
