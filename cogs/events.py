@@ -1,4 +1,5 @@
 import io
+import re
 import deta
 import discord
 from deta import Record
@@ -25,16 +26,16 @@ class Listeners(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
-        bot_id = self.bot.user.id
-        content_map = {
-            f'<@!{bot_id}>': True, f'<@{bot_id}>': True, f'<@!{bot_id}> help': True,
-            f'<@{bot_id}> help': True, f'<@!{bot_id}> setup': True, f'<@{bot_id}> setup': True,
-        }
-        if content_map.get(message.content.lower()):
-            try:
-                await message.channel.send(f'👀 I\'ve given up on prefixes! Please use {Emo.SLASH}')
-            except discord.errors.Forbidden:
-                return
+        pattern = re.compile(f"^<@!?{self.bot.user.id}>")
+        if message.author.bot:
+            return
+        result = pattern.search(message.content.lower())
+        if not result:
+            return
+        try:
+            await message.channel.send(f'👀 I\'ve given up on prefixes! Please use {Emo.SLASH}')
+        except discord.errors.Forbidden:
+            return
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: discord.Guild):

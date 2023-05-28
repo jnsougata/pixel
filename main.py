@@ -10,13 +10,11 @@ intent.members = True  # noqa
 
 class PixeL(commands.Bot):
 
-    extensions = ['cogs.alert', 'cogs.counter', 'cogs.listener']
-
     def __init__(self):
         super().__init__(intents=intent, help_command=None, command_prefix='/', chunk_guilds_at_startup=False)
         self.db = None
         self.drive = None
-        self.log_channel_id = int(os.getenv('LOG_CHANNEL_ID'))
+        self.log_channel_id = None
 
     async def on_ready(self):
         print(f'Logged in as {self.user} (ID: {self.user.id})')
@@ -26,8 +24,16 @@ class PixeL(commands.Bot):
         deta = Deta(loop=self.loop)
         self.db = deta.base(os.getenv('BASE_NAME'))
         self.drive = deta.drive(os.getenv('DRIVE_NAME'))
-        for extension in self.extensions:
-            await self.load_extension(extension)
+        await self.load_extensions_from('cogs')
+        self.log_channel_id = int(os.getenv('LOG_CHANNEL_ID'))
+
+    async def load_extensions_from(self, path: str) -> None:
+        cogs = [
+            f'{path}.{module[:-3]}'
+            for module in os.listdir(path) if module.endswith('.py')
+        ]
+        for cog in cogs:
+            await self.load_extension(cog)
 
 
 if __name__ == '__main__':
