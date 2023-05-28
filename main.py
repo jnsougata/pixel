@@ -21,7 +21,7 @@ class PixeL(commands.Bot):
         print('------')
 
     async def setup_hook(self) -> None:
-        deta = Deta(loop=self.loop)
+        deta = Deta(os.environ['DETA_PROJECT_KEY'], loop=self.loop)
         self.db = deta.base(os.getenv('BASE_NAME'))
         self.drive = deta.drive(os.getenv('DRIVE_NAME'))
         await self.load_extensions_from('cogs')
