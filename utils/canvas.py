@@ -1,6 +1,6 @@
 import io
 import textwrap
-from typing import Tuple, Union, List
+from typing import Tuple, Union, List, IO
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 
 
@@ -26,13 +26,12 @@ class Canvas:
         for font in fonts:
             self.fonts.append(font)
 
-    def set_background(self, path: Path, *, blur_level: int = MISSING):
-        bg = Image.open(path)
-        if bg.mode != 'RGBA':
-            bg = bg.convert('RGBA')
+    def set_background(self, img: Image, *, blur_level: int = MISSING):
+        if img.mode != 'RGBA':
+            img = img.convert('RGBA')
         if blur_level is not MISSING:
-            bg = bg.filter(ImageFilter.GaussianBlur(radius=blur_level))
-        self.ctx.paste(bg.resize((self.width, self.height), resample=Image.LANCZOS), (0, 0, self.width, self.height))
+            img = img.filter(ImageFilter.GaussianBlur(radius=blur_level))
+        self.ctx.paste(img.resize((self.width, self.height), resample=Image.LANCZOS), (0, 0, self.width, self.height))
 
     def draw_line(
         self,
@@ -48,7 +47,7 @@ class Canvas:
 
     def draw_image(
         self,
-        path: Path,
+        img: Image,
         position_left: int = MISSING,
         position_top: int = MISSING,
         *,
@@ -61,7 +60,6 @@ class Canvas:
         crop_bottom: int = MISSING,
         blur_level: int = MISSING,
     ):
-        img = Image.open(path)
         if img.mode != 'RGBA':
             img = img.convert('RGBA')
         if rotate is not MISSING:
@@ -91,7 +89,7 @@ class Canvas:
 
     def draw_round_image(
         self,
-        path: Path,
+        img: Image,
         position_left: int = MISSING,
         position_top: int = MISSING,
         *,
@@ -104,7 +102,6 @@ class Canvas:
         crop_bottom: int = MISSING,
         blur_level: int = MISSING,
     ):
-        img = Image.open(path)
         if img.mode != 'RGBA':
             img = img.convert('RGBA')
         if rotate is not MISSING:
@@ -193,8 +190,11 @@ class Canvas:
         else:
             cursor.text(offset, text, font=font, fill=font_color, spacing=line_space)
 
-    def read(self) -> io.BytesIO:
-        return io.BytesIO(self.ctx.tobytes())
+    def as_img(self) -> Image:
+        return self.ctx
+
+    def to_bytes(self) -> bytes:
+        return self.ctx.tobytes()
 
     def show(self):
         self.ctx.show()
@@ -207,6 +207,13 @@ class Canvas:
         img = Image.open(path).convert('RGBA')
         r, g, b, _ = img.resize((1, 1), resample=0).getpixel((0, 0))
         return f'#{r:02x}{g:02x}{b:02x}'
+
+    @staticmethod
+    def to_image(path: Union[IO, io.BytesIO]) -> Image:
+        img = Image.open(path)
+        if img.mode != 'RGBA':
+            img = img.convert('RGBA')
+        return img
 
     @property
     def accent(self) -> Color:
