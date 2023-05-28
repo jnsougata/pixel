@@ -124,7 +124,7 @@ class Listeners(commands.Cog):
         canvas.draw_text(text=str(member), font_size=50, top=540, font_color="#FFFFFF")
         canvas.draw_text(
             text=f'You are {member.guild.member_count}th Member', font_size=60, top=650, font_color='white')
-        file = discord.File(canvas.to_bytes(), 'welcome.png')
+        file = discord.File(io.BytesIO(canvas.to_bytes()), 'welcome.png')
         scopes = {
             '[ping.member]': '',
             '[member.name]': str(member),
