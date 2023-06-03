@@ -147,7 +147,7 @@ class Notifier(commands.Cog):
             if not resp.status == 429:
                 return
             await asyncio.sleep(random.randint(10, 30))
-            return await self.check_subscription(shard_id, channel_id, guild, cache)
+            return await self.check_subscription(shard_id+1, channel_id, guild, cache)
         else:
             data = await resp.json()
             data['channel_id'] = channel_id
