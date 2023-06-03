@@ -141,8 +141,7 @@ class Notifier(commands.Cog):
             cache: dict
     ) -> None:
         await asyncio.sleep(random.randint(1, 30))
-        url = self.api_root.format(shard_id) + f'/feed/{channel_id}'
-        resp = await self.session.get(url)
+        resp = await self.session.get(self.api_root.format(shard_id+1) + f'/feed/{channel_id}')
         if resp.status != 200:
             logging.info(f' [fail: {shard_id}] {guild.id} {channel_id} <{resp.status}>')
             if not resp.status == 429:
