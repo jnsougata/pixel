@@ -54,7 +54,7 @@ async def ping(i: discohook.Interaction):
         name="attachment",
         description="Attachment to ask a question about",
         kind=discohook.ApplicationCommandOptionType.attachment,
-        required=True
+        required=False
     )
 ])
 async def ask(i: discohook.Interaction, question: str, attachment: discohook.Attachment):
