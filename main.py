@@ -66,9 +66,9 @@ async def ping(i: discohook.Interaction):
         discohook.InteractionContextType.private_channel
     ]
 )
-async def ask(i: discohook.Interaction, question: str, attachment: Optional[discohook.Attachment] = None):
+async def ask(i: discohook.Interaction, prompt: str, attachment: Optional[discohook.Attachment] = None):
     await i.response.defer()
-    contents = [f"{question}\n\n respond in about 2000 characters. Use simple markdown formatting."]
+    contents = [f"{prompt}\n\n respond in about 2000 characters. Use simple markdown formatting."]
     if attachment is not None:
         content_bytes = await attachment.read()
         contents.append(
@@ -140,9 +140,8 @@ async def imagine(i: discohook.Interaction, prompt: str):
             )
             embed = discohook.Embed(
                 title="Generated Image",
-                description=f"Prompt: {imagine}",
-                color=0x00ff00
+                description=f"Prompt: {prompt}",
             )
             embed.set_image(file)
-            await i.response.followup(embed=embed, file=file)
+            await i.response.followup(embed=embed)
             return None
