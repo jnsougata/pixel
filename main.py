@@ -1,5 +1,6 @@
 import os
 import traceback
+from typing import Optional
 
 import discohook
 from google import genai
@@ -57,19 +58,20 @@ async def ping(i: discohook.Interaction):
         required=False
     )
 ])
-async def ask(i: discohook.Interaction, question: str, attachment: discohook.Attachment):
+async def ask(i: discohook.Interaction, question: str, attachment: Optional[discohook.Attachment] = None):
     await i.response.defer()
-    content_bytes = await attachment.read()
-
-    response = ai.models.generate_content(
-        model="gemini-2.0-flash",
-        contents=[
-            f"{question}\n\n respond in about 2000 characters. Use simple markdown formatting.",
+    contents = [f"{question}\n\n respond in about 2000 characters. Use simple markdown formatting."]
+    if attachment is not None:
+        content_bytes = await attachment.read()
+        contents.append(
             types.Part.from_bytes(
                 data=content_bytes,
                 mime_type=attachment.content_type,
             )
-        ]
+        )
+    response = ai.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=contents
     )
     await i.response.followup(response.text)
 
