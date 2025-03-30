@@ -1,41 +1,41 @@
 import os
-import discord
-import logging
-from deta import Deta
-from discord.ext import commands
+import traceback
 
-intent = discord.Intents().default()
-intent.members = True  # noqa
+import discohook
 
 
-class PixeL(commands.Bot):
-
-    def __init__(self):
-        super().__init__(intents=intent, help_command=None, command_prefix='/', chunk_guilds_at_startup=False)
-        self.db = None
-        self.drive = None
-        self.log_channel_id = None
-
-    async def on_ready(self):
-        print(f'Logged in as {self.user} (ID: {self.user.id})')
-        print('------')
-
-    async def setup_hook(self) -> None:
-        deta = Deta(os.environ['DETA_PROJECT_KEY'], loop=self.loop)
-        self.db = deta.base(os.getenv('BASE_NAME'))
-        self.drive = deta.drive(os.getenv('DRIVE_NAME'))
-        await self.load_extensions_from('cogs')
-        self.log_channel_id = int(os.getenv('LOG_CHANNEL_ID'))
-
-    async def load_extensions_from(self, path: str) -> None:
-        cogs = [
-            f'{path}.{module[:-3]}'
-            for module in os.listdir(path) if module.endswith('.py')
-        ]
-        for cog in cogs:
-            await self.load_extension(cog)
+app = discohook.Client(
+    application_id=os.getenv("APPLICATION_ID"),
+    public_key=os.getenv("PUBLIC_KEY"),
+    token=os.getenv("DISCORD_TOKEN"),
+    password=os.getenv("APPLICATION_PASSWORD"),
+)
 
 
-if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
-    PixeL().run(os.getenv('DISCORD_TOKEN'))
+@app.on_interaction_error()
+async def on_error(i: discohook.Interaction, e: Exception):
+    embed = discohook.Embed(
+        title='Oops!',
+        description=f'Something went wrong!'
+                    f'\nTrying again might fix it.'
+                    f'\nIf not, please contact the developer.'
+                    f'\n\nTo Join Development Server [Click Here](https://discord.gg/ChJbUv7z8V)',
+        color=0xff0000
+    )
+    if e.interaction.responded:
+        await i.response.followup(embed=embed, ephemeral=True)
+    else:
+        await i.response.send(embed=embed, ephemeral=True)
+    err = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
+    embed = discohook.Embed(
+        title='Stack Trace',
+        description=f'```py\n{err}\n```',
+        color=0xff0000
+    )
+    await app.send(os.getenv("LOG_CHANNEL_ID"), embed=embed)
+
+@app.load
+@discohook.command.slash("ping")
+async def ping(i: discohook.Interaction):
+    """Ping Pong"""
+    await i.response.send("Pong!")

@@ -1,5 +1,2 @@
-pillow
-aiohttp
-topggpy==1.4.0
-git+https://github.com/jnsougata/deta
-git+https://github.com/Rapptz/discord.py
+uvicorn
+git+https://github.com/jnsougata/discohook.git
