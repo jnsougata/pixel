@@ -47,7 +47,7 @@ async def ping(i: discohook.Interaction):
     await i.response.send("Pong!")
 
 @app.load
-@discohook.command.slash("setup")
+@discohook.command.slash("setup", description="Setup the bot")
 async def setup(i: discohook.Interaction):
     await i.response.send_modal(setup_modal)
 
