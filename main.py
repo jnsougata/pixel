@@ -13,7 +13,7 @@ app = discohook.Client(
 
 
 @app.on_interaction_error()
-async def on_error(i: discohook.Interaction, e: Exception):
+async def on_error(e: discohook.InteractionException):
     embed = discohook.Embed(
         title='Oops!',
         description=f'Something went wrong!'
@@ -23,9 +23,9 @@ async def on_error(i: discohook.Interaction, e: Exception):
         color=0xff0000
     )
     if e.interaction.responded:
-        await i.response.followup(embed=embed, ephemeral=True)
+        await e.interaction.response.followup(embed=embed, ephemeral=True)
     else:
-        await i.response.send(embed=embed, ephemeral=True)
+        await e.interaction.response.send(embed=embed, ephemeral=True)
     err = ''.join(traceback.format_exception(type(e), e, e.__traceback__))
     embed = discohook.Embed(
         title='Stack Trace',
