@@ -123,7 +123,7 @@ async def translate(i: discohook.Interaction, message: discohook.Message):
 async def imagine(i: discohook.Interaction, prompt: str):
     await i.response.defer()
     response = ai.models.generate_images(
-        model="imagen-3.0-generate-002",
+        model="gemini-2.0-flash-exp-image-generation",
         prompt=prompt,
         config=types.GenerateImagesConfig(number_of_images=1)
     )
