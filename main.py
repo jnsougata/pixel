@@ -35,12 +35,21 @@ async def on_error(e: discohook.InteractionException):
     )
     await app.send(os.getenv("LOG_CHANNEL_ID"), embed=embed)
 
+@app.preload("setup-modal")
+@discohook.modal.new("Setup", custom_id="setup-modal", fields=[])
+async def setup_modal(i: discohook.Interaction):
+    await i.response.send("Setup complete! You can now use the bot.")
 
 @app.load
 @discohook.command.slash("ping")
 async def ping(i: discohook.Interaction):
     """Ping Pong"""
     await i.response.send("Pong!")
+
+@app.load
+@discohook.command.slash("setup")
+async def setup(i: discohook.Interaction):
+    await i.response.send_modal(setup_modal)
 
 @app.load
 @discohook.command.message("translate")
