@@ -34,8 +34,14 @@ async def on_error(e: discohook.InteractionException):
     )
     await app.send(os.getenv("LOG_CHANNEL_ID"), embed=embed)
 
+
 @app.load
 @discohook.command.slash("ping")
 async def ping(i: discohook.Interaction):
     """Ping Pong"""
     await i.response.send("Pong!")
+
+@app.load
+@discohook.command.message("translate")
+async def translate(i: discohook.Interaction, message: discohook.Message):
+    await i.response.send(message.content)
