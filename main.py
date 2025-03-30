@@ -47,8 +47,9 @@ async def ping(i: discohook.Interaction):
 async def translate(i: discohook.Interaction, message: discohook.Message):
     await i.response.defer()
     client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    text = f"Translate `{message.content}` to english. Respond with only the translation."
     response = client.models.generate_content(
         model="gemini-2.0-flash",
-        contents=f"Translate `{message.content}` to english. Respond with only the translation.",
+        contents=[text]
     )
     await i.response.followup(response.text)
