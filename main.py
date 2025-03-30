@@ -36,7 +36,22 @@ async def on_error(e: discohook.InteractionException):
     await app.send(os.getenv("LOG_CHANNEL_ID"), embed=embed)
 
 @app.preload("setup-modal")
-@discohook.modal.new("Setup", custom_id="setup-modal", fields=[])
+@discohook.modal.new("Setup", custom_id="setup-modal", fields=[
+discohook.TextInput(
+        label="Name",
+        field_id="name",
+        style=discohook.TextInputFieldLength.short,
+        required=True,
+        hint="Your name"
+    ),
+    discohook.TextInput(
+        label="Gemini API key",
+        field_id="api_key",
+        style=discohook.TextInputFieldLength.long,
+        required=True,
+        hint="************************"
+    )
+])
 async def setup_modal(i: discohook.Interaction):
     await i.response.send("Setup complete! You can now use the bot.")
 
