@@ -44,20 +44,28 @@ async def ping(i: discohook.Interaction):
     await i.response.send("Pong!")
 
 @app.load
-@discohook.command.slash("ask", description="ask a question", options=[
-    discohook.Option(
-        name="question",
-        description="Question to ask",
-        kind=discohook.ApplicationCommandOptionType.string,
-        required=True
-    ),
-    discohook.Option(
-        name="attachment",
-        description="Attachment to ask a question about",
-        kind=discohook.ApplicationCommandOptionType.attachment,
-        required=False
-    )
-])
+@discohook.command.slash(
+    "ask", description="ask a question",
+    options=[
+        discohook.Option(
+            name="question",
+            description="Question to ask",
+            kind=discohook.ApplicationCommandOptionType.string,
+            required=True
+        ),
+        discohook.Option(
+            name="attachment",
+            description="Attachment to ask a question about",
+            kind=discohook.ApplicationCommandOptionType.attachment,
+            required=False
+        )
+    ],
+    contexts=[
+        discohook.InteractionContextType.guild,
+        discohook.InteractionContextType.bot_dm,
+        discohook.InteractionContextType.private_channel
+    ]
+)
 async def ask(i: discohook.Interaction, question: str, attachment: Optional[discohook.Attachment] = None):
     await i.response.defer()
     contents = [f"{question}\n\n respond in about 2000 characters. Use simple markdown formatting."]
@@ -76,7 +84,14 @@ async def ask(i: discohook.Interaction, question: str, attachment: Optional[disc
     await i.response.followup(response.text)
 
 @app.load
-@discohook.command.message("translate")
+@discohook.command.message(
+    "translate",
+    contexts=[
+        discohook.InteractionContextType.guild,
+        discohook.InteractionContextType.bot_dm,
+        discohook.InteractionContextType.private_channel
+    ]
+)
 async def translate(i: discohook.Interaction, message: discohook.Message):
     await i.response.defer(ephemeral=True)
 
