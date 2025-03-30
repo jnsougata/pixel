@@ -12,6 +12,7 @@ app = discohook.Client(
     public_key=os.getenv("PUBLIC_KEY"),
     token=os.getenv("DISCORD_TOKEN"),
     password=os.getenv("APPLICATION_PASSWORD"),
+    default_help_command=True
 )
 
 
