@@ -1,2 +1,3 @@
 uvicorn
+google-genai
 git+https://github.com/jnsougata/discohook.git

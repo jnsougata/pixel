@@ -2,6 +2,7 @@ import os
 import traceback
 
 import discohook
+from google import genai
 
 
 app = discohook.Client(
@@ -44,4 +45,10 @@ async def ping(i: discohook.Interaction):
 @app.load
 @discohook.command.message("translate")
 async def translate(i: discohook.Interaction, message: discohook.Message):
-    await i.response.send(message.content)
+    await i.response.defer()
+    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+    response = client.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=f"Translate `{message.content}` to english. Respond with only the translation.",
+    )
+    await i.response.followup(response.text)
