@@ -3,8 +3,9 @@ import traceback
 
 import discohook
 from google import genai
+from google.genai import types
 
-
+ai = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = discohook.Client(
     application_id=os.getenv("APPLICATION_ID"),
     public_key=os.getenv("PUBLIC_KEY"),
@@ -35,26 +36,6 @@ async def on_error(e: discohook.InteractionException):
     )
     await app.send(os.getenv("LOG_CHANNEL_ID"), embed=embed)
 
-@app.preload("setup-modal")
-@discohook.modal.new("Setup", custom_id="setup-modal", fields=[
-discohook.TextInput(
-        label="Name",
-        field_id="name",
-        style=discohook.TextInputFieldLength.short,
-        required=True,
-        hint="Your name"
-    ),
-    discohook.TextInput(
-        label="Gemini API key",
-        field_id="api_key",
-        style=discohook.TextInputFieldLength.long,
-        required=True,
-        hint="************************"
-    )
-])
-async def setup_modal(i: discohook.Interaction):
-    await i.response.send("Setup complete! You can now use the bot.")
-
 @app.load
 @discohook.command.slash("ping")
 async def ping(i: discohook.Interaction):
@@ -62,17 +43,43 @@ async def ping(i: discohook.Interaction):
     await i.response.send("Pong!")
 
 @app.load
-@discohook.command.slash("setup", description="Setup the bot")
-async def setup(i: discohook.Interaction):
-    await i.response.send_modal(setup_modal)
+@discohook.command.slash("ask", description="ask a question", options=[
+    discohook.Option(
+        name="question",
+        description="Question to ask",
+        kind=discohook.ApplicationCommandOptionType.string,
+        required=True
+    ),
+    discohook.Option(
+        name="attachment",
+        description="Attachment to ask a question about",
+        kind=discohook.ApplicationCommandOptionType.attachment,
+        required=True
+    )
+])
+async def ask(i: discohook.Interaction, question: str, attachment: discohook.Attachment):
+    await i.response.defer()
+    content_bytes = await attachment.read()
+
+    response = ai.models.generate_content(
+        model="gemini-2.0-flash",
+        contents=[
+            f"{question}\n\n respond in about 2000 characters. Use simple markdown formatting.",
+            types.Part.from_bytes(
+                data=content_bytes,
+                mime_type=attachment.content_type,
+            )
+        ]
+    )
+    await i.response.followup(response.text)
 
 @app.load
 @discohook.command.message("translate")
 async def translate(i: discohook.Interaction, message: discohook.Message):
     await i.response.defer(ephemeral=True)
-    client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
+
     text = f"Translate `{message.content}` to english. Respond with only the translation."
-    response = client.models.generate_content(
+    response = ai.models.generate_content(
         model="gemini-2.0-flash",
         contents=[text]
     )
