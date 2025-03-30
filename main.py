@@ -112,6 +112,12 @@ async def translate(i: discohook.Interaction, message: discohook.Message):
             description="Prompt to generate an image from",
             kind=discohook.ApplicationCommandOptionType.string,
             required=True
+        ),
+        discohook.Option(
+            name="attachment",
+            description="Attachment to generate an image from",
+            kind=discohook.ApplicationCommandOptionType.attachment,
+            required=False
         )
     ],
     contexts=[
@@ -120,8 +126,17 @@ async def translate(i: discohook.Interaction, message: discohook.Message):
         discohook.InteractionContextType.private_channel
     ]
 )
-async def imagine(i: discohook.Interaction, prompt: str):
+async def imagine(i: discohook.Interaction, prompt: str, attachment: Optional[discohook.Attachment] = None):
     await i.response.defer()
+    contents = [prompt]
+    if attachment is not None:
+        content_bytes = await attachment.read()
+        contents.append(
+            types.Part.from_bytes(
+                data=content_bytes,
+                mime_type=attachment.content_type,
+            )
+        )
     response = ai.models.generate_content(
         model="gemini-2.0-flash-exp-image-generation",
         contents=prompt,
@@ -131,7 +146,7 @@ async def imagine(i: discohook.Interaction, prompt: str):
     )
     for part in response.candidates[0].content.parts:
         if part.text is not None:
-            print(part.text)
+            continue
         elif part.inline_data is not None:
             file = discohook.File(
                 name="imagine.png",
