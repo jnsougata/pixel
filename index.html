@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PixeL</title>
+    <link rel="icon" href="/assets/icon.png" type="image/png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        html { scroll-behavior: smooth; }
+        body { font-family: 'Poppins', sans-serif; }
+        body {
+            background-color: #000; /* Black background */
+            color: #fff; /* White text */
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px; /* Adjust grid size as needed */
+        }
+        .feature-card {
+            background-color: #1a1a1a; /* Dark gray background */
+            border: 1px solid #333; /* Darker gray border */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+        .feature-card:hover {
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.7);
+            transition: box-shadow 0.3s ease;
+        }
+        .glow-icon {
+            filter: drop-shadow(0 0 10px rgba(0, 150, 255, 0.7)); /* Blue glow effect */
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <section class="flex items-center justify-center min-h-screen px-4 py-16">
+        <div class="text-center">
+            <img src="/assets/icon.png" alt="PixeL Stamp"
+                 class="mx-auto w-32 h-32 md:w-40 md:h-40 mb-8 rounded-full glow-icon">
+            <h1 class="text-4xl md:text-5xl font-semibold mb-4 tracking-tight">
+                Welcome to PixeL
+            </h1>
+            <p class="text-lg md:text-xl text-gray-300 max-w-xl mx-auto mb-8 italic">
+                "Think. Generate. Evolve."
+            </p>
+            <a href="https://discord.com/oauth2/authorize?client_id=848304171814879273"
+               class="inline-block bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-medium hover:bg-blue-700 transition duration-300">
+                Invite Pixel
+            </a>
+        </div>
+    </section>
+
+    <section id="features" class="py-16 bg-black">
+        <div class="max-w-6xl mx-auto px-4 text-center">
+            <h2 class="text-3xl font-semibold mb-10 tracking-tight">Features</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+
+                <div class="feature-card p-8 rounded-2xl text-left">
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-500 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        <h3 class="text-xl font-semibold">Moderation Tools</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed">Manage your server with ease using advanced moderation. Auto ban, mute, or kick members when necessary.</p>
+                </div>
+
+                <div class="feature-card p-8 rounded-2xl text-left">
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-green-500 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <h3 class="text-xl font-semibold">Fun Commands</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed">Bring excitement with interactive commands: explore memes, test your trivia knowledge, play games, and more!</p>
+                </div>
+
+                <div class="feature-card p-8 rounded-2xl text-left">
+                    <div class="flex items-center mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-red-500 mr-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <h3 class="text-xl font-semibold">Customizable</h3>
+                    </div>
+                    <p class="text-gray-300 text-sm leading-relaxed">Tailor settings to perfectly match your server's unique needs, workflow, and overall style.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="mt-16 pt-8 pb-8 text-center bg-black">
+        <p class="text-gray-600 text-xs tracking-wider">&copy; 2025 PixeL. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

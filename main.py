@@ -5,6 +5,8 @@ from typing import Optional
 import discohook
 from google import genai
 from google.genai import types
+from starlette.staticfiles import StaticFiles
+from starlette.responses import FileResponse
 
 ai = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = discohook.Client(
@@ -14,7 +16,14 @@ app = discohook.Client(
     password=os.getenv("APPLICATION_PASSWORD"),
     default_help_command=True
 )
+app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
+
+async def homepage(_request):
+    return FileResponse("index.html", media_type="text/html")
+
+
+app.add_route(path="/", methods=["GET"], route=homepage)
 
 @app.on_interaction_error()
 async def on_error(e: discohook.InteractionException):
