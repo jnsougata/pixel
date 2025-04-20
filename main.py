@@ -29,6 +29,7 @@ app = discohook.Client(
     token=os.getenv("DISCORD_TOKEN"),
     password=os.getenv("APPLICATION_PASSWORD"),
     default_help_command=True,
+    lifespan=lifespan,
 )
 app.mount("/assets", StaticFiles(directory="assets"), name="assets")
 
