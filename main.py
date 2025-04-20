@@ -1,15 +1,27 @@
+import contextlib
 import os
 import traceback
 from typing import Optional
 
 import discohook
+from dotenv import load_dotenv
 from google import genai
 from google.genai import types
-from starlette.staticfiles import StaticFiles
 from starlette.responses import FileResponse
-from dotenv import load_dotenv
+from starlette.staticfiles import StaticFiles
 
 load_dotenv()
+
+
+@contextlib.asynccontextmanager
+async def lifespan(client: discohook.Client):
+    try:
+        yield
+    finally:
+        if client.http.session:
+            await client.http.session.close()
+
+
 ai = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 app = discohook.Client(
     application_id=os.getenv("APPLICATION_ID"),
